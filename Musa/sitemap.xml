@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+    
+    <!-- Página principal -->
+    <url>
+        <loc>https://www.musa-moda.com/</loc>
+        <lastmod>2025-10-04</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://www.musa-moda.com/images/slide/MA2.jpeg</image:loc>
+            <image:title>MUSA - Moda Actual</image:title>
+            <image:caption>Tienda de moda femenina en Madrid, Cundinamarca</image:caption>
+        </image:image>
+    </url>
+    
+    <!-- Panel administrativo (privado) -->
+    <url>
+        <loc>https://www.musa-moda.com/admin-panel.php</loc>
+        <lastmod>2025-10-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.1</priority>
+    </url>
+    
+    <!-- Categorías principales -->
+    <url>
+        <loc>https://www.musa-moda.com/#vestidos</loc>
+        <lastmod>2025-10-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://www.musa-moda.com/#blusas</loc>
+        <lastmod>2025-10-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://www.musa-moda.com/#pantalones</loc>
+        <lastmod>2025-10-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://www.musa-moda.com/#accesorios</loc>
+        <lastmod>2025-10-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+</urlset>

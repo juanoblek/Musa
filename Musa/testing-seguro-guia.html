@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Guía de Testing Seguro - MercadoPago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h4><i class="fas fa-shield-alt"></i> Guía de Testing Seguro - MercadoPago</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="alert alert-warning">
+                            <h5><i class="fas fa-exclamation-triangle"></i> ¿Por qué falló el pago?</h5>
+                            <p>Las <strong>tarjetas de prueba</strong> no funcionan en <strong>modo producción</strong>. MercadoPago las detecta como falsas y rechaza el pago.</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-header bg-success text-white">
+                                        <h6><i class="fas fa-check"></i> ✅ MODO TESTING (Actual)</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Para qué sirve:</strong></p>
+                                        <ul>
+                                            <li>Probar toda la funcionalidad</li>
+                                            <li>Verificar flujos de pago</li>
+                                            <li>Testing sin riesgo</li>
+                                            <li>Usar tarjetas de prueba</li>
+                                        </ul>
+                                        
+                                        <p><strong>Tarjetas que funcionan:</strong></p>
+                                        <div class="bg-light p-2 rounded">
+                                            <small>
+                                                <strong>Visa:</strong> 4509 9535 6623 3704<br>
+                                                <strong>Mastercard:</strong> 5031 7557 3453 0604<br>
+                                                <strong>CVV:</strong> 123 | <strong>Vencimiento:</strong> 11/25<br>
+                                                <strong>Nombre:</strong> APRO (Aprobado)
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card border-danger">
+                                    <div class="card-header bg-danger text-white">
+                                        <h6><i class="fas fa-times"></i> 🔥 MODO PRODUCCIÓN</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Para qué sirve:</strong></p>
+                                        <ul>
+                                            <li>Pagos reales de clientes</li>
+                                            <li>Dinero real se descuenta</li>
+                                            <li>Solo tarjetas reales</li>
+                                            <li>Para venta real</li>
+                                        </ul>
+                                        
+                                        <p><strong>Tarjetas que funcionan:</strong></p>
+                                        <div class="bg-light p-2 rounded">
+                                            <small>
+                                                <strong>Solo tarjetas reales:</strong><br>
+                                                - Tu tarjeta personal<br>
+                                                - Tarjetas de clientes reales<br>
+                                                - ⚠️ Se cobra dinero real
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5>🧪 Testing Actual - Modo Seguro Activado</h5>
+                            <div class="alert alert-success">
+                                <p><strong>Estado actual:</strong> Modo Testing activado ✅</p>
+                                <p>Ahora puedes usar las tarjetas de prueba sin riesgo.</p>
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <strong>📝 Datos de Prueba Completos</strong>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>💳 Visa (Aprobada)</h6>
+                                        <ul>
+                                            <li><strong>Número:</strong> 4509 9535 6623 3704</li>
+                                            <li><strong>CVV:</strong> 123</li>
+                                            <li><strong>Vencimiento:</strong> 11/25</li>
+                                            <li><strong>Nombre:</strong> APRO</li>
+                                            <li><strong>Email:</strong> test_user_123@test.com</li>
+                                            <li><strong>Documento:</strong> 12345678</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>💳 Mastercard (Aprobada)</h6>
+                                        <ul>
+                                            <li><strong>Número:</strong> 5031 7557 3453 0604</li>
+                                            <li><strong>CVV:</strong> 123</li>
+                                            <li><strong>Vencimiento:</strong> 11/25</li>
+                                            <li><strong>Nombre:</strong> APRO</li>
+                                            <li><strong>Email:</strong> test_user_456@test.com</li>
+                                            <li><strong>Documento:</strong> 87654321</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <button onclick="testPaymentFlow()" class="btn btn-success btn-lg me-3">
+                                <i class="fas fa-play"></i> Probar Flujo de Pago Seguro
+                            </button>
+                            <button onclick="switchToProduction()" class="btn btn-warning">
+                                <i class="fas fa-rocket"></i> Cambiar a Producción (Más tarde)
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>🔄 Flujo Recomendado</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ol>
+                                        <li><strong>Testing completo:</strong> Prueba todos los flujos con tarjetas de prueba</li>
+                                        <li><strong>Verificar base de datos:</strong> Confirma que los pedidos se guardan</li>
+                                        <li><strong>Probar errores:</strong> Usa tarjetas que fallan para ver mensajes de error</li>
+                                        <li><strong>Producción:</strong> Solo cuando estés 100% seguro</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <h6><i class="fas fa-lightbulb"></i> Tip Profesional:</h6>
+                            <p>Mantén el modo testing hasta que tengas clientes reales. Es completamente funcional y te ahorra dolores de cabeza.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testPaymentFlow() {
+            window.open('pago-premium.html', '_blank');
+        }
+
+        function switchToProduction() {
+            if (confirm('¿Estás seguro de cambiar a producción? Los pagos serán REALES.')) {
+                alert('Para cambiar a producción, contacta al desarrollador. Es un cambio crítico que debe hacerse cuidadosamente.');
+            }
+        }
+    </script>
+</body>
+</html>

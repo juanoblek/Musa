@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información de Envío - Musa & Arion</title>
+    
+    <!-- Bootstrap 5.3.0 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e74c3c;
+            --accent-color: #f39c12;
+            --text-dark: #2c3e50;
+            --bg-light: #ecf0f1;
+            --border-color: #bdc3c7;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* Progress Bar Styles */
+        .checkout-progress {
+            background: white;
+            padding: 25px 20px 45px 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 60px;
+            right: 60px;
+            height: 3px;
+            background: #e0e0e0;
+            z-index: 1;
+            border-radius: 2px;
+        }
+        
+        .progress-line-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            width: 25%;
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+        
+        .progress-step {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .progress-step.completed {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .progress-step.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(44, 62, 80, 0.4);
+        }
+        
+        .step-label {
+            position: absolute;
+            top: 65px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            color: #333;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 80px;
+        }
+        
+        .progress-step.completed .step-label {
+            color: var(--secondary-color);
+        }
+        
+        .progress-step.active .step-label {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+        
+        /* Main Container */
+        .shipping-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 0 auto;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25);
+        }
+        
+        .form-control.is-invalid {
+            border-color: var(--secondary-color);
+        }
+        
+        .invalid-feedback {
+            color: var(--secondary-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* Order Summary */
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .product-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .product-details {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+        
+        .product-quantity {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .product-price {
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+        
+        .summary-totals {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .total-row.final {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-color);
+            border-top: 1px solid #e9ecef;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        /* Shipping Cost Alert */
+        .shipping-alert {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .shipping-cost {
+            font-size: 24px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        /* Navigation Buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            gap: 20px;
+        }
+        
+        .btn-nav {
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-continue {
+            background: var(--secondary-color);
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .btn-continue:hover {
+            background: #c0392b;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .btn-continue:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .shipping-container {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-nav {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            /* Progress Bar Mobile */
+            .checkout-progress {
+                padding: 20px 10px 45px 10px;
+                margin-bottom: 20px;
+            }
+            
+            .progress-steps {
+                padding: 0 15px;
+                max-width: 100%;
+            }
+            
+            .progress-line {
+                left: 40px;
+                right: 40px;
+            }
+            
+            .progress-step {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+            
+            .step-label {
+                font-size: 10px;
+                top: 58px;
+                min-width: 70px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .checkout-progress {
+                padding: 15px 5px 40px 5px;
+            }
+            
+            .progress-steps {
+                padding: 0 10px;
+            }
+            
+            .progress-line {
+                left: 35px;
+                right: 35px;
+            }
+            
+            .progress-step {
+                width: 40px;
+                height: 40px;
+                font-size: 14px;
+            }
+            
+            .step-label {
+                font-size: 9px;
+                top: 52px;
+                min-width: 60px;
+            }
+        }
+        
+        /* Loading States */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Progress Bar -->
+        <div class="checkout-progress">
+            <div class="progress-steps">
+                <div class="progress-line">
+                    <div class="progress-line-fill"></div>
+                </div>
+                
+                <div class="progress-step completed">
+                    <i class="fas fa-check"></i>
+                    <div class="step-label">Carrito</div>
+                </div>
+                
+                <div class="progress-step active">
+                    <i class="fas fa-truck"></i>
+                    <div class="step-label">Envío</div>
+                </div>
+                
+                <div class="progress-step">
+                    <i class="fas fa-credit-card"></i>
+                    <div class="step-label">Pago</div>
+                </div>
+                
+                <div class="progress-step">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="step-label">Confirmación</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="shipping-container">
+            <h1 class="section-title">
+                <i class="fas fa-truck me-3"></i>
+                Información de Envío
+            </h1>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h3 class="summary-title">
+                    <i class="fas fa-shopping-bag me-2"></i>
+                    Resumen del Pedido
+                </h3>
+                <div id="orderSummary">
+                    <!-- Products will be loaded here -->
+                </div>
+                
+                <div class="summary-totals">
+                    <div class="total-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotalAmount">$0</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Envío:</span>
+                        <span id="shippingCost">GRATIS</span>
+                    </div>
+                    <div class="total-row final">
+                        <span>Total:</span>
+                        <span id="totalAmount">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Form -->
+            <form id="shippingForm" novalidate>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">
+                                <i class="fas fa-user me-2"></i>
+                                Nombre Completo *
+                            </label>
+                            <input type="text" class="form-control" id="fullName" required>
+                            <div class="invalid-feedback">El nombre completo es requerido</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>
+                                Email *
+                            </label>
+                            <input type="email" class="form-control" id="email" required>
+                            <div class="invalid-feedback">El email es requerido y debe ser válido</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone me-2"></i>
+                                Teléfono *
+                            </label>
+                            <input type="tel" class="form-control" id="phone" required>
+                            <div class="invalid-feedback">El teléfono es requerido</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="documentType" class="form-label">
+                                <i class="fas fa-id-card me-2"></i>
+                                Tipo de Documento *
+                            </label>
+                            <select class="form-select" id="documentType" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="CC">Cédula de Ciudadanía</option>
+                                <option value="CE">Cédula de Extranjería</option>
+                                <option value="NIT">NIT</option>
+                                <option value="PP">Pasaporte</option>
+                            </select>
+                            <div class="invalid-feedback">El tipo de documento es requerido</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="documentNumber" class="form-label">
+                                <i class="fas fa-hashtag me-2"></i>
+                                Número de Documento *
+                            </label>
+                            <input type="text" class="form-control" id="documentNumber" required>
+                            <div class="invalid-feedback">El número de documento es requerido</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="department" class="form-label">
+                                <i class="fas fa-map me-2"></i>
+                                Departamento *
+                            </label>
+                            <select class="form-select" id="department" required>
+                                <option value="">Seleccionar departamento...</option>
+                                <option value="antioquia">Antioquia</option>
+                                <option value="atlantico">Atlántico</option>
+                                <option value="bogota">Bogotá D.C.</option>
+                                <option value="bolivar">Bolívar</option>
+                                <option value="boyaca">Boyacá</option>
+                                <option value="caldas">Caldas</option>
+                                <option value="caqueta">Caquetá</option>
+                                <option value="casanare">Casanare</option>
+                                <option value="cauca">Cauca</option>
+                                <option value="cesar">Cesar</option>
+                                <option value="choco">Chocó</option>
+                                <option value="cordoba">Córdoba</option>
+                                <option value="cundinamarca">Cundinamarca</option>
+                                <option value="guainia">Guainía</option>
+                                <option value="guajira">La Guajira</option>
+                                <option value="guaviare">Guaviare</option>
+                                <option value="huila">Huila</option>
+                                <option value="magdalena">Magdalena</option>
+                                <option value="meta">Meta</option>
+                                <option value="narino">Nariño</option>
+                                <option value="norte_santander">Norte de Santander</option>
+                                <option value="putumayo">Putumayo</option>
+                                <option value="quindio">Quindío</option>
+                                <option value="risaralda">Risaralda</option>
+                                <option value="san_andres">San Andrés y Providencia</option>
+                                <option value="santander">Santander</option>
+                                <option value="sucre">Sucre</option>
+                                <option value="tolima">Tolima</option>
+                                <option value="valle">Valle del Cauca</option>
+                                <option value="vaupes">Vaupés</option>
+                                <option value="vichada">Vichada</option>
+                            </select>
+                            <div class="invalid-feedback">El departamento es requerido</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="city" class="form-label">
+                                <i class="fas fa-city me-2"></i>
+                                Ciudad *
+                            </label>
+                            <select class="form-select" id="city" required disabled>
+                                <option value="">Primero selecciona un departamento</option>
+                            </select>
+                            <div class="invalid-feedback">La ciudad es requerida</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="form-label">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        Dirección Completa *
+                    </label>
+                    <input type="text" class="form-control" id="address" required 
+                           placeholder="Ej: Calle 123 # 45-67, Apartamento 8B">
+                    <div class="invalid-feedback">La dirección completa es requerida</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="postalCode" class="form-label">
+                                <i class="fas fa-mail-bulk me-2"></i>
+                                Código Postal
+                            </label>
+                            <input type="text" class="form-control" id="postalCode">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="deliveryNotes" class="form-label">
+                        <i class="fas fa-sticky-note me-2"></i>
+                        Notas de Entrega (Opcional)
+                    </label>
+                    <textarea class="form-control" id="deliveryNotes" rows="3" 
+                              placeholder="Instrucciones especiales para la entrega..."></textarea>
+                </div>
+            </form>
+
+            <!-- Shipping Cost Alert -->
+            <div id="shippingAlert" class="shipping-alert" style="display: none;">
+                <i class="fas fa-truck fa-2x mb-2"></i>
+                <div>Costo de envío a tu ciudad:</div>
+                <div class="shipping-cost" id="calculatedShipping">$0</div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="navigation-buttons">
+                <a href="index.html" class="btn-nav btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al Carrito
+                </a>
+                
+                <button type="button" class="btn-nav btn-continue" id="continueToPayment" disabled>
+                    <span class="btn-text">Continuar al Pago</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ShippingManager {
+            constructor() {
+                this.cart = [];
+                this.shippingCost = 0;
+                this.shippingData = {};
+                this.cities = {
+                    'antioquia': ['medellin', 'bello', 'envigado', 'itagui', 'rionegro'],
+                    'atlantico': ['barranquilla', 'soledad', 'malambo', 'sabanalarga'],
+                    'bogota': ['bogota'],
+                    'bolivar': ['cartagena', 'magangue', 'turbaco'],
+                    'boyaca': ['tunja', 'duitama', 'sogamoso', 'chiquinquira'],
+                    'caldas': ['manizales', 'la_dorada', 'chinchina'],
+                    'cundinamarca': ['soacha', 'zipaquira', 'facatativa', 'chia', 'mosquera'],
+                    'huila': ['neiva', 'pitalito', 'garzon'],
+                    'meta': ['villavicencio', 'acacias', 'granada'],
+                    'narino': ['pasto', 'ipiales', 'tumaco'],
+                    'norte_santander': ['cucuta', 'ocana', 'pamplona'],
+                    'quindio': ['armenia', 'calarca', 'montenegro'],
+                    'risaralda': ['pereira', 'dosquebradas', 'santa_rosa'],
+                    'santander': ['bucaramanga', 'floridablanca', 'giron', 'barrancabermeja'],
+                    'tolima': ['ibague', 'espinal', 'melgar'],
+                    'valle': ['cali', 'palmira', 'buenaventura', 'tulua', 'cartago']
+                };
+                
+                this.cityNames = {
+                    'medellin': 'Medellín',
+                    'bello': 'Bello',
+                    'envigado': 'Envigado',
+                    'itagui': 'Itagüí',
+                    'rionegro': 'Rionegro',
+                    'barranquilla': 'Barranquilla',
+                    'soledad': 'Soledad',
+                    'malambo': 'Malambo',
+                    'sabanalarga': 'Sabanalarga',
+                    'bogota': 'Bogotá',
+                    'cartagena': 'Cartagena',
+                    'magangue': 'Magangué',
+                    'turbaco': 'Turbaco',
+                    'tunja': 'Tunja',
+                    'duitama': 'Duitama',
+                    'sogamoso': 'Sogamoso',
+                    'chiquinquira': 'Chiquinquirá',
+                    'manizales': 'Manizales',
+                    'la_dorada': 'La Dorada',
+                    'chinchina': 'Chinchiná',
+                    'soacha': 'Soacha',
+                    'zipaquira': 'Zipaquirá',
+                    'facatativa': 'Facatativá',
+                    'chia': 'Chía',
+                    'mosquera': 'Mosquera',
+                    'neiva': 'Neiva',
+                    'pitalito': 'Pitalito',
+                    'garzon': 'Garzón',
+                    'villavicencio': 'Villavicencio',
+                    'acacias': 'Acacías',
+                    'granada': 'Granada',
+                    'pasto': 'Pasto',
+                    'ipiales': 'Ipiales',
+                    'tumaco': 'Tumaco',
+                    'cucuta': 'Cúcuta',
+                    'ocana': 'Ocaña',
+                    'pamplona': 'Pamplona',
+                    'armenia': 'Armenia',
+                    'calarca': 'Calarcá',
+                    'montenegro': 'Montenegro',
+                    'pereira': 'Pereira',
+                    'dosquebradas': 'Dosquebradas',
+                    'santa_rosa': 'Santa Rosa de Cabal',
+                    'bucaramanga': 'Bucaramanga',
+                    'floridablanca': 'Floridablanca',
+                    'giron': 'Girón',
+                    'barrancabermeja': 'Barrancabermeja',
+                    'ibague': 'Ibagué',
+                    'espinal': 'Espinal',
+                    'melgar': 'Melgar',
+                    'cali': 'Cali',
+                    'palmira': 'Palmira',
+                    'buenaventura': 'Buenaventura',
+                    'tulua': 'Tuluá',
+                    'cartago': 'Cartago'
+                };
+                
+                this.shippingCosts = {
+                    'medellin': 0, 'bogota': 0, 'cali': 0, 'barranquilla': 0,
+                    'cartagena': 0, 'bucaramanga': 0, 'pereira': 0, 'manizales': 0,
+                    'armenia': 0, 'ibague': 0, 'neiva': 0, 'villavicencio': 0,
+                    'pasto': 0, 'cucuta': 0, 'tunja': 0
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                console.log('🚀 Inicializando Sistema de Envío...');
+                
+                // Debug: Verificar qué hay en localStorage
+                console.log('🔍 Debug - Contenido de localStorage:');
+                console.log('- carrito:', localStorage.getItem('carrito'));
+                console.log('- premium_cart:', localStorage.getItem('premium_cart'));
+                console.log('- Todas las claves:', Object.keys(localStorage));
+                
+                this.loadCart();
+                this.renderOrderSummary();
+                this.setupEventListeners();
+                this.loadSavedData();
+                console.log('✅ Sistema de Envío inicializado');
+            }
+            
+            loadCart() {
+                try {
+                    console.log('🛒 Cargando carrito desde localStorage...');
+                    
+                    const cartData = localStorage.getItem('carrito');
+                    if (cartData) {
+                        const parsedCart = JSON.parse(cartData);
+                        
+                        // Validar que sea un array
+                        if (Array.isArray(parsedCart)) {
+                            // Normalizar datos del carrito para compatibilidad
+                            this.cart = parsedCart.map(item => ({
+                                name: item.name || item.nombre || 'Producto sin nombre',
+                                price: parseFloat(item.price || item.precio || 0),
+                                quantity: parseInt(item.quantity || item.cantidad || 1),
+                                color: item.color || '',
+                                size: item.size || item.talla || '',
+                                image: item.image || item.imagen || 'https://via.placeholder.com/80x80'
+                            }));
+                            
+                            console.log('✅ Carrito cargado:', this.cart.length, 'productos');
+                            console.log('📦 Productos:', this.cart);
+                        } else {
+                            console.warn('⚠️ Datos del carrito no son válidos (no es array)');
+                            this.cart = [];
+                        }
+                    } else {
+                        console.warn('⚠️ No hay productos en el carrito en localStorage');
+                        this.cart = [];
+                    }
+                    
+                    if (this.cart.length === 0) {
+                        console.error('❌ Carrito vacío, redirigiendo a la tienda');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Carrito Vacío',
+                            text: 'No hay productos en el carrito. Serás redirigido a la tienda.',
+                            confirmButtonText: 'Ir a la Tienda'
+                        }).then(() => {
+                            window.location.href = 'index.html';
+                        });
+                    }
+                } catch (error) {
+                    console.error('❌ Error cargando carrito:', error);
+                    this.cart = [];
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al cargar los productos del carrito.',
+                        confirmButtonText: 'Ir a la Tienda'
+                    }).then(() => {
+                        window.location.href = 'index.html';
+                    });
+                }
+            }
+            
+            renderOrderSummary() {
+                const container = document.getElementById('orderSummary');
+                if (!container) {
+                    console.error('❌ No se encontró el contenedor orderSummary');
+                    return;
+                }
+                
+                if (this.cart.length === 0) {
+                    console.warn('⚠️ El carrito está vacío, no se puede renderizar');
+                    return;
+                }
+                
+                console.log('📋 Renderizando resumen del pedido con', this.cart.length, 'productos');
+                
+                let html = '';
+                let subtotal = 0;
+                
+                this.cart.forEach((item, index) => {
+                    console.log(`📦 Producto ${index + 1}:`, item);
+                    
+                    const itemPrice = parseFloat(item.price) || 0;
+                    const itemQuantity = parseInt(item.quantity) || 1;
+                    const itemTotal = itemPrice * itemQuantity;
+                    subtotal += itemTotal;
+                    
+                    html += `
+                        <div class="product-item">
+                            <img src="${item.image}" alt="${item.name}" class="product-image" 
+                                 onerror="this.src='https://via.placeholder.com/80x80'">
+                            <div class="product-details">
+                                <div class="product-name">${item.name}</div>
+                                <div class="product-quantity">Cantidad: ${itemQuantity}</div>
+                                ${item.color ? `<div class="product-specs">Color: ${item.color}</div>` : ''}
+                                ${item.size ? `<div class="product-specs">Talla: ${item.size}</div>` : ''}
+                            </div>
+                            <div class="product-price">$${itemTotal.toLocaleString()}</div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                document.getElementById('subtotalAmount').textContent = `$${subtotal.toLocaleString()}`;
+                console.log('💰 Subtotal calculado:', subtotal);
+                
+                this.updateTotal();
+            }
+            
+            setupEventListeners() {
+                // Department change
+                document.getElementById('department').addEventListener('change', (e) => {
+                    this.loadCities(e.target.value);
+                });
+                
+                // City change
+                document.getElementById('city').addEventListener('change', (e) => {
+                    this.calculateShipping(e.target.value);
+                });
+                
+                // Form validation
+                const form = document.getElementById('shippingForm');
+                form.addEventListener('input', () => {
+                    this.validateForm();
+                });
+                
+                // Continue button
+                document.getElementById('continueToPayment').addEventListener('click', () => {
+                    this.proceedToPayment();
+                });
+            }
+            
+            loadCities(departmentCode) {
+                const citySelect = document.getElementById('city');
+                citySelect.innerHTML = '<option value="">Seleccionar ciudad...</option>';
+                citySelect.disabled = false;
+                
+                if (departmentCode && this.cities[departmentCode]) {
+                    this.cities[departmentCode].forEach(cityCode => {
+                        const option = document.createElement('option');
+                        option.value = cityCode;
+                        option.textContent = this.cityNames[cityCode] || cityCode;
+                        citySelect.appendChild(option);
+                    });
+                } else {
+                    citySelect.disabled = true;
+                }
+                
+                // Reset shipping
+                this.shippingCost = 0;
+                this.updateTotal();
+                document.getElementById('shippingAlert').style.display = 'none';
+            }
+            
+            calculateShipping(cityCode) {
+                if (!cityCode) {
+                    this.shippingCost = 0;
+                    this.updateTotal();
+                    document.getElementById('shippingAlert').style.display = 'none';
+                    return;
+                }
+                
+                // Calculate shipping cost - SIEMPRE GRATIS
+                this.shippingCost = 0; // Forzar envío gratis para todas las ciudades
+                
+                // Show shipping alert
+                const alert = document.getElementById('shippingAlert');
+                const costElement = document.getElementById('calculatedShipping');
+                
+                // Siempre mostrar como gratis
+                alert.querySelector('div:nth-child(2)').textContent = 'Tu envío es:';
+                costElement.textContent = 'GRATIS';
+                costElement.style.color = '#27ae60'; // Verde para gratis
+                
+                alert.style.display = 'block';
+                
+                this.updateTotal();
+                this.validateForm();
+            }
+            
+            updateTotal() {
+                const subtotal = this.getSubtotal();
+                const total = subtotal + this.shippingCost;
+                
+                // Mostrar costo de envío
+                const shippingElement = document.getElementById('shippingCost');
+                if (this.shippingCost > 0) {
+                    shippingElement.textContent = `$${this.shippingCost.toLocaleString()}`;
+                } else {
+                    shippingElement.textContent = 'GRATIS';
+                }
+                    
+                document.getElementById('totalAmount').textContent = `$${total.toLocaleString()}`;
+            }
+            
+            getSubtotal() {
+                return this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            }
+            
+            validateForm() {
+                const form = document.getElementById('shippingForm');
+                const requiredFields = form.querySelectorAll('[required]');
+                const continueButton = document.getElementById('continueToPayment');
+                
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    const value = field.value.trim();
+                    
+                    if (!value) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                    } else {
+                        field.classList.remove('is-invalid');
+                        
+                        // Email validation
+                        if (field.type === 'email') {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            if (!emailRegex.test(value)) {
+                                isValid = false;
+                                field.classList.add('is-invalid');
+                            }
+                        }
+                        
+                        // Phone validation
+                        if (field.id === 'phone') {
+                            const phoneRegex = /^[0-9+\-\s()]{7,}$/;
+                            if (!phoneRegex.test(value)) {
+                                isValid = false;
+                                field.classList.add('is-invalid');
+                            }
+                        }
+                    }
+                });
+                
+                // Check if a city has been selected (shipping has been calculated)
+                // Ya no verificamos el costo porque siempre es gratis (0)
+                const citySelected = document.getElementById('city').value;
+                if (!citySelected) {
+                    isValid = false;
+                }
+                
+                continueButton.disabled = !isValid;
+                return isValid;
+            }
+            
+            loadSavedData() {
+                try {
+                    const savedData = localStorage.getItem('shipping_data');
+                    if (savedData) {
+                        const data = JSON.parse(savedData);
+                        
+                        // Fill form fields
+                        Object.keys(data).forEach(key => {
+                            const element = document.getElementById(key);
+                            if (element) {
+                                element.value = data[key];
+                                
+                                // Trigger change events
+                                if (key === 'department') {
+                                    this.loadCities(data[key]);
+                                    setTimeout(() => {
+                                        if (data.city) {
+                                            document.getElementById('city').value = data.city;
+                                            this.calculateShipping(data.city);
+                                        }
+                                    }, 100);
+                                }
+                            }
+                        });
+                        
+                        console.log('📋 Datos de envío cargados');
+                    }
+                } catch (error) {
+                    console.error('❌ Error cargando datos guardados:', error);
+                }
+            }
+            
+            saveShippingData() {
+                const formData = new FormData(document.getElementById('shippingForm'));
+                const data = {};
+                
+                // Get form data
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                
+                // Add calculated shipping cost
+                data.shippingCost = this.shippingCost;
+                data.subtotal = this.getSubtotal();
+                data.total = this.getSubtotal() + this.shippingCost;
+                
+                // Save to localStorage
+                localStorage.setItem('shipping_data', JSON.stringify(data));
+                
+                console.log('💾 Datos de envío guardados:', data);
+                return data;
+            }
+            
+            proceedToPayment() {
+                if (!this.validateForm()) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Información Incompleta',
+                        text: 'Por favor completa todos los campos requeridos.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return;
+                }
+                
+                // Save shipping data
+                const shippingData = this.saveShippingData();
+                
+                // Show loading
+                const button = document.getElementById('continueToPayment');
+                const originalText = button.querySelector('.btn-text').textContent;
+                button.querySelector('.btn-text').innerHTML = '<span class="spinner"></span> Procesando...';
+                button.disabled = true;
+                
+                // Simulate processing and redirect
+                setTimeout(() => {
+                    console.log('🔄 Redirigiendo al pago...');
+                    window.location.href = 'pago-premium.html';
+                }, 1000);
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ShippingManager();
+        });
+    </script>
+</body>
+</html>

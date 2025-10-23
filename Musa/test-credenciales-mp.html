@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Configurador de Credenciales MercadoPago</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .credential-test {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover { background: #0056b3; }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Configurador de Credenciales MercadoPago</h1>
+        
+        <div class="credential-test">
+            <h3>🧪 Credenciales de Test Conocidas</h3>
+            <p>Vamos a probar diferentes public keys de test para encontrar una que funcione:</p>
+            
+            <div id="test-results"></div>
+            
+            <button onclick="testAllCredentials()">🚀 Probar Todas las Credenciales</button>
+        </div>
+        
+        <div class="credential-test">
+            <h3>⚙️ Configuración Personalizada</h3>
+            <label>Tu Public Key de Test:</label>
+            <input type="text" id="custom-key" placeholder="TEST-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+            <button onclick="testCustomKey()">🧪 Probar Esta Credencial</button>
+            <div id="custom-result"></div>
+        </div>
+        
+        <div class="credential-test">
+            <h3>📋 Instrucciones</h3>
+            <ol>
+                <li>Ve a <a href="https://www.mercadopago.com.co/developers" target="_blank">MercadoPago Developers</a></li>
+                <li>Crea una cuenta o inicia sesión</li>
+                <li>Crea una nueva aplicación</li>
+                <li>Copia las credenciales de TEST</li>
+                <li>Úsalas en el campo de arriba</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        // Credenciales de test conocidas para probar
+        const testCredentials = [
+            'TEST-4e1fc2a5-e4ed-4db8-bfe8-b0b5f58a5d7a',
+            'TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f',
+            'TEST-1234567890123456-070123-abc123def456',
+            'TEST-0987654321098765-070123-fed654cba321'
+        ];
+        
+        function addResult(container, message, type) {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            container.appendChild(div);
+        }
+        
+        async function testCredential(publicKey, container) {
+            try {
+                console.log(`🧪 Probando: ${publicKey}`);
+                
+                const mp = new MercadoPago(publicKey, { 
+                    locale: 'es-CO',
+                    sandbox: true 
+                });
+                
+                // Crear un formulario de prueba simple
+                const testForm = mp.cardForm({
+                    form: {
+                        id: "hidden-test-form",
+                        cardNumber: { id: "test-cardNumber" },
+                        expirationDate: { id: "test-expirationDate" },
+                        securityCode: { id: "test-securityCode" },
+                        cardholderName: { id: "test-cardholderName" },
+                        issuer: { id: "test-issuer" },
+                        installments: { id: "test-installments" },
+                        identificationType: { id: "test-identificationType" },
+                        identificationNumber: { id: "test-identificationNumber" },
+                        cardholderEmail: { id: "test-cardholderEmail" }
+                    },
+                    callbacks: {
+                        onFormMounted: error => {
+                            if (error) {
+                                addResult(container, `❌ ${publicKey}: ${JSON.stringify(error)}`, 'error');
+                            } else {
+                                addResult(container, `✅ ${publicKey}: ¡FUNCIONA!`, 'success');
+                                
+                                // Si funciona, crear un formulario real para usarlo
+                                createWorkingForm(publicKey);
+                            }
+                        },
+                        onFetching: (resource) => {
+                            console.log(`🔄 ${publicKey}: Obteniendo ${resource}`);
+                        }
+                    }
+                });
+                
+                // Esperar un poco para que se procese
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+            } catch (error) {
+                addResult(container, `❌ ${publicKey}: Error - ${error.message}`, 'error');
+            }
+        }
+        
+        async function testAllCredentials() {
+            const container = document.getElementById('test-results');
+            container.innerHTML = '<div class="status info">🔄 Probando credenciales...</div>';
+            
+            // Crear elementos ocultos para el test
+            createHiddenTestElements();
+            
+            for (const credential of testCredentials) {
+                await testCredential(credential, container);
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Espera entre tests
+            }
+        }
+        
+        async function testCustomKey() {
+            const customKey = document.getElementById('custom-key').value.trim();
+            const container = document.getElementById('custom-result');
+            
+            if (!customKey) {
+                addResult(container, '❌ Por favor ingresa una public key', 'error');
+                return;
+            }
+            
+            container.innerHTML = '<div class="status info">🔄 Probando tu credencial...</div>';
+            
+            createHiddenTestElements();
+            await testCredential(customKey, container);
+        }
+        
+        function createHiddenTestElements() {
+            // Crear elementos ocultos para el test si no existen
+            const elements = [
+                'test-cardNumber', 'test-expirationDate', 'test-securityCode',
+                'test-cardholderName', 'test-issuer', 'test-installments',
+                'test-identificationType', 'test-identificationNumber', 'test-cardholderEmail'
+            ];
+            
+            elements.forEach(id => {
+                if (!document.getElementById(id)) {
+                    const input = document.createElement('input');
+                    input.id = id;
+                    input.style.display = 'none';
+                    document.body.appendChild(input);
+                }
+            });
+            
+            // Crear formulario oculto si no existe
+            if (!document.getElementById('hidden-test-form')) {
+                const form = document.createElement('form');
+                form.id = 'hidden-test-form';
+                form.style.display = 'none';
+                document.body.appendChild(form);
+            }
+        }
+        
+        function createWorkingForm(workingKey) {
+            // Crear botón para ir al test con la credencial que funciona
+            const container = document.getElementById('test-results');
+            const button = document.createElement('button');
+            button.textContent = `🚀 Usar ${workingKey} en Test Completo`;
+            button.style.background = '#28a745';
+            button.style.fontSize = '16px';
+            button.style.padding = '15px 25px';
+            button.onclick = () => {
+                // Guardar la credencial que funciona
+                localStorage.setItem('working_mp_key', workingKey);
+                // Redireccionar al test
+                window.location.href = `test-simple-funcional.html?mp_key=${encodeURIComponent(workingKey)}`;
+            };
+            container.appendChild(button);
+        }
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            createHiddenTestElements();
+            
+            // Si hay una credencial guardada, mostrarla
+            const savedKey = localStorage.getItem('working_mp_key');
+            if (savedKey) {
+                document.getElementById('custom-key').value = savedKey;
+                const container = document.getElementById('custom-result');
+                addResult(container, `💾 Credencial guardada: ${savedKey}`, 'info');
+            }
+        });
+    </script>
+</body>
+</html>

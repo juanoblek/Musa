@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Final - Integración Productos</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .debug-info { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .product-card { border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 5px; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Test Final - Integración Admin → API → Index</h1>
+        
+        <div class="debug-info">
+            <h3>Estado de la API</h3>
+            <p id="api-status">Verificando...</p>
+            <p><strong>Total productos:</strong> <span id="productos-count">-</span></p>
+            <p><strong>Total categorías:</strong> <span id="categorias-count">-</span></p>
+        </div>
+
+        <div class="debug-info">
+            <h3>Últimos Productos (API)</h3>
+            <div id="productos-api-list"></div>
+        </div>
+
+        <div class="debug-info">
+            <h3>Renderizado de Productos (Como en Index)</h3>
+            <div class="row" id="products-container"></div>
+        </div>
+
+        <div class="debug-info">
+            <h3>Logs de Debug</h3>
+            <div id="debug-logs"></div>
+        </div>
+    </div>
+
+    <script>
+        // Log function
+        function logDebug(message) {
+            console.log(message);
+            const logsDiv = document.getElementById('debug-logs');
+            logsDiv.innerHTML += `<p>${new Date().toLocaleTimeString()}: ${message}</p>`;
+        }
+
+        // Test API productos
+        async function testProductosAPI() {
+            try {
+                logDebug('🔍 Probando API de productos...');
+                const response = await fetch('api/productos-v2.php');
+                const result = await response.json();
+                const data = result.data || result; // Manejar ambos formatos
+                
+                document.getElementById('productos-count').textContent = data.length;
+                document.getElementById('api-status').innerHTML = '<span class="success">✅ API funcionando</span>';
+                
+                // Mostrar últimos 3 productos
+                const lista = document.getElementById('productos-api-list');
+                lista.innerHTML = '';
+                data.slice(-3).forEach(producto => {
+                    lista.innerHTML += `
+                        <div class="product-card">
+                            <strong>${producto.name}</strong><br>
+                            ID: ${producto.id}<br>
+                            Precio: $${producto.sale_price || producto.price}<br>
+                            Imagen: ${producto.main_image || 'N/A'}<br>
+                            Categoría ID: ${producto.category_id}
+                        </div>
+                    `;
+                });
+
+                logDebug(`✅ API OK: ${data.length} productos encontrados`);
+                return data;
+            } catch (error) {
+                logDebug(`❌ Error en API: ${error.message}`);
+                document.getElementById('api-status').innerHTML = '<span class="error">❌ Error en API</span>';
+                return [];
+            }
+        }
+
+        // Test categorías
+        async function testCategoriasAPI() {
+            try {
+                const response = await fetch('api/categorias.php');
+                const result = await response.json();
+                const data = result.data || result; // Manejar ambos formatos
+                document.getElementById('categorias-count').textContent = data.length;
+                logDebug(`✅ Categorías OK: ${data.length} encontradas`);
+                return data;
+            } catch (error) {
+                logDebug(`❌ Error en categorías: ${error.message}`);
+                return [];
+            }
+        }
+
+        // ProductsManager (igual que en index)
+        class ProductsManager {
+            constructor() {
+                this.products = [];
+                this.categories = [];
+            }
+
+            async init() {
+                logDebug('🚀 Inicializando ProductsManager...');
+                await this.loadCategories();
+                await this.loadProducts();
+                this.renderProducts();
+            }
+
+            async loadCategories() {
+                try {
+                    const response = await fetch('api/categorias.php');
+                    const result = await response.json();
+                    this.categories = result.data || result; // Manejar ambos formatos
+                    logDebug(`📂 Categorías cargadas: ${this.categories.length}`);
+                } catch (error) {
+                    logDebug(`❌ Error cargando categorías: ${error.message}`);
+                }
+            }
+
+            async loadProducts() {
+                try {
+                    const response = await fetch('api/productos-v2.php');
+                    const result = await response.json();
+                    this.products = result.data || result; // Manejar ambos formatos
+                    logDebug(`📦 Productos cargados: ${this.products.length}`);
+                } catch (error) {
+                    logDebug(`❌ Error cargando productos: ${error.message}`);
+                }
+            }
+
+            getCategoryName(categoryId) {
+                const category = this.categories.find(cat => cat.id == categoryId);
+                return category ? category.name : 'Sin categoría';
+            }
+
+            generateProductCard(product) {
+                const imageUrl = product.main_image ? 
+                    `uploads/${product.main_image}` : 
+                    'images/placeholder.svg';
+                
+                const price = product.sale_price || product.price || '0';
+                const originalPrice = product.price && product.sale_price && product.price !== product.sale_price ? 
+                    product.price : null;
+                
+                const categoryName = this.getCategoryName(product.category_id);
+
+                return `
+                    <div class="col-lg-4 col-md-6 col-12">
+                        <div class="product-thumb">
+                            <a href="#" onclick="openProductModal(${product.id})">
+                                <img src="${imageUrl}" class="img-fluid product-image" alt="${product.name}">
+                            </a>
+                            <div class="product-top d-flex">
+                                <span class="product-alert me-auto">${categoryName}</span>
+                                ${originalPrice ? `<span class="product-price text-muted"><s>$${originalPrice}</s></span>` : ''}
+                            </div>
+                            <div class="product-info d-flex">
+                                <div>
+                                    <h5 class="product-title mb-0">
+                                        <a href="#" class="product-title-link">${product.name}</a>
+                                    </h5>
+                                </div>
+                                <small class="product-price text-muted ms-auto">$${price}</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderProducts() {
+                logDebug('🎨 Renderizando productos...');
+                const container = document.getElementById('products-container');
+                
+                if (!container) {
+                    logDebug('❌ Container no encontrado');
+                    return;
+                }
+
+                if (this.products.length === 0) {
+                    container.innerHTML = '<div class="col-12"><p class="text-center">No hay productos disponibles</p></div>';
+                    logDebug('⚠️ No hay productos para renderizar');
+                    return;
+                }
+
+                const html = this.products.map(product => this.generateProductCard(product)).join('');
+                container.innerHTML = html;
+                logDebug(`✅ ${this.products.length} productos renderizados`);
+            }
+        }
+
+        // Mock functions para evitar errores
+        window.openProductModal = function(id) {
+            logDebug(`🔍 Modal solicitado para producto ID: ${id}`);
+        };
+
+        // Ejecutar tests
+        document.addEventListener('DOMContentLoaded', async function() {
+            logDebug('🏁 Iniciando tests...');
+            
+            // Test APIs
+            await testProductosAPI();
+            await testCategoriasAPI();
+            
+            // Test ProductsManager
+            const manager = new ProductsManager();
+            await manager.init();
+            
+            logDebug('🎉 Tests completados');
+        });
+    </script>
+</body>
+</html>

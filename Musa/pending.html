@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Pendiente - Musa Fashion</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #ffc107, #fd7e14); min-height: 100vh; }
+        .pending-container { min-height: 100vh; display: flex; align-items: center; }
+        .pending-card { border: none; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .pending-icon { color: #ffc107; font-size: 4rem; }
+    </style>
+</head>
+<body>
+    <div class="container pending-container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card pending-card">
+                    <div class="card-body text-center p-5">
+                        <div class="mb-4">
+                            <i class="bi bi-clock-fill pending-icon"></i>
+                        </div>
+                        
+                        <h2 class="text-warning mb-3">Pago Pendiente</h2>
+                        <p class="text-muted mb-4">
+                            Tu pago está siendo procesado. 
+                            Te notificaremos cuando se complete la transacción.
+                        </p>
+                        
+                        <div class="alert alert-info border">
+                            <h6><i class="bi bi-info-circle me-2"></i>¿Qué significa esto?</h6>
+                            <ul class="list-unstyled text-start mb-0 small">
+                                <li><i class="bi bi-bank me-2"></i>Transferencia bancaria en proceso</li>
+                                <li><i class="bi bi-credit-card me-2"></i>Validación de tarjeta pendiente</li>
+                                <li><i class="bi bi-clock me-2"></i>Puede tomar hasta 24-48 horas</li>
+                                <li><i class="bi bi-envelope me-2"></i>Te enviaremos actualizaciones por email</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <a href="index.html" class="btn btn-primary">
+                                <i class="bi bi-house me-2"></i>Volver a la Tienda
+                            </a>
+                            <button class="btn btn-outline-warning" onclick="window.location.reload()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Verificar Estado
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4 pt-3 border-top">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-1"></i>
+                                Tu pedido está registrado y será procesado una vez confirmado el pago
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Limpiar carrito ya que el pedido está registrado
+        localStorage.removeItem('cart');
+        
+        // Registrar pago pendiente
+        console.log('⏳ Pago pendiente de confirmación');
+        
+        // Opcional: registrar evento de pago pendiente
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'purchase_pending', {
+                event_category: 'ecommerce',
+                event_label: 'payment_pending'
+            });
+        }
+    </script>
+</body>
+</html>

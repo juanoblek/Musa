@@ -1,0 +1,117 @@
+/* Shipping Form Component Styles */
+
+/* Select Inputs */
+.custom-select,
+.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    transition: border-color .15s ease-in-out,
+                box-shadow .15s ease-in-out,
+                background-color .15s ease-in-out,
+                opacity .3s ease-in-out;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.25rem;
+}
+
+.custom-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.custom-select:disabled {
+    background-color: var(--bs-secondary-bg);
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+.form-floating > .custom-select {
+    height: calc(3.5rem + 2px);
+    line-height: 1.25;
+    padding-top: 1.625rem;
+    padding-bottom: .625rem;
+}
+
+/* Form Validation */
+.form-floating {
+    margin-bottom: 1.2rem;
+}
+
+.form-floating > label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.form-select:invalid {
+    color: #6c757d;
+}
+
+/* Shipping Info */
+.shipping-info {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1.5rem;
+}
+
+.shipping-details {
+    margin-bottom: 2rem;
+}
+
+/* Progress Steps */
+.checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.checkout-progress .step {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6c757d;
+    position: relative;
+    z-index: 1;
+}
+
+.checkout-progress .step.active {
+    color: var(--bs-primary);
+    font-weight: 600;
+}
+
+.checkout-progress .step span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+    background-color: #e9ecef;
+}
+
+.checkout-progress .step.active span {
+    background-color: var(--bs-primary);
+    color: #fff;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2rem;
+    gap: 1rem;
+}

@@ -1,0 +1,162 @@
+<!-- FORMULARIO PSE OPTIMIZADO PARA CONVERSIÓN -->
+<div class="pse-optimized-flow">
+    
+    <!-- Paso 1: Solo lo esencial para PSE -->
+    <div class="pse-essential-step">
+        <h4>🏦 Configura tu pago PSE</h4>
+        <p class="step-description">Solo 3 datos rápidos para conectarte con tu banco</p>
+        
+        <div class="essential-fields">
+            <!-- Solo banco, documento, email -->
+            <div class="field-group">
+                <label>Tu Banco</label>
+                <div class="bank-quick-selector">
+                    <div class="bank-option" data-value="bancolombia">
+                        <img src="bancolombia-icon.svg" alt="Bancolombia">
+                    </div>
+                    <div class="bank-option" data-value="bbva">
+                        <img src="bbva-icon.svg" alt="BBVA">
+                    </div>
+                    <!-- Más bancos... -->
+                </div>
+            </div>
+            
+            <div class="field-row">
+                <input type="text" placeholder="CC - 12345678" id="pseQuickDocument">
+                <input type="email" placeholder="tu@email.com" id="pseQuickEmail">
+            </div>
+        </div>
+        
+        <button class="continue-pse-btn">
+            🏦 Continuar con Mi Banco
+            <small>Datos de envío después del pago</small>
+        </button>
+    </div>
+    
+    <!-- Paso 2: Envío (solo si pago exitoso) -->
+    <div class="pse-shipping-step" style="display: none;">
+        <h4>📦 ¡Pago exitoso! Completa tus datos de envío</h4>
+        <!-- Formulario de envío aquí -->
+    </div>
+</div>
+
+<style>
+.pse-optimized-flow {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.step-description {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.essential-fields {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.bank-quick-selector {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.bank-option {
+    aspect-ratio: 1;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bank-option:hover {
+    border-color: #007bff;
+    background: white;
+}
+
+.bank-option.selected {
+    border-color: #007bff;
+    background: #007bff;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.field-row input {
+    padding: 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.continue-pse-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.continue-pse-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+.continue-pse-btn small {
+    display: block;
+    font-size: 12px;
+    opacity: 0.9;
+    margin-top: 4px;
+}
+</style>
+
+<script>
+// FLUJO OPTIMIZADO
+document.addEventListener('DOMContentLoaded', function() {
+    const continueBtn = document.querySelector('.continue-pse-btn');
+    
+    continueBtn?.addEventListener('click', function() {
+        // 1. Validar datos mínimos
+        if (validateMinimalPSEData()) {
+            // 2. Ir directo al modal bancario
+            openPSEModalWithMinimalData();
+        }
+    });
+    
+    function validateMinimalPSEData() {
+        const bank = document.querySelector('.bank-option.selected');
+        const document = document.getElementById('pseQuickDocument').value;
+        const email = document.getElementById('pseQuickEmail').value;
+        
+        return bank && document && email;
+    }
+    
+    function openPSEModalWithMinimalData() {
+        // Crear preferencia con datos mínimos
+        // Usar dirección temporal o datos de la cuenta
+        const tempShippingData = {
+            name: "Cliente PSE",
+            address: "Dirección por confirmar",
+            city: "Bogotá",
+            // etc...
+        };
+        
+        // Abrir modal PSE
+        // Después del pago exitoso, mostrar formulario de envío
+    }
+});
+</script>

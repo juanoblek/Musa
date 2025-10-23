@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>🛒 Verificador del Sistema de Carrito</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .success { color: green; background: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error { color: red; background: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .warning { color: orange; background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .info { color: blue; background: #d1ecf1; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .btn { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; margin: 5px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .btn.success { background: #28a745; }
+        .btn.warning { background: #ffc107; color: black; }
+        .btn.danger { background: #dc3545; }
+        .test-results { margin: 20px 0; }
+        .test-item { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🛒 Verificador del Sistema de Carrito</h1>
+    
+    <div id="status">Iniciando verificación del carrito...</div>
+    
+    <h2>🔍 Tests del Sistema</h2>
+    <div>
+        <button onclick="runAllTests()" class="btn success">🚀 Ejecutar Todos los Tests</button>
+        <button onclick="testCartFunctionality()" class="btn">🛒 Test Básico del Carrito</button>
+        <button onclick="testScriptLoading()" class="btn">📜 Test Carga de Scripts</button>
+        <button onclick="testConsoleErrors()" class="btn warning">🚨 Test Errores en Consola</button>
+        <button onclick="openMainSite()" class="btn info">🌐 Abrir Sitio Principal</button>
+    </div>
+    
+    <div id="results" class="test-results"></div>
+    
+    <h2>📊 Resultados Detallados</h2>
+    <div id="detailed-results"></div>
+    
+    <script>
+        let testResults = [];
+        
+        function addResult(test, status, message, details = '') {
+            const result = { test, status, message, details, timestamp: new Date().toLocaleTimeString() };
+            testResults.push(result);
+            displayResults();
+        }
+        
+        function displayResults() {
+            const resultsDiv = document.getElementById('results');
+            const detailedDiv = document.getElementById('detailed-results');
+            
+            let summary = '';
+            let detailed = '';
+            
+            testResults.forEach(result => {
+                const statusClass = result.status === 'pass' ? 'success' : 
+                                  result.status === 'fail' ? 'error' : 'warning';
+                
+                summary += `<div class="${statusClass}">
+                    <strong>${result.test}:</strong> ${result.message}
+                    <small style="float: right;">${result.timestamp}</small>
+                </div>`;
+                
+                detailed += `<div class="test-item">
+                    <h4>${result.test} - ${result.status.toUpperCase()}</h4>
+                    <p><strong>Mensaje:</strong> ${result.message}</p>
+                    ${result.details ? `<p><strong>Detalles:</strong> ${result.details}</p>` : ''}
+                    <p><small><strong>Hora:</strong> ${result.timestamp}</small></p>
+                </div>`;
+            });
+            
+            resultsDiv.innerHTML = summary;
+            detailedDiv.innerHTML = detailed;
+        }
+        
+        async function testCartFunctionality() {
+            addResult('Funcionalidad del Carrito', 'info', 'Iniciando test de funcionalidad básica...');
+            
+            try {
+                // Test 1: Verificar elementos del carrito
+                const cartButton = document.querySelector('.cart-toggle') || 
+                                 document.querySelector('#cart-toggle') ||
+                                 document.querySelector('[data-bs-toggle="offcanvas"]');
+                
+                if (cartButton) {
+                    addResult('Elementos del Carrito', 'pass', 'Botón del carrito encontrado');
+                } else {
+                    addResult('Elementos del Carrito', 'fail', 'Botón del carrito NO encontrado');
+                }
+                
+                // Test 2: Verificar funciones del carrito
+                const cartFunctions = ['agregarProducto', 'actualizarContador', 'mostrarCarrito'];
+                let foundFunctions = 0;
+                
+                cartFunctions.forEach(funcName => {
+                    if (typeof window[funcName] === 'function') {
+                        foundFunctions++;
+                    }
+                });
+                
+                if (foundFunctions > 0) {
+                    addResult('Funciones del Carrito', 'pass', `${foundFunctions}/${cartFunctions.length} funciones encontradas`);
+                } else {
+                    addResult('Funciones del Carrito', 'warning', 'Funciones del carrito no encontradas directamente en window');
+                }
+                
+                // Test 3: Verificar localStorage del carrito
+                try {
+                    const cartData = localStorage.getItem('carrito') || localStorage.getItem('cart');
+                    if (cartData !== null) {
+                        const parsed = JSON.parse(cartData);
+                        addResult('LocalStorage del Carrito', 'pass', `Carrito encontrado con ${Array.isArray(parsed) ? parsed.length : 'datos'} elementos`);
+                    } else {
+                        addResult('LocalStorage del Carrito', 'info', 'Carrito vacío o no inicializado');
+                    }
+                } catch (error) {
+                    addResult('LocalStorage del Carrito', 'fail', `Error accediendo al localStorage: ${error.message}`);
+                }
+                
+            } catch (error) {
+                addResult('Funcionalidad del Carrito', 'fail', `Error en test: ${error.message}`);
+            }
+        }
+        
+        function testScriptLoading() {
+            addResult('Carga de Scripts', 'info', 'Verificando scripts cargados...');
+            
+            const scripts = Array.from(document.scripts);
+            const cartScripts = scripts.filter(script => 
+                script.src.includes('cart') || 
+                script.src.includes('carrito') ||
+                script.textContent.includes('carrito') ||
+                script.textContent.includes('cart')
+            );
+            
+            if (cartScripts.length > 0) {
+                addResult('Scripts del Carrito', 'pass', `${cartScripts.length} scripts relacionados con carrito encontrados`);
+                
+                cartScripts.forEach((script, index) => {
+                    const scriptName = script.src ? script.src.split('/').pop() : `Script inline ${index + 1}`;
+                    addResult('Script Detectado', 'info', scriptName);
+                });
+            } else {
+                addResult('Scripts del Carrito', 'warning', 'No se encontraron scripts específicos del carrito');
+            }
+        }
+        
+        function testConsoleErrors() {
+            addResult('Errores de Consola', 'info', 'Monitoreando errores...');
+            
+            let errorCount = 0;
+            const originalError = console.error;
+            const originalWarn = console.warn;
+            
+            // Interceptar errores
+            console.error = function(...args) {
+                errorCount++;
+                addResult('Error de Consola', 'fail', args.join(' '));
+                originalError.apply(console, args);
+            };
+            
+            console.warn = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('cart') || message.includes('carrito')) {
+                    addResult('Warning del Carrito', 'warning', message);
+                }
+                originalWarn.apply(console, args);
+            };
+            
+            // Restaurar después de 10 segundos
+            setTimeout(() => {
+                console.error = originalError;
+                console.warn = originalWarn;
+                addResult('Monitoreo de Errores', 'info', `Finalizado. ${errorCount} errores detectados`);
+            }, 10000);
+        }
+        
+        async function runAllTests() {
+            testResults = []; // Limpiar resultados anteriores
+            document.getElementById('status').innerHTML = '<div class="info">🔄 Ejecutando batería completa de tests...</div>';
+            
+            await testCartFunctionality();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            testScriptLoading();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            testConsoleErrors();
+            
+            document.getElementById('status').innerHTML = '<div class="success">✅ Tests completados. Revisa los resultados abajo.</div>';
+        }
+        
+        function openMainSite() {
+            window.open('index.html', '_blank');
+            addResult('Navegación', 'info', 'Sitio principal abierto en nueva pestaña');
+        }
+        
+        // Auto-ejecutar test básico al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testCartFunctionality, 1000);
+        });
+        
+        // Función para debug del carrito desde la consola
+        window.debugCart = function() {
+            console.log('🛒 DEBUG DEL CARRITO:');
+            console.log('- localStorage carrito:', localStorage.getItem('carrito'));
+            console.log('- localStorage cart:', localStorage.getItem('cart'));
+            console.log('- Funciones globales del carrito:', 
+                Object.keys(window).filter(key => 
+                    key.toLowerCase().includes('cart') || 
+                    key.toLowerCase().includes('carrito')
+                )
+            );
+            console.log('- Elementos del carrito en DOM:', 
+                document.querySelectorAll('[class*="cart"], [id*="cart"], [class*="carrito"], [id*="carrito"]').length
+            );
+        };
+        
+        console.log('🛒 Verificador del carrito cargado. Usa debugCart() para información detallada.');
+    </script>
+</body>
+</html>

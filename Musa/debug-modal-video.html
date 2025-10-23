@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Modal Video Issue</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { background: white; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .debug-info { background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .test-btn { margin: 5px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .test-video { background: #28a745; color: white; }
+        .clear-cache { background: #ffc107; color: black; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Debug: Modal Video Issue</h1>
+        
+        <div class="debug-info">
+            <h3>📊 Estado Actual del Sistema:</h3>
+            <p id="systemStatus">Verificando...</p>
+        </div>
+        
+        <div class="debug-info">
+            <h3>🔍 Funciones Disponibles:</h3>
+            <p id="functionsStatus">Verificando...</p>
+        </div>
+        
+        <div class="debug-info">
+            <h3>🎬 Productos con Video:</h3>
+            <p id="videoProductsStatus">Verificando...</p>
+        </div>
+        
+        <h2>🧪 Tests Rápidos:</h2>
+        <button class="test-btn test-video" onclick="testDirectVideoModal()">
+            🎬 Test Modal Video Directo
+        </button>
+        
+        <button class="test-btn clear-cache" onclick="clearCacheAndReload()">
+            🔄 Limpiar Cache y Recargar
+        </button>
+        
+        <div id="testResults" class="debug-info" style="display: none;">
+            <h3>📋 Resultados del Test:</h3>
+            <div id="testOutput"></div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar estado del sistema
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+            checkFunctions();
+            checkVideoProducts();
+        });
+
+        function checkSystemStatus() {
+            const status = document.getElementById('systemStatus');
+            let info = '';
+            
+            // Verificar modal
+            const modal = document.getElementById('ProductViewModal');
+            info += modal ? '✅ Modal ProductViewModal: Encontrado<br>' : '❌ Modal ProductViewModal: No encontrado<br>';
+            
+            // Verificar carousel
+            const carousel = document.getElementById('productViewCarouselInner');
+            info += carousel ? '✅ Carousel Inner: Encontrado<br>' : '❌ Carousel Inner: No encontrado<br>';
+            
+            // Verificar Bootstrap
+            info += (typeof bootstrap !== 'undefined') ? '✅ Bootstrap: Cargado<br>' : '❌ Bootstrap: No cargado<br>';
+            
+            status.innerHTML = info;
+        }
+
+        function checkFunctions() {
+            const status = document.getElementById('functionsStatus');
+            let info = '';
+            
+            // Verificar funciones principales
+            info += (typeof window.populateProductModal === 'function') ? 
+                    '✅ window.populateProductModal: Disponible<br>' : 
+                    '❌ window.populateProductModal: No disponible<br>';
+                    
+            info += (typeof window.showProductView === 'function') ? 
+                    '✅ window.showProductView: Disponible<br>' : 
+                    '❌ window.showProductView: No disponible<br>';
+            
+            status.innerHTML = info;
+        }
+
+        function checkVideoProducts() {
+            // Esta información viene del verificador anterior
+            const info = `
+                ✅ Total productos con video: 3<br>
+                📹 asdasdsa: video_68f276851285d_1760720517.mp4<br>
+                📹 Chaqueta Nueva Era: video_68f11d67ce55c_1760632167.mp4<br>
+                📹 Chaqueta See: video_68f0254985a91_1760568649.mp4
+            `;
+            document.getElementById('videoProductsStatus').innerHTML = info;
+        }
+
+        function testDirectVideoModal() {
+            console.log('🧪 === INICIANDO TEST DIRECTO DE VIDEO ===');
+            
+            const testResults = document.getElementById('testResults');
+            const testOutput = document.getElementById('testOutput');
+            testResults.style.display = 'block';
+            
+            let output = '<strong>🎬 Test Modal Video:</strong><br>';
+            
+            // Datos de prueba con video
+            const testData = {
+                image: 'uploads/video_68f276851285d_1760720517.mp4',
+                title: 'Test Video Modal',
+                price: '$50.000',
+                id: 'test-video'
+            };
+            
+            // Test 1: Verificar detección de video
+            const isVideo = /\.(mp4|mov|avi|webm)$/i.test(testData.image);
+            output += `📋 Detección de video: ${isVideo ? '<span class="success">✅ CORRECTO</span>' : '<span class="error">❌ FALLIDO</span>'}<br>`;
+            
+            // Test 2: Llamar función de población
+            try {
+                if (typeof window.populateProductModal === 'function') {
+                    window.populateProductModal(testData);
+                    output += '<span class="success">✅ populateProductModal ejecutada</span><br>';
+                } else {
+                    output += '<span class="error">❌ populateProductModal no disponible</span><br>';
+                }
+            } catch (error) {
+                output += `<span class="error">❌ Error en populateProductModal: ${error.message}</span><br>`;
+            }
+            
+            // Test 3: Verificar contenido del carousel
+            setTimeout(() => {
+                const carousel = document.getElementById('productViewCarouselInner');
+                if (carousel) {
+                    const hasVideo = carousel.innerHTML.includes('<video');
+                    const hasImg = carousel.innerHTML.includes('<img');
+                    output += `🎞️ Contenido del carousel: ${hasVideo ? '<span class="success">✅ VIDEO detectado</span>' : hasImg ? '<span class="error">❌ Solo IMG encontrado</span>' : '<span class="error">❌ Vacío</span>'}<br>`;
+                    
+                    if (hasVideo) {
+                        output += '<span class="success">🎯 ¡ÉXITO! El modal ahora muestra videos correctamente</span><br>';
+                    }
+                }
+                
+                testOutput.innerHTML = output;
+                
+                // Abrir modal para inspección visual
+                const modal = document.getElementById('ProductViewModal');
+                if (modal) {
+                    const bsModal = new bootstrap.Modal(modal);
+                    bsModal.show();
+                }
+                
+            }, 500);
+        }
+
+        function clearCacheAndReload() {
+            // Agregar timestamp para evitar cache
+            const url = window.location.href.split('?')[0] + '?v=' + Date.now();
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

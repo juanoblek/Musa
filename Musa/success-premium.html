@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Pago Exitoso! - MUSA Fashion</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --success-color: #00c851;
+            --primary-color: #00b4d8;
+            --dark-color: #2c3e50;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #00c851 0%, #00b4d8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .success-icon i {
+            font-size: 3rem;
+            color: white;
+        }
+
+        .success-title {
+            color: var(--dark-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .order-details {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-custom {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--success-color));
+            color: white;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 180, 216, 0.3);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--dark-color);
+            border: 2px solid var(--dark-color);
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--dark-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .social-share {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .social-share h6 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.1);
+            color: white;
+        }
+
+        .social-btn.facebook { background: #3b5998; }
+        .social-btn.twitter { background: #1da1f2; }
+        .social-btn.whatsapp { background: #25d366; }
+        .social-btn.instagram { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 30px 20px;
+            }
+            
+            .success-title {
+                font-size: 2rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        
+        <h1 class="success-title">¡Pago Exitoso!</h1>
+        
+        <p class="success-message">
+            Tu pedido ha sido procesado correctamente. Recibirás un email de confirmación con todos los detalles.
+        </p>
+        
+        <div class="order-details">
+            <div class="detail-row">
+                <span>Número de pedido:</span>
+                <span id="orderNumber">#MUSA-00001</span>
+            </div>
+            <div class="detail-row">
+                <span>Método de pago:</span>
+                <span id="paymentMethod">Tarjeta de crédito</span>
+            </div>
+            <div class="detail-row">
+                <span>Estado:</span>
+                <span style="color: var(--success-color);">
+                    <i class="fas fa-check-circle"></i> Aprobado
+                </span>
+            </div>
+            <div class="detail-row">
+                <span>Tiempo estimado de entrega:</span>
+                <span>3-5 días hábiles</span>
+            </div>
+            <div class="detail-row">
+                <span>Total pagado:</span>
+                <span id="totalAmount">$0</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="index.html" class="btn-custom btn-primary-custom">
+                <i class="fas fa-home"></i> Volver al inicio
+            </a>
+            <a href="#" onclick="downloadReceipt()" class="btn-custom btn-outline-custom">
+                <i class="fas fa-download"></i> Descargar recibo
+            </a>
+        </div>
+        
+        <div class="social-share">
+            <h6>¡Comparte tu compra!</h6>
+            <div class="social-buttons">
+                <a href="#" class="social-btn facebook" onclick="shareOnFacebook()">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-btn twitter" onclick="shareOnTwitter()">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-btn whatsapp" onclick="shareOnWhatsApp()">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="#" class="social-btn instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Actualizar información del pedido
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generar número de pedido único
+            const orderNumber = '#MUSA-' + Date.now().toString().slice(-8);
+            document.getElementById('orderNumber').textContent = orderNumber;
+            
+            // Obtener total del localStorage si está disponible
+            const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            if (cart.length > 0) {
+                const total = cart.reduce((sum, item) => {
+                    return sum + (parseFloat(item.precio || 0) * parseInt(item.cantidad || 1));
+                }, 0) + 0; // ENVÍO GRATIS
+                
+                document.getElementById('totalAmount').textContent = '$' + new Intl.NumberFormat('es-CO').format(total);
+            }
+            
+            // Actualizar método de pago si viene en la URL
+            const paymentType = urlParams.get('payment_type');
+            if (paymentType) {
+                document.getElementById('paymentMethod').textContent = getPaymentMethodName(paymentType);
+            }
+            
+            // Limpiar carrito después de compra exitosa
+            localStorage.removeItem('carrito');
+            
+            // Confeti automático
+            setTimeout(createConfetti, 500);
+        });
+        
+        function getPaymentMethodName(type) {
+            const methods = {
+                'credit_card': 'Tarjeta de crédito',
+                'debit_card': 'Tarjeta de débito',
+                'bank_transfer': 'Transferencia bancaria',
+                'ticket': 'Efectivo'
+            };
+            return methods[type] || 'Tarjeta de crédito';
+        }
+        
+        function downloadReceipt() {
+            // Crear un recibo simple en formato texto
+            const orderNumber = document.getElementById('orderNumber').textContent;
+            const total = document.getElementById('totalAmount').textContent;
+            const date = new Date().toLocaleDateString('es-CO');
+            
+            const receipt = `
+MUSA FASHION - RECIBO DE COMPRA
+================================
+
+Pedido: ${orderNumber}
+Fecha: ${date}
+Total: ${total}
+Estado: Aprobado
+
+¡Gracias por tu compra!
+
+Para soporte contacta:
+Email: soporte@musafashion.com
+WhatsApp: +57 300 123 4567
+            `.trim();
+            
+            const blob = new Blob([receipt], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `recibo-${orderNumber.replace('#', '')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function shareOnFacebook() {
+            const text = '¡Acabo de comprar en MUSA Fashion! 🛍️✨';
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(text)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+        
+        function shareOnTwitter() {
+            const text = '¡Acabo de comprar en MUSA Fashion! 🛍️✨ #MusaFashion #CompraOnline';
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(window.location.origin)}`;
+            window.open(url, '_blank', 'width=600,height=400');
+        }
+        
+        function shareOnWhatsApp() {
+            const text = '¡Acabo de comprar en MUSA Fashion! 🛍️✨ Mira su increíble catálogo: ' + window.location.origin;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+        
+        function createConfetti() {
+            // Crear confeti simple con CSS
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        top: -10px;
+                        left: ${Math.random() * 100}vw;
+                        width: 10px;
+                        height: 10px;
+                        background: ${['#00c851', '#00b4d8', '#ff6b35', '#f7931e', '#9b59b6'][Math.floor(Math.random() * 5)]};
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 9999;
+                        animation: fall ${2 + Math.random() * 3}s linear forwards;
+                    `;
+                    
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        if (confetti.parentNode) {
+                            confetti.parentNode.removeChild(confetti);
+                        }
+                    }, 5000);
+                }, i * 50);
+            }
+        }
+        
+        // CSS para animación de confeti
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    transform: translateY(100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Test Automático - Modal Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .test-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-test {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .btn-test:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .status-panel {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        .log-panel {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            height: 300px;
+            overflow-y: auto;
+            margin: 1rem 0;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+        .status-info { background: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-panel">
+            <h1 class="text-center mb-4">✅ Test Automático - Modal Videos</h1>
+            <p class="text-center">Verificación automática del sistema de videos en modal</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>🎯 Acciones de Test</h3>
+                    <button class="btn btn-test w-100" onclick="testModalApertura()">
+                        📦 Test Apertura Modal
+                    </button>
+                    <button class="btn btn-test w-100" onclick="testAPIConnection()">
+                        🔗 Test Conexión API
+                    </button>
+                    <button class="btn btn-test w-100" onclick="testVideoDetection()">
+                        🎬 Test Detección Videos
+                    </button>
+                    <button class="btn btn-test w-100" onclick="testAutoFallback()">
+                        🔄 Test Fallback Automático
+                    </button>
+                    <button class="btn btn-test w-100" onclick="simulateProductClick()">
+                        🖱️ Simular Click en Producto
+                    </button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h3>📊 Estado del Sistema</h3>
+                    <div class="status-panel">
+                        <div class="mb-2">
+                            <span class="status-indicator status-info" id="modalStatus"></span>
+                            Modal detectado: <span id="modalText">Verificando...</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="status-indicator status-info" id="apiStatus"></span>
+                            API disponible: <span id="apiText">Verificando...</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="status-indicator status-info" id="scriptsStatus"></span>
+                            Scripts cargados: <span id="scriptsText">Verificando...</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="status-indicator status-info" id="videoStatus"></span>
+                            Videos detectados: <span id="videoText">Verificando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h3>📝 Log de Eventos</h3>
+                <div class="log-panel" id="logPanel">
+                    Iniciando sistema de test...\n
+                </div>
+                <button class="btn btn-outline-light btn-sm" onclick="clearLog()">🗑️ Limpiar Log</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let logElement = document.getElementById('logPanel');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = {'info': '📋', 'success': '✅', 'error': '❌', 'warning': '⚠️'}[type] || '📋';
+            logElement.innerHTML += `[${timestamp}] ${icon} ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function clearLog() {
+            logElement.innerHTML = 'Log limpiado...\n';
+        }
+
+        function updateStatus(elementId, textId, status, text) {
+            const element = document.getElementById(elementId);
+            const textElement = document.getElementById(textId);
+            
+            element.className = `status-indicator status-${status}`;
+            textElement.textContent = text;
+        }
+
+        async function testModalApertura() {
+            log('🧪 Iniciando test de apertura de modal...', 'info');
+            
+            try {
+                // Verificar si existe el modal
+                const modal = window.parent.document.getElementById('ProductViewModal');
+                if (!modal) {
+                    log('❌ Modal ProductViewModal no encontrado', 'error');
+                    updateStatus('modalStatus', 'modalText', 'error', 'NO ENCONTRADO');
+                    return;
+                }
+                
+                log('✅ Modal encontrado en DOM', 'success');
+                updateStatus('modalStatus', 'modalText', 'success', 'DISPONIBLE');
+                
+                // Verificar estado del modal
+                const isVisible = modal.classList.contains('show');
+                log(`📊 Modal visible: ${isVisible}`, 'info');
+                
+                return true;
+            } catch (error) {
+                log('❌ Error en test de modal: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function testAPIConnection() {
+            log('🧪 Probando conexión a API...', 'info');
+            
+            try {
+                const response = await fetch('../api/productos-v2.php');
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                
+                const data = await response.json();
+                log('✅ API respondió correctamente', 'success');
+                log(`📊 Productos encontrados: ${data.data ? data.data.length : 0}`, 'info');
+                
+                updateStatus('apiStatus', 'apiText', 'success', 'CONECTADO');
+                
+                // Buscar productos con videos
+                if (data.data) {
+                    const videosCount = data.data.filter(p => 
+                        p.main_image && /\.(mp4|mov|avi|webm)$/i.test(p.main_image)
+                    ).length;
+                    log(`🎬 Productos con video: ${videosCount}`, 'info');
+                    updateStatus('videoStatus', 'videoText', videosCount > 0 ? 'success' : 'warning', `${videosCount} productos`);
+                }
+                
+                return true;
+            } catch (error) {
+                log('❌ Error conectando API: ' + error.message, 'error');
+                updateStatus('apiStatus', 'apiText', 'error', 'ERROR');
+                return false;
+            }
+        }
+
+        async function testVideoDetection() {
+            log('🧪 Probando detección de videos...', 'info');
+            
+            try {
+                const testUrls = [
+                    'uploads/video_68f276851285d_1760720517.mp4',
+                    'uploads/video_68f2764f21aed_1760720047.mp4',
+                    'images/placeholder.svg'
+                ];
+                
+                testUrls.forEach(url => {
+                    const isVideo = /\.(mp4|mov|avi|webm)$/i.test(url);
+                    log(`🔍 ${url}: ${isVideo ? 'VIDEO' : 'IMAGEN'}`, isVideo ? 'success' : 'info');
+                });
+                
+                return true;
+            } catch (error) {
+                log('❌ Error en detección: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function testAutoFallback() {
+            log('🧪 Probando sistema de fallback automático...', 'info');
+            
+            try {
+                // Verificar si las funciones están disponibles
+                if (window.parent.executeAutoFallback) {
+                    log('✅ Función executeAutoFallback disponible', 'success');
+                    
+                    // Ejecutar fallback
+                    await window.parent.executeAutoFallback();
+                    log('✅ Fallback ejecutado', 'success');
+                } else {
+                    log('❌ Función executeAutoFallback no disponible', 'error');
+                }
+                
+                if (window.parent.getRealMediaURLFromAPI) {
+                    log('✅ Función getRealMediaURLFromAPI disponible', 'success');
+                } else {
+                    log('❌ Función getRealMediaURLFromAPI no disponible', 'error');
+                }
+                
+                return true;
+            } catch (error) {
+                log('❌ Error en test de fallback: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function simulateProductClick() {
+            log('🧪 Simulando click en producto...', 'info');
+            
+            try {
+                // Datos de producto de prueba
+                const testProductData = {
+                    image: 'uploads/video_68f276851285d_1760720517.mp4',
+                    title: 'asdasdsa',
+                    price: '$212'
+                };
+                
+                log('📦 Datos de prueba: ' + JSON.stringify(testProductData), 'info');
+                
+                // Verificar función de modal
+                if (window.parent.populateProductModal) {
+                    log('✅ Función populateProductModal disponible', 'success');
+                    // window.parent.populateProductModal(testProductData);
+                    log('🎯 Modal se poblaría con los datos de prueba', 'success');
+                } else {
+                    log('❌ Función populateProductModal no disponible', 'error');
+                }
+                
+                return true;
+            } catch (error) {
+                log('❌ Error simulando click: ' + error.message, 'error');
+                return false;
+            }
+        }
+
+        async function checkScripts() {
+            log('🔍 Verificando scripts cargados...', 'info');
+            
+            const scripts = [
+                'populateProductModal',
+                'executeAutoFallback',
+                'getRealMediaURLFromAPI',
+                'handleProductMediaClick'
+            ];
+            
+            let loadedCount = 0;
+            scripts.forEach(script => {
+                if (window.parent[script]) {
+                    log(`✅ ${script}: DISPONIBLE`, 'success');
+                    loadedCount++;
+                } else {
+                    log(`❌ ${script}: NO DISPONIBLE`, 'error');
+                }
+            });
+            
+            updateStatus('scriptsStatus', 'scriptsText', 
+                loadedCount === scripts.length ? 'success' : 'warning', 
+                `${loadedCount}/${scripts.length}`);
+        }
+
+        // Auto-ejecutar tests al cargar
+        window.onload = async () => {
+            log('🚀 Iniciando tests automáticos...', 'info');
+            
+            await testModalApertura();
+            await testAPIConnection();
+            await checkScripts();
+            
+            log('✅ Tests iniciales completados', 'success');
+        };
+    </script>
+</body>
+</html>

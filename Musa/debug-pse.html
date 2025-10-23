@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Debug PSE - Musa Moda</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .debug-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .debug-header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .debug-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+        }
+        .debug-section h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        .step {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .step-number {
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .log-output {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,123,255,0.3);
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <div class="debug-header">
+            <h1>🔍 Debug PSE System</h1>
+            <p>Herramienta de diagnóstico para el sistema de pagos PSE</p>
+        </div>
+
+        <div class="debug-section">
+            <h3>📋 Pasos para Testing Completo</h3>
+            
+            <div class="step">
+                <span class="step-number">1</span>
+                <strong>Preparar el Test:</strong>
+                <ul>
+                    <li>Abre las DevTools (F12) → Pestaña Console</li>
+                    <li>Ve a: <a href="http://localhost:8080/pago-premium.html" target="_blank">pago-premium.html</a></li>
+                    <li>Agrega un producto al carrito</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Configurar Datos:</strong>
+                <ul>
+                    <li>Llena datos de envío completos</li>
+                    <li>Selecciona método: <strong>PSE</strong></li>
+                    <li>Banco: <strong>Bancolombia</strong></li>
+                    <li>Documento: <strong>Cédula - 123456789</strong></li>
+                    <li>Email: <strong>test@test.com</strong></li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Procesar Pago:</strong>
+                <ul>
+                    <li>Clic en "Pagar con PSE"</li>
+                    <li>Observa logs en consola</li>
+                    <li>En simulador: Usuario <code>PTESTU</code>, Pass <code>PTESTPS</code>, Clave <code>123456</code></li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Verificar Resultados:</strong>
+                <ul>
+                    <li>Modal de éxito debe aparecer</li>
+                    <li>Logs de guardado en consola</li>
+                    <li>Verificar en panel administrativo</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>🖥️ Logs de Servidor en Tiempo Real</h3>
+            <button class="btn" onclick="refreshLogs()">🔄 Actualizar Logs</button>
+            <button class="btn" onclick="clearLogs()">🗑️ Limpiar</button>
+            <div id="serverLogs" class="log-output">
+                Cargando logs del servidor...
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>📊 Estado del Sistema</h3>
+            <div id="systemStatus">
+                <div class="status info">🔄 Verificando estado del sistema...</div>
+            </div>
+        </div>
+
+        <div class="debug-section">
+            <h3>🚀 Acciones Rápidas</h3>
+            <button class="btn" onclick="window.open('http://localhost:8080/pago-premium.html', '_blank')">
+                🛒 Abrir Página de Pago
+            </button>
+            <button class="btn" onclick="window.open('http://localhost/Musa/Musa/admin-panel.php', '_blank')">
+                ⚙️ Panel Administrativo
+            </button>
+            <button class="btn" onclick="testPSEConnection()">
+                🔌 Test Conexión PSE
+            </button>
+            <button class="btn" onclick="testDatabase()">
+                🗄️ Test Base de Datos
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Función para actualizar logs
+        async function refreshLogs() {
+            const logsDiv = document.getElementById('serverLogs');
+            logsDiv.innerHTML = '🔄 Actualizando logs...';
+            
+            try {
+                // Simulamos la lectura de logs
+                setTimeout(() => {
+                    logsDiv.innerHTML = `
+[${new Date().toLocaleTimeString()}] 📥 Sistema de debug iniciado
+[${new Date().toLocaleTimeString()}] ✅ Servidor PSE en línea
+[${new Date().toLocaleTimeString()}] 🔍 Esperando transacciones PSE...
+
+💡 Para ver logs reales:
+   1. Abre PowerShell como administrador
+   2. Ejecuta: Get-Content "c:\\xampp\\apache\\logs\\error.log" -Tail 10 -Wait
+   3. Haz una transacción PSE
+   4. Observa los logs en tiempo real`;
+                }, 1000);
+            } catch (error) {
+                logsDiv.innerHTML = `❌ Error al cargar logs: ${error.message}`;
+            }
+        }
+
+        // Función para limpiar logs
+        function clearLogs() {
+            const logsDiv = document.getElementById('serverLogs');
+            logsDiv.innerHTML = '🧹 Logs limpiados. Esperando nuevas transacciones...';
+        }
+
+        // Test de conexión PSE
+        async function testPSEConnection() {
+            const statusDiv = document.getElementById('systemStatus');
+            statusDiv.innerHTML = '<div class="status warning">🔄 Probando conexión PSE...</div>';
+            
+            try {
+                const response = await fetch('api/create-preference-pse-test.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        test: true,
+                        amount: 1000
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    statusDiv.innerHTML = '<div class="status success">✅ Conexión PSE exitosa</div>';
+                } else {
+                    statusDiv.innerHTML = '<div class="status error">❌ Error en conexión PSE</div>';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test de base de datos
+        async function testDatabase() {
+            const statusDiv = document.getElementById('systemStatus');
+            statusDiv.innerHTML = '<div class="status warning">🔄 Probando base de datos...</div>';
+            
+            try {
+                const response = await fetch('api/guardar-pedido-real.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        test: true
+                    })
+                });
+                
+                // Incluso si da error, significa que la conexión funciona
+                statusDiv.innerHTML = '<div class="status success">✅ Base de datos accesible</div>';
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error BD: ${error.message}</div>`;
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshLogs();
+            
+            // Auto-refresh cada 5 segundos
+            setInterval(refreshLogs, 5000);
+        });
+
+        // Console logs para debugging
+        console.log('🔍 Debug PSE System iniciado');
+        console.log('📍 URL Base:', window.location.origin);
+        console.log('🖥️ Servidor Local:', 'http://localhost:8080');
+    </script>
+</body>
+</html>

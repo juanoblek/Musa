@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Categories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .category-card {
+            background: white;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block;
+            width: 200px;
+        }
+        .category-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .category-content {
+            padding: 10px 0;
+        }
+        .category-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        .category-description {
+            color: #666;
+            font-size: 0.9em;
+            margin: 0 0 10px 0;
+        }
+        .category-count {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .debug {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Categories</h1>
+    
+    <div class="debug">
+        <h3>🔍 Debug Information</h3>
+        <div id="debug-info">Iniciando prueba...</div>
+    </div>
+
+    <div id="categories-container">
+        <h2>Categorías Disponibles:</h2>
+        <div id="categories-grid"></div>
+    </div>
+
+    <script>
+        function log(message) {
+            const debugDiv = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<br>[${timestamp}] ${message}`;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        async function getProductCount(categoryId) {
+            try {
+                log(`📊 Obteniendo count para categoría: ${categoryId}`);
+                
+                // Usar el API de productos v2 para obtener productos por categoría
+                const response = await fetch(`api/productos-v2.php?category=${categoryId}`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    const count = result.data.length;
+                    log(`✅ Categoría ${categoryId}: ${count} productos`);
+                    return count;
+                }
+                
+                log(`⚠️ Categoría ${categoryId}: Sin productos o error en respuesta`);
+                return 0;
+            } catch (error) {
+                log(`❌ Error al contar productos de ${categoryId}: ${error.message}`);
+                return 0;
+            }
+        }
+
+        async function loadCategories() {
+            log('🚀 Cargando categorías...');
+            
+            try {
+                const response = await fetch('api/categorias.php');
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    log(`📋 ${result.data.length} categorías encontradas`);
+                    
+                    // Mapeo de imágenes reales para categorías
+                    const categoryImages = {
+                        'hombre': 'images/Chaqueta Beige Botones Dorados/chaqueta_b1.jpeg',
+                        'mujer': 'images/Chaqueta Pink Serenity Super Nylon/chaqueta_pink_serenity_super_nylon.jpeg',
+                        'camisas': 'images/Camisa Blanco Purista/camisa_blanco_purista.jpeg',
+                        'pantalones': 'images/Pantalon Drill Liso/pantalon_drill_liso_gris.jpeg',
+                        'chaquetas': 'images/Chaqueta Beige Botones Dorados/Chaqueta B1.jpeg',
+                        'blazers': 'images/BLAZER.png',
+                        'accesorios': 'images/clothes-1839935_1920.jpg'
+                    };
+
+                    const grid = document.getElementById('categories-grid');
+                    
+                    for (const category of result.data) {
+                        log(`🔄 Procesando categoría: ${category.name} (${category.id})`);
+                        
+                        const productCount = await getProductCount(category.id);
+                        const image = categoryImages[category.id] || 'images/clothes-1839935_1920.jpg';
+                        
+                        const categoryHtml = `
+                            <div class="category-card">
+                                <img src="${image}" 
+                                     alt="${category.name}" 
+                                     class="category-image"
+                                     onerror="this.src='images/clothes-1839935_1920.jpg'">
+                                <div class="category-content">
+                                    <h3 class="category-name">${category.name}</h3>
+                                    <p class="category-description">${category.description || ''}</p>
+                                    <span class="category-count">${productCount} productos</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        grid.innerHTML += categoryHtml;
+                    }
+                    
+                    log('✅ Categorías renderizadas correctamente');
+                } else {
+                    throw new Error('No se pudieron cargar las categorías');
+                }
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+            }
+        }
+
+        // Cargar categorías cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🌟 DOM cargado, iniciando prueba de categorías...');
+            loadCategories();
+        });
+    </script>
+</body>
+</html>

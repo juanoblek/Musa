@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ TEST SIMPLE: Pago Real Funcional</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        .btn-pagar {
+            width: 100%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .btn-pagar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">
+            ✅ Test Simple: Pago Real + BD
+        </h1>
+        
+        <div id="status-container">
+            <div class="status info">🔄 Inicializando sistema...</div>
+        </div>
+        
+        <form id="payment-form">
+            <div class="form-group">
+                <label for="fullName">Nombre Completo *</label>
+                <input type="text" id="fullName" name="fullName" value="Juan Test" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" value="test@test.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-checkout__cardholderEmail">Email del Titular</label>
+                <input type="email" id="form-checkout__cardholderEmail" value="test@test.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="form-checkout__cardholderName">Nombre en la Tarjeta</label>
+                <input type="text" id="form-checkout__cardholderName" placeholder="APRO">
+            </div>
+            
+            <div class="form-group">
+                <label for="form-checkout__identificationType">Tipo de Documento</label>
+                <select id="form-checkout__identificationType"></select>
+            </div>
+            
+            <div class="form-group">
+                <label for="form-checkout__identificationNumber">Número de Documento</label>
+                <input type="text" id="form-checkout__identificationNumber" placeholder="12345678">
+            </div>
+            
+            <div class="form-group">
+                <label for="form-checkout__cardNumber">Número de Tarjeta</label>
+                <input type="text" id="form-checkout__cardNumber" placeholder="4509 9535 6623 3704">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label for="form-checkout__expirationDate">Vencimiento</label>
+                    <input type="text" id="form-checkout__expirationDate" placeholder="11/25">
+                </div>
+                <div class="form-group">
+                    <label for="form-checkout__securityCode">CVV</label>
+                    <input type="text" id="form-checkout__securityCode" placeholder="123">
+                </div>
+                <div class="form-group">
+                    <label for="form-checkout__installments">Cuotas</label>
+                    <select id="form-checkout__installments"></select>
+                </div>
+            </div>
+            
+            <div class="form-group" style="display: none;">
+                <label for="form-checkout__issuer">Banco Emisor</label>
+                <select id="form-checkout__issuer"></select>
+            </div>
+            
+            <button type="submit" class="btn-pagar" id="submit-btn">
+                💳 Procesar Pago Real ($259.800)
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        console.log('🚀 Iniciando test simple...');
+        
+        // Datos del carrito de prueba
+        window.carrito = [
+            { id: 1, nombre: "Producto Test", precio: 244800, cantidad: 1 }
+        ];
+        
+        let mp = null;
+        let cardForm = null;
+        let mpConfig = null;
+        
+        function updateStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        async function loadMercadoPagoConfig() {
+            try {
+                updateStatus('🔄 Obteniendo configuración de MercadoPago...', 'info');
+                
+                const response = await fetch('/Musa/config/mercadopago.php?get_config=true');
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                mpConfig = await response.json();
+                console.log('📋 Configuración MP:', mpConfig);
+                
+                if (!mpConfig.configured) {
+                    throw new Error('MercadoPago no está configurado correctamente');
+                }
+                
+                if (!mpConfig.public_key) {
+                    throw new Error('Public Key de MercadoPago no disponible');
+                }
+                
+                return mpConfig;
+                
+            } catch (error) {
+                console.error('❌ Error cargando config MP:', error);
+                
+                // Fallback a credenciales por defecto
+                console.log('⚠️ Usando credenciales de fallback...');
+                return {
+                    environment: 'test',
+                    public_key: 'TEST-4e1fc2a5-e4ed-4db8-bfe8-b0b5f58a5d7a',
+                    configured: true,
+                    sandbox: true
+                };
+            }
+        }
+        
+        async function inicializarSistema() {
+            try {
+                updateStatus('🔄 Verificando MercadoPago SDK...', 'info');
+                
+                // Verificar MercadoPago SDK
+                if (typeof MercadoPago === 'undefined') {
+                    throw new Error('MercadoPago SDK no cargado');
+                }
+                
+                // Cargar configuración desde el servidor
+                mpConfig = await loadMercadoPagoConfig();
+                
+                updateStatus(`🔄 Inicializando MercadoPago (${mpConfig.environment})...`, 'info');
+                
+                // Inicializar MercadoPago con las credenciales correctas
+                mp = new MercadoPago(mpConfig.public_key, { 
+                    locale: 'es-CO',
+                    sandbox: mpConfig.sandbox
+                });
+                
+                console.log(`✅ MercadoPago inicializado con: ${mpConfig.public_key}`);
+                
+                updateStatus('🔄 Creando formulario de tarjeta...', 'info');
+                
+                // Crear formulario de tarjeta
+                cardForm = mp.cardForm({
+                    form: {
+                        id: "payment-form",
+                        cardNumber: { id: "form-checkout__cardNumber", placeholder: "Número de tarjeta" },
+                        expirationDate: { id: "form-checkout__expirationDate", placeholder: "MM/YY" },
+                        securityCode: { id: "form-checkout__securityCode", placeholder: "Código de seguridad" },
+                        cardholderName: { id: "form-checkout__cardholderName", placeholder: "Titular de la tarjeta" },
+                        issuer: { id: "form-checkout__issuer", placeholder: "Banco emisor" },
+                        installments: { id: "form-checkout__installments", placeholder: "Cuotas" },
+                        identificationType: { id: "form-checkout__identificationType" },
+                        identificationNumber: { id: "form-checkout__identificationNumber", placeholder: "Número de documento" },
+                        cardholderEmail: { id: "form-checkout__cardholderEmail", placeholder: "E-mail" }
+                    },
+                    callbacks: {
+                        onFormMounted: error => {
+                            if (error) {
+                                console.error('❌ Error detallado montando formulario:', error);
+                                updateStatus('❌ Error montando formulario: ' + JSON.stringify(error), 'error');
+                            } else {
+                                updateStatus('✅ Sistema listo para procesar pagos reales', 'success');
+                                console.log('✅ Formulario montado correctamente');
+                                
+                                // Verificar que los selectores se llenaron
+                                setTimeout(() => {
+                                    const tipoDoc = document.getElementById('form-checkout__identificationType');
+                                    const cuotas = document.getElementById('form-checkout__installments');
+                                    
+                                    if (tipoDoc && tipoDoc.options.length > 0) {
+                                        console.log('✅ Selector de tipo documento cargado');
+                                    } else {
+                                        console.log('⚠️ Selector de tipo documento vacío');
+                                    }
+                                    
+                                    if (cuotas && cuotas.options.length > 0) {
+                                        console.log('✅ Selector de cuotas cargado');
+                                    } else {
+                                        console.log('⚠️ Selector de cuotas vacío');
+                                    }
+                                }, 2000);
+                            }
+                        },
+                        onSubmit: event => {
+                            event.preventDefault();
+                            procesarPago();
+                        },
+                        onFetching: (resource) => {
+                            console.log('🔄 Obteniendo:', resource);
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('❌ Error detallado inicializando:', error);
+                updateStatus('❌ Error: ' + error.message + ' | ' + JSON.stringify(error), 'error');
+            }
+        }
+        
+        async function procesarPago() {
+            try {
+                updateStatus('🔄 Procesando pago con MercadoPago...', 'info');
+                
+                // Obtener token de la tarjeta
+                const { token, requireESC, error } = await cardForm.getCardFormData();
+                
+                if (error) {
+                    throw new Error('Error con la tarjeta: ' + error.message);
+                }
+                
+                console.log('🔑 Token obtenido:', token);
+                
+                // Preparar datos para enviar al backend
+                const paymentData = {
+                    // Datos del cliente
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: '3001234567',
+                    documentType: document.getElementById('form-checkout__identificationType').value || 'CC',
+                    documentNumber: document.getElementById('form-checkout__identificationNumber').value,
+                    
+                    // Datos de envío (mínimos)
+                    address: 'Calle 123 # 45-67',
+                    city: 'Bogotá',
+                    department: 'Bogotá D.C.',
+                    
+                    // Datos del pedido
+                    productos: JSON.stringify(window.carrito),
+                    subtotal: 244800,
+                    envio: 15000,
+                    total: 259800,
+                    
+                    // Token de pago
+                    token: token,
+                    paymentMethod: 'credit_card',
+                    mercadopago: true
+                };
+                
+                updateStatus('🔄 Enviando al servidor...', 'info');
+                
+                // Enviar al backend
+                const response = await fetch('/Musa/api/pago-real-mercadopago.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('📥 Respuesta:', result);
+                
+                if (result.success && result.pago_exitoso) {
+                    updateStatus(
+                        `🎉 ¡ÉXITO! Pago aprobado y guardado en BD. Pedido: ${result.pedido_id}`, 
+                        'success'
+                    );
+                } else {
+                    updateStatus(
+                        `⚠️ ${result.message || 'Pago no aprobado'}`, 
+                        'error'
+                    );
+                }
+                
+            } catch (error) {
+                updateStatus('❌ Error: ' + error.message, 'error');
+                console.error('❌ Error procesando pago:', error);
+            }
+        }
+        
+        // Inicializar cuando DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(inicializarSistema, 1000);
+            
+            // Sincronizar emails
+            const emailPrincipal = document.getElementById('email');
+            const emailTarjeta = document.getElementById('form-checkout__cardholderEmail');
+            
+            emailPrincipal.addEventListener('input', function() {
+                emailTarjeta.value = this.value;
+            });
+        });
+    </script>
+</body>
+</html>

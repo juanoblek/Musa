@@ -1,0 +1,21 @@
+/* Asegurar que no haya interferencias de CSS suelto */
+body {
+    overflow-x: hidden;
+}
+
+/* Ocultar cualquier texto CSS que pueda estar mal renderizado */
+.navbar ~ *:not(main):not(section):not(div):not(script):not(style) {
+    display: none !important;
+}
+
+/* Forzar que solo el contenido estructurado sea visible */
+.navbar + * {
+    margin-top: 0 !important;
+}
+
+/* Limpiar cualquier texto flotante */
+body > text,
+body > ::before,
+body > ::after {
+    display: none !important;
+}

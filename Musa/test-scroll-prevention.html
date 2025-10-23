@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Scroll Prevention</title>
+    <style>
+        body { height: 2000px; }
+        #test-div { margin-top: 1500px; background: red; padding: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Test Scroll Prevention</h1>
+    <p>This page is tall to test scroll prevention</p>
+    
+    <div id="test-div">Test Element</div>
+    
+    <button onclick="testScroll()">Test Scroll</button>
+    
+    <script>
+        // Implement the same scroll prevention as in index.html
+        Element.prototype.scrollIntoView = function(options) {
+            console.log('🚫 Scroll bloqueado para:', this.tagName + (this.id ? '#' + this.id : ''));
+            return false;
+        };
+        
+        function testScroll() {
+            console.log('Testing scroll...');
+            document.getElementById('test-div').scrollIntoView();
+        }
+        
+        // Auto test after 2 seconds
+        setTimeout(() => {
+            console.log('Auto testing scroll prevention...');
+            document.getElementById('test-div').scrollIntoView();
+        }, 2000);
+    </script>
+</body>
+</html>

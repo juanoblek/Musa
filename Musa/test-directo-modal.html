@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Test Directo - Modal Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .test-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            max-width: 800px;
+        }
+        .btn-test {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-test:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            height: 400px;
+            overflow-y: auto;
+            margin: 1rem 0;
+            border: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-panel">
+        <h1 class="text-center mb-4">🎬 Test Directo Modal Videos</h1>
+        <p class="text-center">Test integrado en la página principal</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>🧪 Tests Directos</h3>
+                <button class="btn btn-test" onclick="testAPI()">📡 Test API</button>
+                <button class="btn btn-test" onclick="testPlaceholderEliminator()">🗑️ Test Eliminador</button>
+                <button class="btn btn-test" onclick="openTestModal()">📦 Abrir Modal Test</button>
+                <button class="btn btn-test" onclick="forceVideoInModal()">🎬 Forzar Video</button>
+                <button class="btn btn-test" onclick="simulateProductClick()">🖱️ Simular Click</button>
+                <button class="btn btn-test" onclick="checkModalContent()">🔍 Ver Modal</button>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>📊 Estado</h3>
+                <div class="console-output" id="output">
+                    Test directo iniciado...\n
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Bootstrap para test -->
+    <div class="modal fade" id="ProductViewModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productViewTitle">Test Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="carousel-inner" id="productViewCarouselInner">
+                        <div class="carousel-item active">
+                            <img src="images/placeholder.svg" class="d-block w-100" alt="Test">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="productViewAddToCart" data-image="images/placeholder.svg">Test Button</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let output = document.getElementById('output');
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        async function testAPI() {
+            log('📡 Probando API...');
+            try {
+                const response = await fetch('api/productos-v2.php');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    log(`✅ API OK - ${data.data.length} productos`);
+                    
+                    const videos = data.data.filter(p => 
+                        p.main_image && /\.(mp4|mov|avi|webm)$/i.test(p.main_image)
+                    );
+                    log(`🎬 Productos con video: ${videos.length}`);
+                    
+                    videos.forEach((v, i) => {
+                        log(`   ${i+1}. ${v.name || 'Sin nombre'}: ${v.main_image}`);
+                    });
+                } else {
+                    log('❌ API error: ' + JSON.stringify(data));
+                }
+            } catch (error) {
+                log('❌ Error API: ' + error.message);
+            }
+        }
+
+        function testPlaceholderEliminator() {
+            log('🗑️ Probando eliminador de placeholders...');
+            
+            if (window.eliminarPlaceholdersModal) {
+                log('✅ Función eliminarPlaceholdersModal disponible');
+                window.eliminarPlaceholdersModal();
+                log('🎯 Eliminador ejecutado');
+            } else {
+                log('❌ Función eliminarPlaceholdersModal NO disponible');
+                log('🔍 Funciones disponibles:');
+                Object.keys(window).filter(k => k.includes('Modal')).forEach(k => {
+                    log(`   - ${k}`);
+                });
+            }
+        }
+
+        function openTestModal() {
+            log('📦 Abriendo modal de test...');
+            
+            const modal = document.getElementById('ProductViewModal');
+            if (modal) {
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+                log('✅ Modal abierto');
+                
+                setTimeout(() => {
+                    if (window.eliminarPlaceholdersModal) {
+                        window.eliminarPlaceholdersModal();
+                        log('🎯 Eliminador ejecutado en modal');
+                    }
+                }, 1000);
+            } else {
+                log('❌ Modal no encontrado');
+            }
+        }
+
+        async function forceVideoInModal() {
+            log('🎬 Forzando video en modal...');
+            
+            try {
+                // Obtener datos de API
+                const response = await fetch('api/productos-v2.php');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const videoProduct = data.data.find(p => 
+                        p.main_image && /\.(mp4|mov|avi|webm)$/i.test(p.main_image)
+                    );
+                    
+                    if (videoProduct) {
+                        log(`🎬 Video encontrado: ${videoProduct.main_image}`);
+                        
+                        // Actualizar modal directamente
+                        const carouselInner = document.getElementById('productViewCarouselInner');
+                        const titleElement = document.getElementById('productViewTitle');
+                        
+                        if (carouselInner && titleElement) {
+                            titleElement.textContent = videoProduct.name || 'Producto con Video';
+                            
+                            carouselInner.innerHTML = `
+                                <div class="carousel-item active">
+                                    <video src="${videoProduct.main_image}" 
+                                           controls 
+                                           autoplay 
+                                           muted 
+                                           loop 
+                                           style="width: 100%; max-height: 400px; object-fit: contain;">
+                                    </video>
+                                </div>
+                            `;
+                            
+                            log('✅ Video insertado en modal');
+                            
+                            // Abrir modal
+                            const modal = document.getElementById('ProductViewModal');
+                            const bsModal = new bootstrap.Modal(modal);
+                            bsModal.show();
+                        }
+                    } else {
+                        log('❌ No se encontró producto con video');
+                    }
+                }
+            } catch (error) {
+                log('❌ Error: ' + error.message);
+            }
+        }
+
+        async function simulateProductClick() {
+            log('🖱️ Simulando click en producto...');
+            
+            if (window.populateProductModal) {
+                log('✅ Función populateProductModal disponible');
+                
+                try {
+                    const response = await fetch('api/productos-v2.php');
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        const videoProduct = data.data.find(p => 
+                            p.main_image && /\.(mp4|mov|avi|webm)$/i.test(p.main_image)
+                        );
+                        
+                        if (videoProduct) {
+                            const productData = {
+                                image: videoProduct.main_image,
+                                title: videoProduct.name || 'Producto Test',
+                                price: `$${videoProduct.sale_price || videoProduct.price || '999'}`
+                            };
+                            
+                            log('📦 Datos del producto: ' + JSON.stringify(productData));
+                            
+                            window.populateProductModal(productData);
+                            
+                            const modal = document.getElementById('ProductViewModal');
+                            const bsModal = new bootstrap.Modal(modal);
+                            bsModal.show();
+                            
+                            log('✅ Modal poblado y abierto');
+                        }
+                    }
+                } catch (error) {
+                    log('❌ Error: ' + error.message);
+                }
+            } else {
+                log('❌ Función populateProductModal NO disponible');
+            }
+        }
+
+        function checkModalContent() {
+            log('🔍 Verificando contenido del modal...');
+            
+            const modal = document.getElementById('ProductViewModal');
+            if (!modal) {
+                log('❌ Modal no encontrado');
+                return;
+            }
+            
+            const carouselInner = modal.querySelector('#productViewCarouselInner');
+            if (carouselInner) {
+                const videos = carouselInner.querySelectorAll('video');
+                const images = carouselInner.querySelectorAll('img');
+                const placeholders = carouselInner.querySelectorAll('img[src*="placeholder"]');
+                
+                log(`📊 Estado del modal:`);
+                log(`   - Videos: ${videos.length}`);
+                log(`   - Imágenes: ${images.length}`);
+                log(`   - Placeholders: ${placeholders.length}`);
+                
+                if (videos.length > 0) {
+                    videos.forEach((v, i) => {
+                        log(`   📹 Video ${i+1}: ${v.src}`);
+                    });
+                }
+                
+                if (placeholders.length > 0) {
+                    log(`⚠️ PROBLEMA: Hay ${placeholders.length} placeholders`);
+                }
+            }
+        }
+
+        // Auto-test al cargar
+        window.onload = () => {
+            log('🚀 Test directo iniciado');
+            setTimeout(testAPI, 1000);
+        };
+    </script>
+</body>
+</html>

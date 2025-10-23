@@ -1,0 +1,28 @@
+# .gitignore para proyecto PHP / XAMPP
+
+# Composer
+/vendor/
+
+# Node
+/node_modules/
+
+# Environment files
+.env
+.env.*
+
+# IDEs y editores
+.vscode/
+.idea/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs y caches
+*.log
+/tmp/
+cache/
+
+# Otros
+*.zip
+*.tar.gz

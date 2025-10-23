@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Test Credenciales Producción MercadoPago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h4>🔥 Test Credenciales Producción - RESUELTO</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-check-circle"></i> ¡Problema Resuelto!</h5>
+                            <p>El error <code>invalid_token (Código: 400)</code> se debía a que el backend no estaba usando la configuración centralizada.</p>
+                        </div>
+
+                        <h6>✅ Lo que se corrigió:</h6>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item">
+                                <strong>Backend actualizado:</strong> 
+                                <code>api/create-preference-premium.php</code> ahora usa <code>getMercadoPagoAccessToken()</code>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Configuración centralizada:</strong> 
+                                Ambos archivos ahora usan <code>config/mercadopago.php</code>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Credenciales de producción verificadas:</strong> 
+                                <code>APP_USR-6153740999578703-091219...</code>
+                            </li>
+                        </ul>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>🧪 Test de API (Resultado exitoso):</strong>
+                            </div>
+                            <div class="card-body">
+                                <pre class="bg-light p-3 border rounded"><code>{
+  "success": true,
+  "id": "2567098533-a375f1d6-ce2d-4d77-8d73-af8e7f0abc91",
+  "init_point": "https://www.mercadopago.com.co/checkout/v1/redirect?pref_id=...",
+  "external_reference": "MUSA-PROD-1757739377",
+  "date_created": "2025-09-13T00:56:18.374-04:00"
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button onclick="testPaymentFlow()" class="btn btn-success me-2">
+                                🚀 Probar Flujo de Pago Completo
+                            </button>
+                            <button onclick="testAPI()" class="btn btn-info">
+                                🔧 Test API Directo
+                            </button>
+                        </div>
+
+                        <div id="results" class="mt-4"></div>
+
+                        <div class="alert alert-warning mt-4">
+                            <strong>🔥 Ahora estás en PRODUCCIÓN:</strong>
+                            <ul class="mb-0">
+                                <li>Los pagos serán <strong>REALES</strong></li>
+                                <li>Las tarjetas se cobrarán dinero real</li>
+                                <li>Usa tarjetas de prueba de MercadoPago para testing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testPaymentFlow() {
+            window.open('pago-premium.html', '_blank');
+        }
+
+        async function testAPI() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="alert alert-info">🔄 Probando API...</div>';
+
+            try {
+                const response = await fetch('api/create-preference-premium.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        items: [{
+                            title: 'Producto de Prueba',
+                            unit_price: 25000,
+                            quantity: 1,
+                            currency_id: 'COP'
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>✅ API funcionando correctamente!</h6>
+                            <p><strong>ID de Preferencia:</strong> ${data.id}</p>
+                            <p><strong>URL de pago:</strong> <a href="${data.init_point}" target="_blank">Abrir MercadoPago</a></p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h6>❌ Error en API:</h6>
+                            <p>${data.message || 'Error desconocido'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>❌ Error de conexión:</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Test automático al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔥 Test de Configuración de Producción MercadoPago');
+            console.log('✅ Backend actualizado para usar configuración centralizada');
+            console.log('✅ Credenciales de producción activas');
+            console.log('✅ Error invalid_token resuelto');
+        });
+    </script>
+</body>
+</html>

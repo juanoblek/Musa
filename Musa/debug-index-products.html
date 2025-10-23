@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Debug Index Products</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            background: #fafafa;
+        }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 5px 0;
+            padding: 5px;
+            background: #f8f9fa;
+            border-left: 3px solid #007bff;
+        }
+        
+        .refresh-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        .refresh-btn:hover {
+            background: #0056b3;
+        }
+        
+        #live-logs {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: #f8f9fa;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Debug Index Products</h1>
+        <p><strong>Objetivo:</strong> Verificar por qué los productos no se muestran en el index principal</p>
+        
+        <div class="test-section info">
+            <h3>🎛️ Controles</h3>
+            <button class="refresh-btn" onclick="runFullDiagnostic()">🔄 Ejecutar Diagnóstico Completo</button>
+            <button class="refresh-btn" onclick="testProductsAPI()">📡 Probar API</button>
+            <button class="refresh-btn" onclick="testDOMStructure()">🏗️ Probar DOM</button>
+            <button class="refresh-btn" onclick="forceRender()">🎨 Forzar Renderizado</button>
+        </div>
+
+        <div class="test-section" id="api-section">
+            <h3>📡 API Test</h3>
+            <div id="api-results">Presiona "Probar API" para verificar...</div>
+        </div>
+
+        <div class="test-section" id="dom-section">
+            <h3>🏗️ DOM Structure Test</h3>
+            <div id="dom-results">Presiona "Probar DOM" para verificar...</div>
+        </div>
+
+        <div class="test-section" id="render-section">
+            <h3>🎨 Render Test</h3>
+            <div id="render-results">Presiona "Forzar Renderizado" para probar...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>📋 Live Logs</h3>
+            <div id="live-logs">
+                <div class="log-entry">🚀 Debug iniciado - esperando comandos...</div>
+            </div>
+        </div>
+
+        <!-- Simular la estructura del index -->
+        <div class="test-section">
+            <h3>🧪 Test Container</h3>
+            <section id="prendas-exclusivas" class="container mt-5">
+                <div class="container">
+                    <div class="row" id="test-products-container">
+                        <div class="col-12 text-center">
+                            <p>Contenedor de prueba - los productos aparecerán aquí</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Función para agregar logs
+        function addLog(message, type = 'info') {
+            const logsDiv = document.getElementById('live-logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            
+            if (type === 'error') logEntry.style.borderLeftColor = '#dc3545';
+            if (type === 'success') logEntry.style.borderLeftColor = '#28a745';
+            if (type === 'warning') logEntry.style.borderLeftColor = '#ffc107';
+            
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        // Test 1: API de productos
+        async function testProductsAPI() {
+            addLog('📡 Iniciando test de API...');
+            const section = document.getElementById('api-section');
+            
+            try {
+                const response = await fetch('api/productos-v2.php');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    document.getElementById('api-results').innerHTML = `
+                        <div class="success" style="padding: 10px; border-radius: 5px;">
+                            <strong>✅ API Funcionando Correctamente</strong><br>
+                            • Status: ${response.status}<br>
+                            • Productos encontrados: <strong>${data.data.length}</strong><br>
+                            • Primer producto: ${data.data[0]?.name || 'N/A'}<br>
+                            • Categorías: ${[...new Set(data.data.map(p => p.category))].join(', ')}<br>
+                            • URL: <code>api/productos-v2.php</code>
+                        </div>
+                    `;
+                    section.className = 'test-section success';
+                    addLog(`✅ API OK: ${data.data.length} productos encontrados`, 'success');
+                    return data.data;
+                } else {
+                    throw new Error('Formato de respuesta inválido');
+                }
+            } catch (error) {
+                document.getElementById('api-results').innerHTML = `
+                    <div class="error" style="padding: 10px; border-radius: 5px;">
+                        <strong>❌ Error en API</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                section.className = 'test-section error';
+                addLog(`❌ API Error: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        // Test 2: Estructura del DOM
+        function testDOMStructure() {
+            addLog('🏗️ Verificando estructura del DOM...');
+            const section = document.getElementById('dom-section');
+            
+            // Buscar todos los posibles contenedores
+            const selectors = [
+                '#prendas-exclusivas',
+                '#prendas-exclusivas .container',
+                '#prendas-exclusivas .row',
+                '#prendas-exclusivas .container .row',
+                '#products-container'
+            ];
+            
+            let results = '<div style="padding: 10px;">';
+            let foundContainers = 0;
+            
+            selectors.forEach(selector => {
+                const element = document.querySelector(selector);
+                if (element) {
+                    foundContainers++;
+                    results += `
+                        <div style="margin: 10px 0; padding: 8px; background: #e8f5e8; border-radius: 4px;">
+                            <strong>✅ ${selector}</strong><br>
+                            • Tag: ${element.tagName}<br>
+                            • Classes: <code>${element.className}</code><br>
+                            • Children: ${element.children.length}<br>
+                            • Content: ${element.innerHTML.length} caracteres
+                        </div>
+                    `;
+                    addLog(`✅ Encontrado: ${selector}`, 'success');
+                } else {
+                    results += `
+                        <div style="margin: 10px 0; padding: 8px; background: #f8d7da; border-radius: 4px;">
+                            <strong>❌ ${selector}</strong> - No encontrado
+                        </div>
+                    `;
+                    addLog(`❌ No encontrado: ${selector}`, 'error');
+                }
+            });
+            
+            results += '</div>';
+            
+            document.getElementById('dom-results').innerHTML = results;
+            section.className = foundContainers > 0 ? 'test-section success' : 'test-section error';
+            
+            return foundContainers > 0;
+        }
+
+        // Test 3: Forzar renderizado
+        async function forceRender() {
+            addLog('🎨 Intentando forzar renderizado...');
+            const section = document.getElementById('render-section');
+            
+            try {
+                // Obtener productos
+                const products = await testProductsAPI();
+                
+                if (products.length === 0) {
+                    throw new Error('No hay productos para renderizar');
+                }
+                
+                // Buscar contenedor
+                let container = document.querySelector('#prendas-exclusivas .container .row') ||
+                               document.querySelector('#test-products-container');
+                
+                if (!container) {
+                    addLog('🏗️ Creando contenedor...', 'warning');
+                    const section = document.getElementById('prendas-exclusivas');
+                    if (section) {
+                        section.innerHTML = `
+                            <div class="container">
+                                <h2>🛍️ Productos (Renderizado Forzado)</h2>
+                                <div class="row" id="forced-products-container"></div>
+                            </div>
+                        `;
+                        container = document.getElementById('forced-products-container');
+                    }
+                }
+                
+                if (container) {
+                    // Renderizar productos
+                    const productsHtml = products.map(product => {
+                        const mainImage = product.images && product.images.length > 0 
+                            ? `uploads/${product.images[0]}` 
+                            : 'images/placeholder.svg';
+                        
+                        const price = parseFloat(product.price) || 0;
+                        const formattedPrice = price.toLocaleString('es-CO', {
+                            style: 'currency',
+                            currency: 'COP',
+                            minimumFractionDigits: 0
+                        });
+                        
+                        return `
+                            <div class="col-md-4 mb-4">
+                                <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    <img src="${mainImage}" 
+                                         style="width: 100%; height: 200px; object-fit: cover; border-radius: 5px;" 
+                                         alt="${product.name}"
+                                         onerror="this.src='images/placeholder.svg'">
+                                    <h5 style="margin: 10px 0;">${product.name}</h5>
+                                    <p style="color: #666; font-size: 14px;">${product.description ? product.description.substring(0, 100) + '...' : 'Sin descripción'}</p>
+                                    <p><strong>Categoría:</strong> ${product.category}</p>
+                                    <p><strong>Precio:</strong> ${formattedPrice}</p>
+                                    <button onclick="alert('Producto: ${product.name}')" 
+                                            style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                                        Ver Detalles
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    container.innerHTML = productsHtml;
+                    
+                    document.getElementById('render-results').innerHTML = `
+                        <div class="success" style="padding: 10px; border-radius: 5px;">
+                            <strong>✅ Renderizado Exitoso</strong><br>
+                            • Productos renderizados: ${products.length}<br>
+                            • Contenedor: ${container.id || container.className}<br>
+                            • HTML generado: ${productsHtml.length} caracteres
+                        </div>
+                    `;
+                    section.className = 'test-section success';
+                    addLog(`✅ Renderizado exitoso: ${products.length} productos`, 'success');
+                } else {
+                    throw new Error('No se pudo encontrar o crear contenedor');
+                }
+                
+            } catch (error) {
+                document.getElementById('render-results').innerHTML = `
+                    <div class="error" style="padding: 10px; border-radius: 5px;">
+                        <strong>❌ Error en Renderizado</strong><br>
+                        ${error.message}
+                    </div>
+                `;
+                section.className = 'test-section error';
+                addLog(`❌ Render error: ${error.message}`, 'error');
+            }
+        }
+
+        // Diagnóstico completo
+        async function runFullDiagnostic() {
+            addLog('🚀 Iniciando diagnóstico completo...', 'info');
+            
+            await testProductsAPI();
+            setTimeout(() => {
+                testDOMStructure();
+                setTimeout(() => {
+                    forceRender();
+                    addLog('🏁 Diagnóstico completo finalizado', 'success');
+                }, 1000);
+            }, 1000);
+        }
+
+        // Ejecutar diagnóstico al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('🔧 Debug tool cargado');
+            addLog('💡 Presiona "Ejecutar Diagnóstico Completo" para empezar');
+        });
+    </script>
+</body>
+</html>

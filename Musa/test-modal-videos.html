@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Videos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+        .modal-test-button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container test-container">
+        <h1 class="text-center mb-4">🎬 Test Modal Videos</h1>
+        
+        <div class="alert alert-info">
+            <h6>🧪 Test del Modal ProductViewModal:</h6>
+            <p>Este test simula abrir el modal con diferentes tipos de media para verificar que los videos se muestren correctamente.</p>
+        </div>
+        
+        <div class="test-card">
+            <h4>📋 Tests Disponibles</h4>
+            <button class="btn btn-primary modal-test-button" onclick="testModalWithVideo()">🎬 Test Modal con Video MP4</button>
+            <button class="btn btn-success modal-test-button" onclick="testModalWithImage()">🖼️ Test Modal con Imagen</button>
+            <button class="btn btn-warning modal-test-button" onclick="testModalWithVideoMOV()">🎥 Test Modal con Video MOV</button>
+            <button class="btn btn-info modal-test-button" onclick="testDirectVideoAdd()">⚡ Test Agregar Video Directo</button>
+        </div>
+        
+        <div class="test-card">
+            <h4>🔍 Estado del Sistema</h4>
+            <div id="systemStatus"></div>
+            <button class="btn btn-secondary" onclick="checkSystemStatus()">🔄 Verificar Estado</button>
+        </div>
+        
+        <div class="test-card">
+            <h4>📊 Resultados de Tests</h4>
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <!-- Modal de prueba (copia del ProductViewModal) -->
+    <div class="modal fade" id="ProductViewModal" tabindex="-1" aria-labelledby="ProductViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0 position-relative" style="padding: 15px; min-height: 60px; background: transparent;">
+                    <h5 class="modal-title" id="productViewTitle">Test Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <div class="col-lg-8">
+                            <div class="product-view-image-container">
+                                <div id="productViewCarousel" class="carousel slide h-100" data-bs-ride="carousel">
+                                    <div class="carousel-inner h-100" id="productViewCarouselInner">
+                                        <div class="carousel-item active">
+                                            <div class="d-flex align-items-center justify-content-center h-100" style="min-height: 400px;">
+                                                <p class="text-muted">Contenido se cargará aquí...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="p-4">
+                                <h3 id="productViewTitle">Producto de Prueba</h3>
+                                <p>Este es un modal de prueba para verificar la funcionalidad de videos.</p>
+                                <button class="btn btn-primary">Test Button</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necesarios -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/detector-inteligente-media.js"></script>
+    <script src="js/fix-modal-videos.js"></script>
+    
+    <script>
+        // Funciones de test
+        function testModalWithVideo() {
+            console.log('🎬 Iniciando test con video MP4...');
+            
+            const testData = {
+                image: 'uploads/video_68f0254985a91_1760568649.mp4',
+                title: 'Chaqueta See (Video Test)',
+                price: '$150.000'
+            };
+            
+            populateTestModal(testData);
+            showModal();
+            
+            logTestResult('Video MP4', testData.image);
+        }
+        
+        function testModalWithImage() {
+            console.log('🖼️ Iniciando test con imagen...');
+            
+            const testData = {
+                image: 'images/placeholder.jpg',
+                title: 'Producto con Imagen',
+                price: '$100.000'
+            };
+            
+            populateTestModal(testData);
+            showModal();
+            
+            logTestResult('Imagen JPG', testData.image);
+        }
+        
+        function testModalWithVideoMOV() {
+            console.log('🎥 Iniciando test con video MOV...');
+            
+            const testData = {
+                image: 'uploads/test_video.mov',
+                title: 'Video MOV Test',
+                price: '$200.000'
+            };
+            
+            populateTestModal(testData);
+            showModal();
+            
+            logTestResult('Video MOV', testData.image);
+        }
+        
+        function testDirectVideoAdd() {
+            console.log('⚡ Test de función directa addVideoToModal...');
+            
+            if (typeof window.addVideoToModal === 'function') {
+                const result = window.addVideoToModal('uploads/direct_test.mp4', 'Video Directo');
+                showModal();
+                
+                logTestResult('Video Directo', 'uploads/direct_test.mp4', result ? 'Éxito' : 'Falló');
+            } else {
+                logTestResult('Video Directo', 'N/A', 'Función no disponible');
+            }
+        }
+        
+        function populateTestModal(data) {
+            // Simular función populateProductModal
+            const carouselInner = document.getElementById('productViewCarouselInner');
+            const titleElement = document.getElementById('productViewTitle');
+            
+            if (titleElement) {
+                titleElement.textContent = data.title;
+            }
+            
+            if (carouselInner && typeof generarMediaHTMLSincrono !== 'undefined') {
+                const mediaHTML = generarMediaHTMLSincrono(
+                    data.image, 
+                    data.title, 
+                    "d-block w-100", 
+                    "max-height: 400px; object-fit: contain; background: #f8f9fa;"
+                );
+                
+                carouselInner.innerHTML = `
+                    <div class="carousel-item active">
+                        ${mediaHTML}
+                    </div>
+                `;
+                
+                console.log('✅ Modal poblado con detector inteligente');
+            } else {
+                console.error('❌ Detector inteligente no disponible');
+                // Fallback básico
+                carouselInner.innerHTML = `
+                    <div class="carousel-item active">
+                        <img src="${data.image}" class="d-block w-100" alt="${data.title}" style="max-height: 400px; object-fit: contain;">
+                    </div>
+                `;
+            }
+        }
+        
+        function showModal() {
+            const modal = new bootstrap.Modal(document.getElementById('ProductViewModal'));
+            modal.show();
+        }
+        
+        function checkSystemStatus() {
+            const status = {
+                'Detector Inteligente': typeof generarMediaHTMLSincrono !== 'undefined' ? '✅ Disponible' : '❌ No disponible',
+                'Fix Modal Videos': typeof window.addVideoToModal !== 'undefined' ? '✅ Cargado' : '❌ No cargado',
+                'Bootstrap Modal': typeof bootstrap !== 'undefined' ? '✅ Disponible' : '❌ No disponible',
+                'Modal Element': document.getElementById('ProductViewModal') ? '✅ Encontrado' : '❌ No encontrado',
+                'Carousel Element': document.getElementById('productViewCarouselInner') ? '✅ Encontrado' : '❌ No encontrado'
+            };
+            
+            let html = '<div class="alert alert-info"><h6>📊 Estado del Sistema:</h6>';
+            for (const [key, value] of Object.entries(status)) {
+                html += `<p><strong>${key}:</strong> ${value}</p>`;
+            }
+            html += '</div>';
+            
+            document.getElementById('systemStatus').innerHTML = html;
+        }
+        
+        function logTestResult(testType, url, status = 'Ejecutado') {
+            const timestamp = new Date().toLocaleTimeString();
+            const resultDiv = document.getElementById('testResults');
+            
+            const resultHTML = `
+                <div class="alert alert-secondary">
+                    <strong>${timestamp}</strong> - <strong>${testType}:</strong> ${url} 
+                    <span class="badge ${status === 'Éxito' ? 'bg-success' : status === 'Falló' ? 'bg-danger' : 'bg-info'}">${status}</span>
+                </div>
+            `;
+            
+            resultDiv.innerHTML += resultHTML;
+        }
+        
+        // Auto-verificar estado al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkSystemStatus, 1000);
+        });
+    </script>
+</body>
+</html>

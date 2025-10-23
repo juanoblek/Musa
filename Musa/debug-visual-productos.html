@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Visual - Productos</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .debug-container { background: #f8f9fa; border: 2px solid #007bff; margin: 10px 0; padding: 15px; }
+        .product-debug { background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; margin: 5px 0; }
+        .visible { background: #d4edda !important; }
+        .hidden { background: #f8d7da !important; }
+        .highlight { box-shadow: 0 0 20px #007bff !important; border: 3px solid #007bff !important; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>🔍 Debug Visual - Productos en Index</h1>
+        
+        <div class="debug-container">
+            <h3>1. Estado del ProductsManager</h3>
+            <div id="manager-status"></div>
+        </div>
+
+        <div class="debug-container">
+            <h3>2. Contenedores de Productos</h3>
+            <div id="containers-info"></div>
+        </div>
+
+        <div class="debug-container">
+            <h3>3. Productos Encontrados</h3>
+            <div id="products-found"></div>
+        </div>
+
+        <div class="debug-container">
+            <h3>4. Estilos CSS Aplicados</h3>
+            <div id="css-info"></div>
+        </div>
+
+        <div class="debug-container">
+            <h3>5. Test de Scroll a Productos</h3>
+            <button id="scroll-to-products" class="btn btn-primary">Scroll a Productos</button>
+            <button id="highlight-products" class="btn btn-warning">Destacar Productos</button>
+            <button id="force-show" class="btn btn-success">Forzar Visibilidad</button>
+        </div>
+
+        <div class="debug-container">
+            <h3>6. Simulación de Productos (Para Comparar)</h3>
+            <div class="row" id="test-products">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card">
+                        <img src="images/placeholder.svg" class="card-img-top" alt="Test">
+                        <div class="card-body">
+                            <h5>🧪 Producto de Prueba</h5>
+                            <p>Este producto debería ser visible</p>
+                            <span class="text-primary">$100,000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="debug-container">
+            <h3>7. Logs en Tiempo Real</h3>
+            <div id="live-logs" style="max-height: 300px; overflow-y: auto; background: #000; color: #0f0; padding: 10px; font-family: monospace;"></div>
+        </div>
+    </div>
+
+    <script>
+        let logCount = 0;
+        
+        function log(message) {
+            console.log(message);
+            const logsDiv = document.getElementById('live-logs');
+            logsDiv.innerHTML += `<div>${++logCount}. ${new Date().toLocaleTimeString()}: ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function checkProductsManager() {
+            log('🔍 Verificando ProductsManager...');
+            
+            const status = document.getElementById('manager-status');
+            
+            if (window.parent && window.parent.window) {
+                const parentWindow = window.parent.window;
+                
+                // Buscar ProductsManager en la ventana padre
+                let managerFound = false;
+                let productsCount = 0;
+                
+                if (parentWindow.document) {
+                    const scripts = parentWindow.document.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        if (script.textContent && script.textContent.includes('ProductsManager')) {
+                            managerFound = true;
+                        }
+                    });
+                }
+                
+                status.innerHTML = `
+                    <p><strong>ProductsManager encontrado:</strong> ${managerFound ? '✅ SÍ' : '❌ NO'}</p>
+                    <p><strong>Ventana padre:</strong> ${parentWindow ? '✅ Accesible' : '❌ No accesible'}</p>
+                `;
+            } else {
+                status.innerHTML = '<p class="text-warning">No se puede acceder a la ventana padre</p>';
+            }
+        }
+
+        function checkContainers() {
+            log('🔍 Buscando contenedores de productos...');
+            
+            const containersInfo = document.getElementById('containers-info');
+            let html = '<h5>Contenedores encontrados:</h5>';
+            
+            // Abrir nueva ventana con el index para inspeccionar
+            const indexWindow = window.open('index.html', '_blank');
+            
+            setTimeout(() => {
+                if (indexWindow && indexWindow.document) {
+                    const containers = [
+                        '#prendas-exclusivas',
+                        '#products-container', 
+                        '.product-card',
+                        '.productos-section',
+                        '[data-category]'
+                    ];
+                    
+                    containers.forEach(selector => {
+                        const elements = indexWindow.document.querySelectorAll(selector);
+                        html += `<div class="product-debug">
+                            <strong>${selector}:</strong> ${elements.length} elementos encontrados
+                            ${elements.length > 0 ? `<button onclick="highlightInIndex('${selector}')" class="btn btn-sm btn-info ms-2">Destacar</button>` : ''}
+                        </div>`;
+                    });
+                    
+                    containersInfo.innerHTML = html;
+                    
+                    // Verificar contenido específico
+                    const prendasSection = indexWindow.document.getElementById('prendas-exclusivas');
+                    if (prendasSection) {
+                        log(`✅ Sección prendas-exclusivas encontrada`);
+                        log(`📏 Altura: ${prendasSection.offsetHeight}px`);
+                        log(`👀 Visible: ${prendasSection.offsetWidth > 0 && prendasSection.offsetHeight > 0}`);
+                        log(`🎨 Display: ${getComputedStyle(prendasSection).display}`);
+                        log(`📍 Position: ${getComputedStyle(prendasSection).position}`);
+                        
+                        const productCards = prendasSection.querySelectorAll('.product-card, [data-category]');
+                        log(`🛍️ Tarjetas de producto: ${productCards.length}`);
+                        
+                        productCards.forEach((card, index) => {
+                            const rect = card.getBoundingClientRect();
+                            log(`📦 Producto ${index + 1}: ${rect.width}x${rect.height} en (${rect.x}, ${rect.y})`);
+                        });
+                    } else {
+                        log('❌ Sección prendas-exclusivas NO encontrada');
+                    }
+                } else {
+                    containersInfo.innerHTML = '<p class="text-danger">No se pudo acceder al contenido del index</p>';
+                }
+            }, 2000);
+        }
+
+        function highlightInIndex(selector) {
+            log(`🎯 Destacando elementos: ${selector}`);
+            // Esta función destacaría elementos en la ventana del index
+        }
+
+        function scrollToProducts() {
+            log('📜 Intentando scroll a productos...');
+            window.open('index.html#prendas-exclusivas', '_blank');
+        }
+
+        function forceShowProducts() {
+            log('💪 Forzando visibilidad de productos...');
+            
+            // Crear CSS para forzar visibilidad
+            const style = document.createElement('style');
+            style.textContent = `
+                .product-card, [data-category] {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    position: relative !important;
+                    z-index: 999 !important;
+                    background: yellow !important;
+                    border: 3px solid red !important;
+                    margin: 10px !important;
+                    padding: 10px !important;
+                }
+            `;
+            
+            // Aplicar al index si es posible
+            const indexWindow = window.open('index.html', '_blank');
+            setTimeout(() => {
+                if (indexWindow && indexWindow.document) {
+                    indexWindow.document.head.appendChild(style);
+                    log('✅ Estilos de forzado aplicados');
+                }
+            }, 1000);
+        }
+
+        // Evento listeners
+        document.getElementById('scroll-to-products').onclick = scrollToProducts;
+        document.getElementById('highlight-products').onclick = () => highlightInIndex('.product-card');
+        document.getElementById('force-show').onclick = forceShowProducts;
+
+        // Ejecutar verificaciones al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Iniciando debug visual...');
+            checkProductsManager();
+            setTimeout(checkContainers, 1000);
+        });
+
+        // Verificar cada 5 segundos
+        setInterval(() => {
+            log('🔄 Verificación periódica...');
+            checkProductsManager();
+        }, 5000);
+    </script>
+</body>
+</html>

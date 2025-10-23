@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Productos - Debug</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+        }
+        .product-debug {
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .color-preview {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 2px;
+            border: 2px solid #ccc;
+        }
+        .error { color: red; font-weight: bold; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Carga de Productos - Debug</h1>
+    <div id="status">Cargando...</div>
+    <div id="products-container"></div>
+
+    <script>
+        async function testProductLoad() {
+            const statusDiv = document.getElementById('status');
+            const container = document.getElementById('products-container');
+            
+            try {
+                statusDiv.innerHTML = '📡 Conectando a API...';
+                console.log('🔍 Iniciando test de productos...');
+                
+                const response = await fetch('api/productos-v2.php');
+                console.log('📡 Response status:', response.status);
+                
+                const result = await response.json();
+                console.log('📦 Result completo:', result);
+                
+                if (result.success && result.data) {
+                    statusDiv.innerHTML = `<span class="success">✅ ${result.data.length} productos cargados correctamente</span>`;
+                    
+                    result.data.forEach((product, index) => {
+                        console.log(`🔍 Producto ${index + 1}:`, product);
+                        
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product-debug';
+                        
+                        // Verificar colores
+                        let colorsHtml = '';
+                        if (product.colors && Array.isArray(product.colors)) {
+                            colorsHtml = product.colors.map(color => {
+                                if (typeof color === 'object' && color.codigo_hex) {
+                                    return `<span class="color-preview" style="background-color: ${color.codigo_hex}" title="${color.nombre}"></span>`;
+                                } else {
+                                    return `<span class="color-preview" style="background-color: #ccc" title="${color}"></span>`;
+                                }
+                            }).join('');
+                        }
+                        
+                        // Verificar tallas
+                        let sizesHtml = '';
+                        if (product.sizes && Array.isArray(product.sizes)) {
+                            sizesHtml = product.sizes.map(size => `<span style="background: #f0f0f0; padding: 2px 8px; margin: 2px; border-radius: 4px;">${size}</span>`).join('');
+                        }
+                        
+                        productDiv.innerHTML = `
+                            <h3>${product.name || 'SIN NOMBRE'}</h3>
+                            <p><strong>ID:</strong> ${product.id || 'Sin ID'}</p>
+                            <p><strong>Precio:</strong> $${product.price ? product.price.toLocaleString() : 'Sin precio'}</p>
+                            <p><strong>Precio Oferta:</strong> $${product.sale_price ? product.sale_price.toLocaleString() : 'No'}</p>
+                            <p><strong>Categoría:</strong> ${product.category_id || 'Sin categoría'}</p>
+                            <p><strong>Género:</strong> ${product.gender || 'Sin género'}</p>
+                            <p><strong>Stock:</strong> ${product.stock_quantity || 0}</p>
+                            <p><strong>Imagen:</strong> ${product.main_image || 'Sin imagen'}</p>
+                            <p><strong>Colores:</strong> ${colorsHtml || 'Sin colores'}</p>
+                            <p><strong>Tallas:</strong> ${sizesHtml || 'Sin tallas'}</p>
+                            <details>
+                                <summary>JSON Completo</summary>
+                                <pre>${JSON.stringify(product, null, 2)}</pre>
+                            </details>
+                        `;
+                        
+                        container.appendChild(productDiv);
+                    });
+                    
+                } else {
+                    statusDiv.innerHTML = `<span class="error">❌ Error: ${result.error || 'Respuesta inválida'}</span>`;
+                    console.error('❌ Error en respuesta:', result);
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML = `<span class="error">❌ Error de conexión: ${error.message}</span>`;
+                console.error('❌ Error:', error);
+            }
+        }
+        
+        // Ejecutar test al cargar la página
+        testProductLoad();
+    </script>
+</body>
+</html>

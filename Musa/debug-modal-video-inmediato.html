@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Modal Video - Solución Inmediata</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .debug-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .btn-debug {
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-debug:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+            color: white;
+        }
+        .console-output {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            height: 300px;
+            overflow-y: auto;
+            border: 2px solid #333;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        .status-warning { background: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="debug-panel">
+            <h1 class="text-center mb-4">🎬 Debug Modal Video - Solución Inmediata</h1>
+            <p class="text-center">Herramienta para convertir placeholders en videos AHORA MISMO</p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>🎯 Acciones Inmediatas</h3>
+                    <button class="btn btn-debug w-100" onclick="forceConvertNow()">
+                        🔥 CONVERTIR PLACEHOLDER AHORA
+                    </button>
+                    <button class="btn btn-debug w-100" onclick="debugModalContent()">
+                        🔍 ANALIZAR MODAL ACTUAL
+                    </button>
+                    <button class="btn btn-debug w-100" onclick="injectVideoDirectly()">
+                        💉 INYECTAR VIDEO DIRECTO
+                    </button>
+                    <button class="btn btn-debug w-100" onclick="replaceByInnerHTML()">
+                        🔄 REEMPLAZAR POR innerHTML
+                    </button>
+                </div>
+                
+                <div class="col-md-6">
+                    <h3>📊 Estado del Sistema</h3>
+                    <div id="systemStatus">
+                        <div class="mb-2">
+                            <span class="status-indicator status-warning" id="modalStatus"></span>
+                            Modal detectado: <span id="modalText">Verificando...</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="status-indicator status-warning" id="placeholderStatus"></span>
+                            Placeholder encontrado: <span id="placeholderText">Verificando...</span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="status-indicator status-warning" id="videoStatus"></span>
+                            Video convertido: <span id="videoText">Verificando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h3>🖥️ Console Output</h3>
+                <div class="console-output" id="consoleOutput">
+                    Esperando comandos...\n
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configuración de productos con videos
+        const PRODUCT_VIDEOS = {
+            'asdasdsa': 'uploads/video_68f276851285d_1760720517.mp4',
+            'Chaqueta Nueva Era': 'uploads/video_68f2764f21aed_1760720047.mp4',
+            'Chaqueta See': 'uploads/video_68f2786e8a477_1760720494.mp4'
+        };
+
+        let consoleElement = document.getElementById('consoleOutput');
+
+        function logToConsole(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = {
+                'info': '📋',
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️'
+            }[type] || '📋';
+            
+            consoleElement.innerHTML += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+            console.log(message);
+        }
+
+        function updateStatus() {
+            // Verificar modal
+            const modal = window.parent.document.getElementById('ProductViewModal');
+            const modalStatus = document.getElementById('modalStatus');
+            const modalText = document.getElementById('modalText');
+            
+            if (modal) {
+                modalStatus.className = 'status-indicator status-success';
+                modalText.textContent = 'SÍ';
+            } else {
+                modalStatus.className = 'status-indicator status-error';
+                modalText.textContent = 'NO';
+            }
+
+            // Verificar placeholder
+            const placeholder = modal ? modal.querySelector('img[src*="placeholder.svg"]') : null;
+            const placeholderStatus = document.getElementById('placeholderStatus');
+            const placeholderText = document.getElementById('placeholderText');
+            
+            if (placeholder) {
+                placeholderStatus.className = 'status-indicator status-warning';
+                placeholderText.textContent = 'SÍ (NECESITA CONVERSIÓN)';
+            } else {
+                placeholderStatus.className = 'status-indicator status-success';
+                placeholderText.textContent = 'NO';
+            }
+
+            // Verificar video
+            const video = modal ? modal.querySelector('video') : null;
+            const videoStatus = document.getElementById('videoStatus');
+            const videoText = document.getElementById('videoText');
+            
+            if (video) {
+                videoStatus.className = 'status-indicator status-success';
+                videoText.textContent = 'SÍ';
+            } else {
+                videoStatus.className = 'status-indicator status-error';
+                videoText.textContent = 'NO';
+            }
+        }
+
+        function forceConvertNow() {
+            logToConsole('🔥 INICIANDO CONVERSIÓN FORZADA...', 'warning');
+            
+            try {
+                // Acceder al modal en la ventana padre
+                const modal = window.parent.document.getElementById('ProductViewModal');
+                if (!modal) {
+                    logToConsole('❌ Modal no encontrado en ventana padre', 'error');
+                    return;
+                }
+                
+                logToConsole('✅ Modal encontrado', 'success');
+                
+                // Buscar placeholder
+                const placeholder = modal.querySelector('img[src*="placeholder.svg"]');
+                if (!placeholder) {
+                    logToConsole('❌ No se encontró placeholder en modal', 'error');
+                    return;
+                }
+                
+                logToConsole('✅ Placeholder encontrado: ' + placeholder.src, 'success');
+                
+                // Obtener título del producto
+                const titleElement = modal.querySelector('#productViewTitle');
+                if (!titleElement) {
+                    logToConsole('❌ No se encontró título del producto', 'error');
+                    return;
+                }
+                
+                const productTitle = titleElement.textContent.trim();
+                logToConsole('📝 Producto: ' + productTitle, 'info');
+                
+                // Buscar video
+                const videoUrl = PRODUCT_VIDEOS[productTitle];
+                if (!videoUrl) {
+                    logToConsole('❌ No hay video configurado para: ' + productTitle, 'error');
+                    return;
+                }
+                
+                logToConsole('🎬 Video encontrado: ' + videoUrl, 'success');
+                
+                // Crear elemento video
+                const video = window.parent.document.createElement('video');
+                video.src = videoUrl;
+                video.controls = true;
+                video.autoplay = false;
+                video.muted = true;
+                video.loop = true;
+                video.style.cssText = placeholder.style.cssText;
+                video.className = placeholder.className;
+                video.alt = placeholder.alt;
+                
+                // Eventos del video
+                video.onloadeddata = () => {
+                    logToConsole('✅ Video cargado exitosamente', 'success');
+                };
+                
+                video.onerror = () => {
+                    logToConsole('❌ Error cargando video', 'error');
+                };
+                
+                // Reemplazar
+                placeholder.parentNode.replaceChild(video, placeholder);
+                logToConsole('🎯 Placeholder reemplazado con video', 'success');
+                
+                // Actualizar botón carrito
+                const cartButton = modal.querySelector('#productViewAddToCart');
+                if (cartButton && cartButton.dataset.image && cartButton.dataset.image.includes('placeholder.svg')) {
+                    cartButton.dataset.image = videoUrl;
+                    logToConsole('🛒 URL de carrito actualizada', 'success');
+                }
+                
+                logToConsole('🎉 CONVERSIÓN COMPLETADA EXITOSAMENTE', 'success');
+                updateStatus();
+                
+            } catch (error) {
+                logToConsole('❌ ERROR: ' + error.message, 'error');
+            }
+        }
+
+        function debugModalContent() {
+            logToConsole('🔍 ANALIZANDO CONTENIDO DEL MODAL...', 'info');
+            
+            try {
+                const modal = window.parent.document.getElementById('ProductViewModal');
+                if (!modal) {
+                    logToConsole('❌ Modal no encontrado', 'error');
+                    return;
+                }
+                
+                const images = modal.querySelectorAll('img');
+                const videos = modal.querySelectorAll('video');
+                const title = modal.querySelector('#productViewTitle');
+                
+                logToConsole(`📊 Estadísticas del modal:`, 'info');
+                logToConsole(`   - Imágenes encontradas: ${images.length}`, 'info');
+                logToConsole(`   - Videos encontrados: ${videos.length}`, 'info');
+                logToConsole(`   - Título: ${title ? title.textContent : 'No encontrado'}`, 'info');
+                
+                images.forEach((img, index) => {
+                    logToConsole(`   - Imagen ${index + 1}: ${img.src}`, 'info');
+                });
+                
+                videos.forEach((video, index) => {
+                    logToConsole(`   - Video ${index + 1}: ${video.src}`, 'info');
+                });
+                
+            } catch (error) {
+                logToConsole('❌ ERROR en análisis: ' + error.message, 'error');
+            }
+        }
+
+        function injectVideoDirectly() {
+            logToConsole('💉 INYECTANDO VIDEO DIRECTAMENTE...', 'warning');
+            
+            try {
+                const modal = window.parent.document.getElementById('ProductViewModal');
+                if (!modal) {
+                    logToConsole('❌ Modal no encontrado', 'error');
+                    return;
+                }
+                
+                const carouselInner = modal.querySelector('#productViewCarouselInner');
+                if (!carouselInner) {
+                    logToConsole('❌ Carousel inner no encontrado', 'error');
+                    return;
+                }
+                
+                // Crear HTML con video directamente
+                const videoHTML = `
+                    <div class="carousel-item active">
+                        <video src="uploads/video_68f276851285d_1760720517.mp4" 
+                               controls 
+                               autoplay 
+                               muted 
+                               loop 
+                               class="d-block w-100" 
+                               alt="asdasdsa" 
+                               style="max-height: 400px; object-fit: contain; background: #f8f9fa;">
+                        </video>
+                    </div>
+                `;
+                
+                carouselInner.innerHTML = videoHTML;
+                logToConsole('✅ Video inyectado directamente en carousel', 'success');
+                updateStatus();
+                
+            } catch (error) {
+                logToConsole('❌ ERROR en inyección: ' + error.message, 'error');
+            }
+        }
+
+        function replaceByInnerHTML() {
+            logToConsole('🔄 REEMPLAZANDO POR innerHTML...', 'warning');
+            
+            try {
+                const modal = window.parent.document.getElementById('ProductViewModal');
+                if (!modal) {
+                    logToConsole('❌ Modal no encontrado', 'error');
+                    return;
+                }
+                
+                // Buscar y reemplazar todos los placeholders
+                const modalHTML = modal.innerHTML;
+                const updatedHTML = modalHTML.replace(
+                    /src="[^"]*placeholder\.svg"/g,
+                    'src="uploads/video_68f276851285d_1760720517.mp4"'
+                ).replace(
+                    /<img([^>]*src="uploads\/video_[^"]*\.mp4"[^>]*)>/g,
+                    '<video$1 controls autoplay muted loop></video>'
+                );
+                
+                modal.innerHTML = updatedHTML;
+                logToConsole('✅ innerHTML actualizado completamente', 'success');
+                updateStatus();
+                
+            } catch (error) {
+                logToConsole('❌ ERROR en reemplazo: ' + error.message, 'error');
+            }
+        }
+
+        // Actualizar estado cada 2 segundos
+        setInterval(updateStatus, 2000);
+        updateStatus();
+        
+        logToConsole('🎬 Debug Modal Video cargado y listo', 'success');
+    </script>
+</body>
+</html>

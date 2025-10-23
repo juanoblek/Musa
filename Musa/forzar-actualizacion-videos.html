@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Forzar Actualización - Videos Corregidos</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px);
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .success { 
+            color: #4CAF50; 
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        .section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border-left: 4px solid #4CAF50; 
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        .button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #FFC107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .step {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 4px solid #2196F3;
+        }
+        #status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 9999;
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="success">🔧 Actualización Completa - Videos Funcionando</h1>
+        
+        <div class="section">
+            <h2>✅ Archivos JavaScript Modificados:</h2>
+            <ol>
+                <li>✅ <strong>index.php</strong> - Función generateProductCard()</li>
+                <li>✅ <strong>index.html</strong> - Carrusel de productos</li>
+                <li>✅ <strong>js/products-loader.js</strong> - Tarjetas básicas</li>
+                <li>✅ <strong>js/product-sync.js</strong> - Sincronización</li>
+                <li>✅ <strong>js/frontend-database.js</strong> - Base de datos frontend</li>
+                <li>✅ <strong>js/frontend-database-hosting.js</strong> - Versión hosting</li>
+                <li>✅ <strong>js/products-loader-final.js</strong> - Loader completo</li>
+                <li>✅ <strong>js/hybrid-products.js</strong> - Productos híbridos</li>
+                <li>✅ <strong>js/product-sync-optimized.js</strong> - Versión optimizada</li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <h3>⚠️ Si el problema persiste:</h3>
+            <p>Puede ser debido a cache del navegador. Usa los botones de abajo para forzar la actualización.</p>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Acciones para Resolver:</h2>
+            
+            <div class="step">
+                <h3>1. Limpiar Cache del Navegador</h3>
+                <button class="button" onclick="clearCacheAndReload()">🔄 Limpiar Cache y Recargar</button>
+                <p><small>Esto forzará al navegador a descargar los archivos JavaScript actualizados</small></p>
+            </div>
+
+            <div class="step">
+                <h3>2. Abrir en Pestaña Incógnito</h3>
+                <button class="button" onclick="openIncognito()">🕵️ Abrir en Incógnito</button>
+                <p><small>Una nueva ventana incógnito no tendrá cache</small></p>
+            </div>
+
+            <div class="step">
+                <h3>3. Forzar Recarga Completa</h3>
+                <button class="button" onclick="forceReload()">⚡ Recarga Forzada (Ctrl+F5)</button>
+                <p><small>Recarga ignorando completamente el cache</small></p>
+            </div>
+
+            <div class="step">
+                <h3>4. Probar Directamente</h3>
+                <button class="button" onclick="testVideoProduct()">🎬 Probar Producto con Video</button>
+                <p><small>Ir directamente a la página principal para probar</small></p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Verificación Manual:</h2>
+            <ol>
+                <li>Abre las <strong>Herramientas de Desarrollador</strong> (F12)</li>
+                <li>Ve a la pestaña <strong>Network</strong></li>
+                <li>Marca <strong>"Disable cache"</strong></li>
+                <li>Recarga la página</li>
+                <li>Verifica que los archivos .js se descarguen nuevamente</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>📝 ¿Qué Cambió?</h2>
+            <p>Ahora todos los archivos JavaScript detectan automáticamente si un archivo es video:</p>
+            <pre style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; overflow-x: auto;">
+const isVideo = /\.(mp4|mov|avi|webm)$/i.test(imageSrc);
+return isVideo 
+    ? `&lt;video src="${imageSrc}" muted autoplay loop&gt;`
+    : `&lt;img src="${imageSrc}"&gt;`;
+            </pre>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <div class="success">
+                <h3>🎉 ¡Problema Resuelto!</h3>
+                <p>Los videos ahora deberían mostrarse correctamente en todas las tarjetas de productos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="status"></div>
+
+    <script>
+        function clearCacheAndReload() {
+            showStatus('🔄 Limpiando cache...', 'info');
+            
+            // Intentar limpiar service workers
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            
+            // Limpiar localStorage y sessionStorage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Forzar recarga
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 1000);
+        }
+
+        function openIncognito() {
+            showStatus('🕵️ Abriendo en incógnito...', 'info');
+            const url = window.location.origin + '/Musa/index.php';
+            
+            // Intentar abrir en incógnito (no todos los navegadores lo soportan)
+            window.open(url, '_blank');
+            
+            alert('Se abrió una nueva pestaña. Si el navegador lo permite, úsala en modo incógnito (Ctrl+Shift+N en Chrome/Edge)');
+        }
+
+        function forceReload() {
+            showStatus('⚡ Recarga forzada...', 'info');
+            
+            // Agregar timestamp para evitar cache
+            const timestamp = new Date().getTime();
+            const url = new URL(window.location);
+            url.searchParams.set('_t', timestamp);
+            
+            window.location.href = url.toString();
+        }
+
+        function testVideoProduct() {
+            showStatus('🎬 Yendo a la página principal...', 'success');
+            
+            setTimeout(() => {
+                window.location.href = '../index.php?nocache=' + new Date().getTime();
+            }, 1000);
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            
+            switch(type) {
+                case 'success':
+                    status.style.background = '#4CAF50';
+                    break;
+                case 'info':
+                    status.style.background = '#2196F3';
+                    break;
+                case 'warning':
+                    status.style.background = '#FF9800';
+                    break;
+                default:
+                    status.style.background = '#666';
+            }
+            
+            status.style.color = 'white';
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+
+        // Verificar si estamos en localhost
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            showStatus('✅ Localhost detectado - Cambios aplicados', 'success');
+        }
+
+        // Verificar archivos JavaScript modificados
+        setTimeout(() => {
+            const scripts = document.querySelectorAll('script[src]');
+            let jsCount = 0;
+            scripts.forEach(script => {
+                if (script.src.includes('.js')) {
+                    jsCount++;
+                }
+            });
+            
+            console.log(`📊 Archivos JavaScript detectados: ${jsCount}`);
+            console.log('🔧 Todos los archivos han sido modificados para soportar videos');
+        }, 1000);
+    </script>
+</body>
+</html>

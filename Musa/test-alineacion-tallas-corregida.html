@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Alineación de Tallas - Corregida</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .size-color-selector {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+        
+        /* ANTES - Centrado (problemático) */
+        .size-options-before {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center; /* Esto causaba el problema */
+            margin-bottom: 15px;
+        }
+        
+        /* DESPUÉS - Alineado a la izquierda (correcto) */
+        .size-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-start !important;
+            align-items: flex-start !important;
+            margin-bottom: 15px;
+        }
+        
+        /* Asegurar que los colores también estén alineados a la izquierda */
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-start !important;
+            align-items: flex-start !important;
+        }
+        
+        .size-btn {
+            min-width: 45px;
+            height: 35px;
+            border: 2px solid #dee2e6;
+            background: white;
+            color: #495057;
+            font-weight: 600;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .size-btn:hover {
+            border-color: #0d6efd;
+            background: rgba(13, 110, 253, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .size-btn.active {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+        
+        .color-btn {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #dee2e6;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .color-btn:hover {
+            border-color: #0d6efd;
+            transform: translateY(-2px) scale(1.1);
+        }
+        
+        .color-btn.active {
+            border-color: #0d6efd;
+            border-width: 3px;
+        }
+        
+        .comparison-card {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-card.before {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+        
+        .comparison-card.after {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+        
+        .comparison-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .label-section {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
+                        <h3 class="mb-0">✅ Alineación de Tallas - Problema Resuelto</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h5>🎯 Problema Identificado y Corregido:</h5>
+                            <p class="mb-0">Las tallas estaban centradas debido a que faltaba la propiedad <code>justify-content: flex-start</code> en el CSS de <code>.size-options</code>. Ahora están alineadas a la izquierda como los colores.</p>
+                        </div>
+
+                        <!-- Comparación Antes vs Después -->
+                        <h4>📊 Comparación Visual</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="comparison-card before">
+                                    <h6 class="text-danger mb-3">❌ ANTES (Centrado - Incorrecto)</h6>
+                                    
+                                    <div class="size-color-selector">
+                                        <div class="label-section">Tallas:</div>
+                                        <div class="size-options-before">
+                                            <button class="btn btn-sm btn-outline-dark size-btn">S</button>
+                                            <button class="btn btn-sm btn-outline-dark size-btn">M</button>
+                                            <button class="btn btn-sm btn-outline-dark size-btn active">L</button>
+                                            <button class="btn btn-sm btn-outline-dark size-btn">XL</button>
+                                        </div>
+                                        
+                                        <div class="label-section">Colores:</div>
+                                        <div class="color-options">
+                                            <button class="btn color-btn rounded-circle active" style="background: #121213;"></button>
+                                            <button class="btn color-btn rounded-circle" style="background: #8B4513;"></button>
+                                            <button class="btn color-btn rounded-circle" style="background: #696969;"></button>
+                                            <button class="btn color-btn rounded-circle" style="background: #F5F5DC;"></button>
+                                        </div>
+                                    </div>
+                                    
+                                    <small class="text-danger">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Las tallas están centradas, no coincide con la alineación de los colores
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="comparison-card after">
+                                    <h6 class="text-success mb-3">✅ DESPUÉS (Alineado a la Izquierda - Correcto)</h6>
+                                    
+                                    <div class="size-color-selector">
+                                        <div class="label-section">Tallas:</div>
+                                        <div class="size-options">
+                                            <button class="btn btn-sm btn-outline-dark size-btn">S</button>
+                                            <button class="btn btn-sm btn-outline-dark size-btn">M</button>
+                                            <button class="btn btn-sm btn-outline-dark size-btn active">L</button>
+                                            <button class="btn btn-sm btn-outline-dark size-btn">XL</button>
+                                        </div>
+                                        
+                                        <div class="label-section">Colores:</div>
+                                        <div class="color-options">
+                                            <button class="btn color-btn rounded-circle active" style="background: #121213;"></button>
+                                            <button class="btn color-btn rounded-circle" style="background: #8B4513;"></button>
+                                            <button class="btn color-btn rounded-circle" style="background: #696969;"></button>
+                                            <button class="btn color-btn rounded-circle" style="background: #F5F5DC;"></button>
+                                        </div>
+                                    </div>
+                                    
+                                    <small class="text-success">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Ambos elementos están perfectamente alineados a la izquierda
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Casos de uso diferentes -->
+                        <h4 class="mt-5">📋 Diferentes Escenarios</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Pocas Tallas</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="size-color-selector">
+                                            <div class="label-section">Tallas:</div>
+                                            <div class="size-options">
+                                                <button class="btn btn-sm btn-outline-dark size-btn">M</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn active">L</button>
+                                            </div>
+                                            
+                                            <div class="label-section">Colores:</div>
+                                            <div class="color-options">
+                                                <button class="btn color-btn rounded-circle active" style="background: #121213;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #8B4513;"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Muchas Tallas</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="size-color-selector">
+                                            <div class="label-section">Tallas:</div>
+                                            <div class="size-options">
+                                                <button class="btn btn-sm btn-outline-dark size-btn">XS</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">S</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn active">M</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">L</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">XL</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">XXL</button>
+                                            </div>
+                                            
+                                            <div class="label-section">Colores:</div>
+                                            <div class="color-options">
+                                                <button class="btn color-btn rounded-circle active" style="background: #121213;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #8B4513;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #696969;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #F5F5DC;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #FF6B6B;"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Tallas Numéricas</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="size-color-selector">
+                                            <div class="label-section">Tallas:</div>
+                                            <div class="size-options">
+                                                <button class="btn btn-sm btn-outline-dark size-btn">28</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">30</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn active">32</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">34</button>
+                                                <button class="btn btn-sm btn-outline-dark size-btn">36</button>
+                                            </div>
+                                            
+                                            <div class="label-section">Colores:</div>
+                                            <div class="color-options">
+                                                <button class="btn color-btn rounded-circle active" style="background: #121213;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #4A90E2;"></button>
+                                                <button class="btn color-btn rounded-circle" style="background: #7ED321;"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Código CSS aplicado -->
+                        <div class="mt-5">
+                            <h4>⚙️ Código CSS Aplicado</h4>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Solución Implementada</h6>
+                                </div>
+                                <div class="card-body">
+                                    <pre class="bg-dark text-light p-3 rounded"><code>/* Botones de tallas - alineados a la izquierda como los colores */
+.size-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+}
+
+/* Asegurar que los colores también estén alineados a la izquierda */
+.color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-primary btn-lg" onclick="openMainSite()">
+                                <i class="bi bi-eye me-2"></i>
+                                Ver Alineación Corregida en Vivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openMainSite() {
+            window.open('http://localhost/Musa/', '_blank');
+            
+            setTimeout(() => {
+                alert('✅ Alineación de tallas corregida!\n\n' +
+                      'Corrección aplicada:\n' +
+                      '✅ Tallas alineadas a la izquierda como los colores\n' +
+                      '✅ justify-content: flex-start aplicado\n' +
+                      '✅ Consistencia visual mantenida\n' +
+                      '✅ Responsive design preservado\n' +
+                      '✅ UX mejorada con alineación uniforme\n\n' +
+                      'Ahora tanto las tallas como los colores tienen la misma alineación a la izquierda.');
+            }, 1000);
+        }
+
+        // Simular interactividad
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remover active de hermanos
+                this.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                // Agregar active a este
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remover active de hermanos
+                this.parentElement.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                // Agregar active a este
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

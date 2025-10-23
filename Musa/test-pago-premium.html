@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Pago Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>🧪 Prueba de Sistema de Pago Premium</h4>
+                    </div>
+                    <div class="card-body">
+                        <h5>Paso 1: Agregar productos de prueba al carrito</h5>
+                        <button class="btn btn-primary mb-3" id="addTestBtn">
+                            Agregar Productos de Prueba
+                        </button>
+                        
+                        <h5>Paso 2: Ir a la página de pago</h5>
+                        <a href="pago-premium.html" class="btn btn-success mb-3">
+                            Ir a Pago Premium
+                        </a>
+                        
+                        <h5>Estado del carrito actual:</h5>
+                        <div id="cartStatus" class="alert alert-info">
+                            Verificando...
+                        </div>
+                        
+                        <h5>Acciones de debug:</h5>
+                        <button class="btn btn-outline-warning me-2" onclick="clearCart()">
+                            Limpiar Carrito
+                        </button>
+                        <button class="btn btn-outline-info" onclick="showCart()">
+                            Ver Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para agregar productos de prueba
+        function addTestProducts() {
+            const testCart = [
+                {
+                    id: 'test-1',
+                    name: 'Camisa Elegante Azul',
+                    price: 89900,
+                    quantity: 1,
+                    color: 'Azul',
+                    size: 'M',
+                    image: 'https://via.placeholder.com/60x60/007bff/fff?text=C1'
+                },
+                {
+                    id: 'test-2',
+                    name: 'Pantalón Clásico Negro',
+                    price: 129900,
+                    quantity: 1,
+                    color: 'Negro',
+                    size: 'L',
+                    image: 'https://via.placeholder.com/60x60/000000/fff?text=P1'
+                },
+                {
+                    id: 'test-3',
+                    name: 'Blazer Premium Gris',
+                    price: 199900,
+                    quantity: 1,
+                    color: 'Gris',
+                    size: 'M',
+                    image: 'https://via.placeholder.com/60x60/6c757d/fff?text=B1'
+                }
+            ];
+            
+            localStorage.setItem('carrito', JSON.stringify(testCart));
+            updateCartStatus();
+            alert('✅ Productos de prueba agregados al carrito');
+        }
+
+        // Función para limpiar carrito
+        function clearCart() {
+            localStorage.removeItem('carrito');
+            updateCartStatus();
+            alert('🗑️ Carrito limpiado');
+        }
+
+        // Función para mostrar carrito
+        function showCart() {
+            const cart = localStorage.getItem('carrito');
+            if (cart) {
+                const cartData = JSON.parse(cart);
+                console.log('🛒 Carrito actual:', cartData);
+                alert('Ver console para detalles del carrito');
+            } else {
+                alert('Carrito vacío');
+            }
+        }
+
+        // Función para actualizar estado del carrito
+        function updateCartStatus() {
+            const cartStatus = document.getElementById('cartStatus');
+            const cart = localStorage.getItem('carrito');
+            
+            if (cart) {
+                try {
+                    const cartData = JSON.parse(cart);
+                    const total = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    cartStatus.innerHTML = `
+                        <strong>✅ Carrito con productos</strong><br>
+                        📦 ${cartData.length} producto(s)<br>
+                        💰 Subtotal: $${total.toLocaleString('es-CO')}<br>
+                        🚚 Envío: <span class="text-success fw-bold">GRATIS</span><br>
+                        💳 Total final: $${total.toLocaleString('es-CO')}<br>
+                        <small class="text-muted">Productos: ${cartData.map(item => item.name).join(', ')}</small>
+                    `;
+                    cartStatus.className = 'alert alert-success';
+                } catch (error) {
+                    cartStatus.innerHTML = `
+                        <strong>❌ Error en datos del carrito</strong><br>
+                        ${error.message}
+                    `;
+                    cartStatus.className = 'alert alert-danger';
+                }
+            } else {
+                cartStatus.innerHTML = `
+                    <strong>🛒 Carrito vacío</strong><br>
+                    No hay productos en el carrito
+                `;
+                cartStatus.className = 'alert alert-warning';
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartStatus();
+            
+            document.getElementById('addTestBtn').addEventListener('click', addTestProducts);
+        });
+    </script>
+</body>
+</html>

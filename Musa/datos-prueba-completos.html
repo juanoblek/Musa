@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Datos de Prueba - Sistema de Pagos MUSA</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #3498db;
+        }
+        .section h2 {
+            color: #2980b9;
+            margin-top: 0;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+        .data-table tr:hover {
+            background: #f5f5f5;
+        }
+        .copy-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #229954;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .steps {
+            background: #e8f6f3;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #27ae60;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+            margin: 15px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Datos de Prueba Completos - Sistema de Pagos MUSA</h1>
+        
+        <div class="action-buttons">
+            <a href="/Musa/pago-premium.html" class="btn btn-primary" target="_blank">
+                🚀 Ir a Página de Pago Premium
+            </a>
+            <a href="/Musa/test-order-database.html" class="btn btn-info" target="_blank">
+                🧪 Test Base de Datos
+            </a>
+            <button class="btn btn-success" onclick="setupFullTestCart()">
+                📦 Configurar Carrito de Prueba
+            </button>
+            <button class="btn btn-warning" onclick="clearAllData()">
+                🗑️ Limpiar Todo
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>📋 1. Datos de Formulario de Pago</h2>
+            <table class="data-table">
+                <tr>
+                    <th>Campo</th>
+                    <th>Valor de Prueba</th>
+                    <th>Acción</th>
+                </tr>
+                <tr>
+                    <td>Número de Tarjeta</td>
+                    <td><code>4013 4013 4013 4013</code></td>
+                    <td><button class="copy-btn" onclick="copyText('4013401340134013')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Titular de Tarjeta</td>
+                    <td><code>Juan Carlos Pérez González</code></td>
+                    <td><button class="copy-btn" onclick="copyText('Juan Carlos Pérez González')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Fecha de Vencimiento</td>
+                    <td><code>12/28</code></td>
+                    <td><button class="copy-btn" onclick="copyText('12/28')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Código CVV</td>
+                    <td><code>123</code></td>
+                    <td><button class="copy-btn" onclick="copyText('123')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Tipo de Documento</td>
+                    <td><code>CC</code> (Cédula de Ciudadanía)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Número de Documento</td>
+                    <td><code>12345678</code></td>
+                    <td><button class="copy-btn" onclick="copyText('12345678')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><code>test.usuario@example.com</code></td>
+                    <td><button class="copy-btn" onclick="copyText('test.usuario@example.com')">Copiar</button></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>🚚 2. Datos de Formulario de Envío</h2>
+            <table class="data-table">
+                <tr>
+                    <th>Campo</th>
+                    <th>Valor de Prueba</th>
+                    <th>Acción</th>
+                </tr>
+                <tr>
+                    <td>Nombre Completo Destinatario</td>
+                    <td><code>María Elena Rodríguez Martínez</code></td>
+                    <td><button class="copy-btn" onclick="copyText('María Elena Rodríguez Martínez')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Teléfono/Celular</td>
+                    <td><code>300 123 4567</code></td>
+                    <td><button class="copy-btn" onclick="copyText('300 123 4567')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Número de Identificación</td>
+                    <td><code>87654321</code></td>
+                    <td><button class="copy-btn" onclick="copyText('87654321')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Dirección Completa</td>
+                    <td><code>Carrera 15 #93-47, Apartamento 501, Edificio Central Park</code></td>
+                    <td><button class="copy-btn" onclick="copyText('Carrera 15 #93-47, Apartamento 501, Edificio Central Park')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Ciudad</td>
+                    <td><code>bogota</code> (Bogotá D.C.)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Departamento</td>
+                    <td><code>cundinamarca</code> (Cundinamarca)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Código Postal</td>
+                    <td><code>110221</code></td>
+                    <td><button class="copy-btn" onclick="copyText('110221')">Copiar</button></td>
+                </tr>
+                <tr>
+                    <td>Notas de Entrega</td>
+                    <td><code>Entregar en horario de 9 AM a 6 PM. Portería 24 horas disponible.</code></td>
+                    <td><button class="copy-btn" onclick="copyText('Entregar en horario de 9 AM a 6 PM. Portería 24 horas disponible.')">Copiar</button></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>📦 3. Productos de Prueba en el Carrito</h2>
+            <table class="data-table">
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Talla</th>
+                    <th>Color</th>
+                </tr>
+                <tr>
+                    <td>Camisa Formal Elegante</td>
+                    <td>$89.500</td>
+                    <td>2</td>
+                    <td>M</td>
+                    <td>Azul Marino</td>
+                </tr>
+                <tr>
+                    <td>Pantalón de Vestir Clásico</td>
+                    <td>$125.000</td>
+                    <td>1</td>
+                    <td>32</td>
+                    <td>Negro</td>
+                </tr>
+                <tr>
+                    <td>Zapatos de Cuero Premium</td>
+                    <td>$189.900</td>
+                    <td>1</td>
+                    <td>42</td>
+                    <td>Café</td>
+                </tr>
+            </table>
+            <div class="success">
+                <strong>💰 Resumen de Costos:</strong><br>
+                Subtotal: $493.400<br>
+                Envío: $12.000<br>
+                <strong>Total: $505.400</strong>
+            </div>
+        </div>
+
+        <div class="steps">
+            <h2>📋 4. Pasos para Probar el Sistema Completo</h2>
+            <div class="step">
+                <strong>Paso 1:</strong> Haz clic en "📦 Configurar Carrito de Prueba" arriba para agregar productos al carrito.
+            </div>
+            <div class="step">
+                <strong>Paso 2:</strong> Ve a la <a href="/Musa/pago-premium.html" target="_blank">Página de Pago Premium</a>.
+            </div>
+            <div class="step">
+                <strong>Paso 3:</strong> Llena el formulario de pago con los datos de la tabla arriba.
+            </div>
+            <div class="step">
+                <strong>Paso 4:</strong> Completa el formulario de envío con los datos correspondientes.
+            </div>
+            <div class="step">
+                <strong>Paso 5:</strong> Selecciona cualquier método de pago y procesa.
+            </div>
+            <div class="step">
+                <strong>Paso 6:</strong> En el simulador, haz clic en "✅ Pago Exitoso" para simular un pago exitoso.
+            </div>
+            <div class="step">
+                <strong>Paso 7:</strong> Verifica en la consola del navegador que se muestre "✅ Pedido guardado exitosamente".
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 5. Verificación en Base de Datos</h2>
+            <div class="warning">
+                <strong>⚠️ Importante:</strong> Para verificar que los datos llegaron a la base de datos, puedes:
+                <ul>
+                    <li>Revisar la consola del navegador para ver los logs de guardado</li>
+                    <li>Usar phpMyAdmin para consultar las tablas <code>envios</code> y <code>pedidos</code></li>
+                    <li>Usar la página de <a href="/Musa/test-order-database.html" target="_blank">Test de Base de Datos</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 6. Credenciales de MercadoPago Testing</h2>
+            <table class="data-table">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                </tr>
+                <tr>
+                    <td>Public Key (Frontend)</td>
+                    <td><code>TEST-4317f0d7-1b87-4e24-b76b-e1d5a3b2c4d5</code></td>
+                </tr>
+                <tr>
+                    <td>Access Token (Backend)</td>
+                    <td><code>TEST-4317f0d7-1b87-4e24-b76b-e1d5a3b2c4d5</code></td>
+                </tr>
+                <tr>
+                    <td>Modo</td>
+                    <td>Sandbox/Testing</td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="result" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; display: none;"></div>
+    </div>
+
+    <script>
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showMessage('✅ Texto copiado: ' + text, 'success');
+            }).catch(() => {
+                showMessage('❌ Error copiando texto', 'error');
+            });
+        }
+
+        function setupFullTestCart() {
+            const cart = [
+                {
+                    "nombre": "Camisa Formal Elegante",
+                    "precio": 89500,
+                    "cantidad": 2,
+                    "imagen": "camisa-formal.jpg",
+                    "talla": "M",
+                    "color": "Azul Marino",
+                    "descripcion": "Camisa formal de alta calidad, perfecta para ocasiones especiales"
+                },
+                {
+                    "nombre": "Pantalón de Vestir Clásico",
+                    "precio": 125000,
+                    "cantidad": 1,
+                    "imagen": "pantalon-vestir.jpg",
+                    "talla": "32",
+                    "color": "Negro",
+                    "descripcion": "Pantalón de vestir clásico, corte moderno y elegante"
+                },
+                {
+                    "nombre": "Zapatos de Cuero Premium",
+                    "precio": 189900,
+                    "cantidad": 1,
+                    "imagen": "zapatos-cuero.jpg",
+                    "talla": "42",
+                    "color": "Café",
+                    "descripcion": "Zapatos de cuero genuino, diseño premium y confort excepcional"
+                }
+            ];
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            showMessage('✅ Carrito configurado exitosamente con 3 productos de prueba! Total: $505.400', 'success');
+        }
+
+        function clearAllData() {
+            localStorage.removeItem('cart');
+            localStorage.clear();
+            showMessage('🗑️ Todos los datos han sido limpiados', 'warning');
+        }
+
+        function showMessage(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = message;
+            resultDiv.className = type;
+            
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Auto-setup cart on page load
+        window.addEventListener('load', () => {
+            const currentCart = localStorage.getItem('cart');
+            if (!currentCart || JSON.parse(currentCart).length === 0) {
+                setupFullTestCart();
+            } else {
+                showMessage('ℹ️ Ya tienes productos en el carrito. Usa "Limpiar Todo" si quieres configurar nuevos datos.', 'info');
+            }
+        });
+    </script>
+</body>
+</html>

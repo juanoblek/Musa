@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Estado del Servidor XAMPP - MUSA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 3rem 0;
+        }
+        .status-card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-online {
+            color: #28a745;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .status-offline {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .status-warning {
+            color: #856404;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+        }
+        .command-box {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Consolas', monospace;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 mb-4">
+                <i class="bi bi-server me-3"></i>
+                Estado del Servidor XAMPP
+            </h1>
+            <p class="lead mb-4">
+                Verificación del estado de los servicios necesarios para MUSA Fashion
+            </p>
+            <div id="serverStatus" class="alert alert-info">
+                <i class="bi bi-hourglass-split me-2"></i>
+                Verificando servicios...
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Status -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">📊 Estado de Servicios</h2>
+            
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="card status-card">
+                        <div class="card-body text-center">
+                            <div id="apacheStatus" class="status-offline p-3 rounded mb-3">
+                                <i class="bi bi-server h2 mb-0"></i>
+                            </div>
+                            <h5>Apache Web Server</h5>
+                            <p class="text-muted small">Puerto 80</p>
+                            <div id="apacheInfo">Verificando...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="card status-card">
+                        <div class="card-body text-center">
+                            <div id="mysqlStatus" class="status-offline p-3 rounded mb-3">
+                                <i class="bi bi-database h2 mb-0"></i>
+                            </div>
+                            <h5>MySQL Database</h5>
+                            <p class="text-muted small">Puerto 3306</p>
+                            <div id="mysqlInfo">Verificando...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="card status-card">
+                        <div class="card-body text-center">
+                            <div id="phpStatus" class="status-offline p-3 rounded mb-3">
+                                <i class="bi bi-code-slash h2 mb-0"></i>
+                            </div>
+                            <h5>PHP Engine</h5>
+                            <p class="text-muted small">Integrado</p>
+                            <div id="phpInfo">Verificando...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <div class="card status-card">
+                        <div class="card-body text-center">
+                            <div id="musaStatus" class="status-offline p-3 rounded mb-3">
+                                <i class="bi bi-shop h2 mb-0"></i>
+                            </div>
+                            <h5>MUSA Platform</h5>
+                            <p class="text-muted small">Aplicación</p>
+                            <div id="musaInfo">Verificando...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">🎯 Acciones Rápidas</h2>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">🌐 Acceder a la Aplicación</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info mb-3">
+                                <strong>✅ URL PRINCIPAL:</strong><br>
+                                <a href="http://localhost/Musa/" target="_blank" class="btn btn-success btn-sm">http://localhost/Musa/</a>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="http://localhost/Musa/index.html" class="btn btn-success btn-lg" target="_blank">
+                                    <i class="bi bi-shop me-2"></i>
+                                    MUSA Fashion Store
+                                </a>
+                                <a href="http://localhost/Musa/pago-premium.html" class="btn btn-info" target="_blank">
+                                    <i class="bi bi-credit-card me-2"></i>
+                                    Sistema de Pagos
+                                </a>
+                                <a href="http://localhost/Musa/admin-panel.html" class="btn btn-warning" target="_blank">
+                                    <i class="bi bi-gear me-2"></i>
+                                    Panel de Administración
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">🛠️ Herramientas de Desarrollo</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="/phpmyadmin" class="btn btn-primary" target="_blank">
+                                    <i class="bi bi-database me-2"></i>
+                                    phpMyAdmin
+                                </a>
+                                <a href="http://localhost/dashboard/" class="btn btn-secondary" target="_blank">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    XAMPP Dashboard
+                                </a>
+                                <a href="http://localhost/phpmyadmin/" class="btn btn-primary" target="_blank">
+                                    <i class="bi bi-database me-2"></i>
+                                    phpMyAdmin
+                                </a>
+                                <a href="http://localhost/Musa/config/config-global.php" class="btn btn-outline-primary" target="_blank">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    Verificar Configuración
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Reference -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">📋 Comandos de Control</h2>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0">✅ Iniciar Servicios</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="command-box mb-2">
+                                C:\xampp\xampp-control.exe
+                            </div>
+                            <small class="text-muted">Panel de control gráfico</small>
+                            
+                            <div class="command-box mb-2 mt-3">
+                                C:\xampp\apache_start.bat
+                            </div>
+                            <small class="text-muted">Iniciar Apache</small>
+                            
+                            <div class="command-box mb-2 mt-3">
+                                C:\xampp\mysql_start.bat
+                            </div>
+                            <small class="text-muted">Iniciar MySQL</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h6 class="mb-0">⏹️ Detener Servicios</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="command-box mb-2">
+                                C:\xampp\apache_stop.bat
+                            </div>
+                            <small class="text-muted">Detener Apache</small>
+                            
+                            <div class="command-box mb-2 mt-3">
+                                C:\xampp\mysql_stop.bat
+                            </div>
+                            <small class="text-muted">Detener MySQL</small>
+                            
+                            <div class="command-box mb-2 mt-3">
+                                C:\xampp\xampp_stop.exe
+                            </div>
+                            <small class="text-muted">Detener todo XAMPP</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Database Setup -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">🗄️ Configuración de Base de Datos</h2>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">⚠️ Verificar Base de Datos Local</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="dbSetupInfo">
+                                <p>Para que MUSA funcione correctamente, necesitas crear la base de datos local:</p>
+                                <ol>
+                                    <li>Ir a <a href="/phpmyadmin" target="_blank" class="btn btn-sm btn-primary">phpMyAdmin</a></li>
+                                    <li>Crear base de datos: <code>musa_moda</code></li>
+                                    <li>Importar las tablas necesarias</li>
+                                    <li>Verificar la configuración en <a href="/Musa/verificar-localhost.php" target="_blank">verificador</a></li>
+                                </ol>
+                                
+                                <div class="alert alert-info mt-3">
+                                    <strong>Estado de la BD:</strong> <span id="dbStatus">Verificando...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Verificar estado de servicios
+        async function checkServices() {
+            const serverStatus = document.getElementById('serverStatus');
+            let allOnline = true;
+
+            // Verificar Apache
+            try {
+                const apacheResponse = await fetch('http://localhost/dashboard/', { method: 'HEAD' });
+                if (apacheResponse.ok) {
+                    updateServiceStatus('apache', true, 'Corriendo');
+                } else {
+                    updateServiceStatus('apache', false, 'Error HTTP');
+                    allOnline = false;
+                }
+            } catch (error) {
+                updateServiceStatus('apache', false, 'Sin conexión');
+                allOnline = false;
+            }
+
+            // Verificar PHP
+            try {
+                const phpResponse = await fetch('/Musa/verificar-localhost.php', { method: 'HEAD' });
+                if (phpResponse.ok) {
+                    updateServiceStatus('php', true, 'Funcionando');
+                } else {
+                    updateServiceStatus('php', false, 'Error');
+                    allOnline = false;
+                }
+            } catch (error) {
+                updateServiceStatus('php', false, 'Sin respuesta');
+                allOnline = false;
+            }
+
+            // Verificar MySQL (mediante PHP)
+            try {
+                const mysqlResponse = await fetch('/Musa/api/productos-v2.php');
+                const mysqlData = await mysqlResponse.json();
+                if (mysqlData.success) {
+                    updateServiceStatus('mysql', true, 'Conectado');
+                } else {
+                    updateServiceStatus('mysql', false, 'Error de conexión');
+                    allOnline = false;
+                }
+            } catch (error) {
+                updateServiceStatus('mysql', false, 'Sin conexión BD');
+                allOnline = false;
+            }
+
+            // Verificar MUSA Platform
+            try {
+                const musaResponse = await fetch('/Musa/index.html', { method: 'HEAD' });
+                if (musaResponse.ok) {
+                    updateServiceStatus('musa', true, 'Disponible');
+                } else {
+                    updateServiceStatus('musa', false, 'No encontrado');
+                    allOnline = false;
+                }
+            } catch (error) {
+                updateServiceStatus('musa', false, 'Error de carga');
+                allOnline = false;
+            }
+
+            // Actualizar estado general
+            if (allOnline) {
+                serverStatus.className = 'alert alert-success';
+                serverStatus.innerHTML = '<i class="bi bi-check-circle me-2"></i><strong>¡Todos los servicios están funcionando correctamente!</strong>';
+            } else {
+                serverStatus.className = 'alert alert-warning';
+                serverStatus.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i><strong>Algunos servicios necesitan atención.</strong>';
+            }
+        }
+
+        function updateServiceStatus(service, isOnline, message) {
+            const statusDiv = document.getElementById(service + 'Status');
+            const infoDiv = document.getElementById(service + 'Info');
+            
+            if (isOnline) {
+                statusDiv.className = 'status-online p-3 rounded mb-3';
+                infoDiv.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>' + message + '</span>';
+            } else {
+                statusDiv.className = 'status-offline p-3 rounded mb-3';
+                infoDiv.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>' + message + '</span>';
+            }
+        }
+
+        // Ejecutar verificación al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            checkServices();
+            
+            // Verificar cada 30 segundos
+            setInterval(checkServices, 30000);
+        });
+
+        // Verificar base de datos
+        async function checkDatabase() {
+            try {
+                const response = await fetch('/Musa/api/productos-v2.php');
+                const data = await response.json();
+                const dbStatus = document.getElementById('dbStatus');
+                
+                if (data.success && data.data && data.data.length > 0) {
+                    dbStatus.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>Base de datos configurada correctamente (' + data.data.length + ' productos)</span>';
+                } else {
+                    dbStatus.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Base de datos existe pero sin productos</span>';
+                }
+            } catch (error) {
+                const dbStatus = document.getElementById('dbStatus');
+                dbStatus.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Error: ' + error.message + '</span>';
+            }
+        }
+
+        // Verificar BD después de servicios
+        setTimeout(checkDatabase, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - Pedidos MUSA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .status-approved { color: #28a745; font-weight: bold; }
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-rejected { color: #dc3545; font-weight: bold; }
+        .sidebar { min-height: 100vh; background: #343a40; }
+        .sidebar .nav-link { color: #fff; }
+        .sidebar .nav-link:hover { background: #495057; }
+        .order-card { transition: all 0.3s ease; }
+        .order-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 sidebar p-0">
+                <div class="position-sticky pt-3">
+                    <div class="text-center text-white mb-4">
+                        <h4><i class="fas fa-store"></i> MUSA Admin</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#pedidos">
+                                <i class="fas fa-shopping-cart"></i> Pedidos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#productos">
+                                <i class="fas fa-box"></i> Productos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#configuracion">
+                                <i class="fas fa-cog"></i> Configuración
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-shopping-cart"></i> Gestión de Pedidos</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button class="btn btn-outline-secondary" onclick="location.reload()">
+                            <i class="fas fa-sync"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estadísticas -->
+                <div class="row mb-4" id="estadisticas">
+                    <!-- Se carga dinámicamente -->
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <select class="form-select" id="filtroEstado">
+                                    <option value="">Todos los estados</option>
+                                    <option value="approved">Aprobados</option>
+                                    <option value="pending">Pendientes</option>
+                                    <option value="rejected">Rechazados</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="filtroFecha">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" placeholder="Buscar por email o ID..." id="buscarPedido">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100" onclick="filtrarPedidos()">
+                                    <i class="fas fa-search"></i> Filtrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de pedidos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-list"></i> Lista de Pedidos</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>ID Pago</th>
+                                        <th>Cliente</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                        <th>Método</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaPedidos">
+                                    <!-- Se carga dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Cargar pedidos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarPedidos();
+            cargarEstadisticas();
+            
+            // Actualizar cada 30 segundos
+            setInterval(cargarPedidos, 30000);
+        });
+
+        async function cargarPedidos() {
+            try {
+                const response = await fetch('get-pedidos.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarPedidos(data.pedidos);
+                } else {
+                    console.error('Error cargando pedidos:', data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function mostrarPedidos(pedidos) {
+            const tbody = document.getElementById('tablaPedidos');
+            tbody.innerHTML = '';
+
+            if (pedidos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">No hay pedidos registrados</td></tr>';
+                return;
+            }
+
+            pedidos.forEach(pedido => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <span class="font-monospace">${pedido.payment_id}</span>
+                        <br><small class="text-muted">${pedido.external_reference}</small>
+                    </td>
+                    <td>
+                        <strong>${pedido.payer_name}</strong>
+                        <br><small class="text-muted">${pedido.payer_email}</small>
+                    </td>
+                    <td>
+                        <span class="fw-bold">$${formatNumber(pedido.amount)}</span>
+                        <br><small class="text-muted">${pedido.currency}</small>
+                    </td>
+                    <td>
+                        <span class="status-${pedido.status}">
+                            <i class="fas fa-${getStatusIcon(pedido.status)}"></i>
+                            ${getStatusText(pedido.status)}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary">${pedido.payment_method}</span>
+                    </td>
+                    <td>
+                        ${formatDate(pedido.created_at)}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info" onclick="verDetalle('${pedido.payment_id}')">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'approved': return 'check-circle';
+                case 'pending': return 'clock';
+                case 'rejected': return 'times-circle';
+                default: return 'question-circle';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'approved': return 'Aprobado';
+                case 'pending': return 'Pendiente';
+                case 'rejected': return 'Rechazado';
+                default: return status;
+            }
+        }
+
+        function formatNumber(number) {
+            return new Intl.NumberFormat('es-CO').format(number);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-CO', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch('get-estadisticas.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarEstadisticas(data.stats);
+                }
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        function mostrarEstadisticas(stats) {
+            const container = document.getElementById('estadisticas');
+            container.innerHTML = `
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle fa-2x me-3"></i>
+                                <div>
+                                    <h4 class="mb-0">${stats.aprobados || 0}</h4>
+                                    <small>Aprobados</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-clock fa-2x me-3"></i>
+                                <div>
+                                    <h4 class="mb-0">${stats.pendientes || 0}</h4>
+                                    <small>Pendientes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-dollar-sign fa-2x me-3"></i>
+                                <div>
+                                    <h4 class="mb-0">$${formatNumber(stats.total_ventas || 0)}</h4>
+                                    <small>Total Ventas</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shopping-cart fa-2x me-3"></i>
+                                <div>
+                                    <h4 class="mb-0">${stats.total_pedidos || 0}</h4>
+                                    <small>Total Pedidos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function verDetalle(paymentId) {
+            // Implementar modal con detalles del pedido
+            alert('Ver detalle del pedido: ' + paymentId);
+        }
+
+        function filtrarPedidos() {
+            // Implementar filtros
+            cargarPedidos();
+        }
+    </script>
+</body>
+</html>

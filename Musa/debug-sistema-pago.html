@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 DEBUG: Sistema de Pago Real</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .status.info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover { background: #0056b3; }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 DEBUG: Sistema de Pago Real MercadoPago</h1>
+    
+    <div class="debug-section">
+        <h3>📋 Estado de los Componentes</h3>
+        <div id="status-container">
+            <div class="status info">🔄 Verificando componentes...</div>
+        </div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>🧪 Pruebas Disponibles</h3>
+        <button onclick="testMercadoPagoSDK()">Test MercadoPago SDK</button>
+        <button onclick="testPagoRealClass()">Test Clase PagoReal</button>
+        <button onclick="testAPI()">Test API Backend</button>
+        <button onclick="testDatabase()">Test Base de Datos</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>📊 Logs</h3>
+        <pre id="logs"></pre>
+        <button onclick="clearLogs()">Limpiar Logs</button>
+    </div>
+    
+    <div class="debug-section">
+        <h3>🚀 Navegación</h3>
+        <a href="test-pago-real.html" style="color: #007bff; text-decoration: none;">📝 Ir al Test Completo</a> |
+        <a href="sistema-completo.html" style="color: #007bff; text-decoration: none;">🏠 Sistema Principal</a> |
+        <a href="admin-panel.html" style="color: #007bff; text-decoration: none;">👨‍💼 Panel Admin</a>
+    </div>
+    
+    <script src="js/pago-real-mercadopago.js"></script>
+    <script>
+        // Sistema de logs
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logContainer = document.getElementById('logs');
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            logContainer.textContent += logEntry;
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`🔧 DEBUG: ${message}`);
+        }
+        
+        function clearLogs() {
+            document.getElementById('logs').textContent = '';
+        }
+        
+        function updateStatus(id, message, type) {
+            const container = document.getElementById('status-container');
+            let statusDiv = document.getElementById(id);
+            
+            if (!statusDiv) {
+                statusDiv = document.createElement('div');
+                statusDiv.id = id;
+                statusDiv.className = `status ${type}`;
+                container.appendChild(statusDiv);
+            } else {
+                statusDiv.className = `status ${type}`;
+            }
+            
+            statusDiv.textContent = message;
+        }
+        
+        // Tests individuales
+        function testMercadoPagoSDK() {
+            log('Iniciando test de MercadoPago SDK...');
+            
+            if (typeof MercadoPago === 'undefined') {
+                updateStatus('mp-sdk', '❌ MercadoPago SDK no cargado', 'error');
+                log('ERROR: MercadoPago SDK no está disponible', 'error');
+                return false;
+            }
+            
+            try {
+                const mp = new MercadoPago('TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f');
+                updateStatus('mp-sdk', '✅ MercadoPago SDK funcionando', 'success');
+                log('MercadoPago SDK inicializado correctamente', 'success');
+                return true;
+            } catch (error) {
+                updateStatus('mp-sdk', '❌ Error inicializando MercadoPago: ' + error.message, 'error');
+                log('ERROR inicializando MercadoPago: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        function testPagoRealClass() {
+            log('Iniciando test de clase PagoRealMercadoPago...');
+            
+            if (typeof PagoRealMercadoPago === 'undefined') {
+                updateStatus('pago-class', '❌ Clase PagoRealMercadoPago no disponible', 'error');
+                log('ERROR: Clase PagoRealMercadoPago no está definida', 'error');
+                return false;
+            }
+            
+            try {
+                const pago = new PagoRealMercadoPago('TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f', true);
+                updateStatus('pago-class', '✅ Clase PagoRealMercadoPago funcionando', 'success');
+                log('Clase PagoRealMercadoPago inicializada correctamente', 'success');
+                return true;
+            } catch (error) {
+                updateStatus('pago-class', '❌ Error creando PagoRealMercadoPago: ' + error.message, 'error');
+                log('ERROR creando PagoRealMercadoPago: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        async function testAPI() {
+            log('Iniciando test de API backend...');
+            
+            try {
+                const response = await fetch('/Musa/api/test-connection.php');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.database_connected) {
+                    updateStatus('api-backend', '✅ API y Base de Datos conectados', 'success');
+                    log('API backend y BD funcionando correctamente', 'success');
+                    return true;
+                } else {
+                    updateStatus('api-backend', '⚠️ API funciona pero BD tiene problemas', 'error');
+                    log('API responde pero hay problemas con la BD', 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                updateStatus('api-backend', '❌ Error conectando con API: ' + error.message, 'error');
+                log('ERROR conectando con API: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        async function testDatabase() {
+            log('Iniciando test específico de base de datos...');
+            
+            try {
+                const response = await fetch('/Musa/api/test-connection.php');
+                const data = await response.json();
+                
+                log('Respuesta de BD: ' + JSON.stringify(data, null, 2));
+                
+                if (data.database_connected && data.tables_exist) {
+                    updateStatus('database', `✅ BD conectada con ${data.tables_count} tablas`, 'success');
+                    log(`Base de datos conectada con ${data.tables_count} tablas disponibles`, 'success');
+                    return true;
+                } else {
+                    updateStatus('database', '❌ Problemas con la base de datos', 'error');
+                    log('Problemas detectados en la base de datos', 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                updateStatus('database', '❌ Error verificando BD: ' + error.message, 'error');
+                log('ERROR verificando BD: ' + error.message, 'error');
+                return false;
+            }
+        }
+        
+        // Auto-verificación al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Iniciando verificación automática del sistema...');
+            
+            setTimeout(async function() {
+                // Test secuencial de componentes
+                const sdkOk = testMercadoPagoSDK();
+                
+                setTimeout(async function() {
+                    const classOk = testPagoRealClass();
+                    
+                    setTimeout(async function() {
+                        const apiOk = await testAPI();
+                        
+                        setTimeout(async function() {
+                            const dbOk = await testDatabase();
+                            
+                            // Resumen final
+                            if (sdkOk && classOk && apiOk && dbOk) {
+                                updateStatus('final', '🎉 Todos los componentes funcionando correctamente', 'success');
+                                log('ÉXITO: Sistema completamente funcional', 'success');
+                            } else {
+                                updateStatus('final', '⚠️ Algunos componentes tienen problemas', 'error');
+                                log('ATENCIÓN: Revisar componentes con errores', 'error');
+                            }
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

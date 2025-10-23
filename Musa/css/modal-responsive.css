@@ -1,0 +1,320 @@
+/* =============================================================================
+   MODAL RESPONSIVE SYSTEM - PROFESSIONAL IMPLEMENTATION
+   ============================================================================= */
+
+/* 
+ * RESPONSIVE MODAL SIZES
+ * Implementación profesional que garantiza que los modales se vean correctamente
+ * en todos los dispositivos siguiendo las mejores prácticas de UX/UI
+ */
+
+/* Mobile First: Configuración base para móviles */
+.modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+}
+
+.modal-content {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* =============================================================================
+   MOBILE DEVICES (< 576px)
+   ============================================================================= */
+@media (max-width: 575.98px) {
+    .modal-dialog {
+        margin: 0.25rem;
+        max-width: calc(100vw - 0.5rem);
+        width: calc(100vw - 0.5rem);
+    }
+    
+    .modal-xl,
+    .modal-lg {
+        max-width: calc(100vw - 0.5rem);
+        width: calc(100vw - 0.5rem);
+    }
+    
+    .modal-header {
+        padding: 1rem 1rem 0.5rem 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .modal-header .btn-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        margin: 0;
+    }
+    
+    .modal-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        padding-right: 2rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+    }
+    
+    .modal-footer {
+        padding: 0.75rem 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .modal-footer .btn {
+        width: 100%;
+        margin: 0;
+    }
+    
+    /* Ajustes específicos para el modal del carrito */
+    #CartModal .modal-body .row {
+        flex-direction: column;
+    }
+    
+    #CartModal .col-lg-8,
+    #CartModal .col-lg-4 {
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+    
+    /* Ajustes para el modal de productos */
+    #ProductViewModal .modal-body .row {
+        flex-direction: column;
+    }
+    
+    #ProductViewModal .col-md-6 {
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+    
+    /* Ajustes para formularios en modales */
+    .modal .form-control,
+    .modal .form-select {
+        font-size: 16px; /* Previene zoom en iOS */
+        margin-bottom: 0.75rem;
+    }
+    
+    .modal .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .modal .btn-group .btn {
+        border-radius: 0.375rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* =============================================================================
+   TABLET DEVICES (576px - 767.98px)
+   ============================================================================= */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .modal-dialog {
+        max-width: 540px;
+        margin: 1rem auto;
+    }
+    
+    .modal-xl {
+        max-width: calc(100vw - 2rem);
+    }
+    
+    .modal-lg {
+        max-width: 540px;
+    }
+    
+    .modal-header {
+        padding: 1.25rem;
+    }
+    
+    .modal-body {
+        padding: 1.25rem;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+    
+    .modal-footer {
+        padding: 1rem 1.25rem;
+    }
+}
+
+/* =============================================================================
+   DESKTOP DEVICES (768px - 991.98px)
+   ============================================================================= */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .modal-dialog {
+        max-width: 750px;
+        margin: 1.75rem auto;
+    }
+    
+    .modal-xl {
+        max-width: calc(100vw - 3rem);
+    }
+    
+    .modal-lg {
+        max-width: 750px;
+    }
+}
+
+/* =============================================================================
+   LARGE DESKTOP DEVICES (992px - 1199.98px)
+   ============================================================================= */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .modal-dialog {
+        max-width: 900px;
+        margin: 2rem auto;
+    }
+    
+    .modal-xl {
+        max-width: 950px;
+    }
+    
+    .modal-lg {
+        max-width: 800px;
+    }
+}
+
+/* =============================================================================
+   EXTRA LARGE DESKTOP DEVICES (≥ 1200px)
+   ============================================================================= */
+@media (min-width: 1200px) {
+    .modal-dialog {
+        margin: 2rem auto;
+    }
+    
+    .modal-xl {
+        max-width: 1140px;
+    }
+    
+    .modal-lg {
+        max-width: 900px;
+    }
+}
+
+/* =============================================================================
+   MODAL CONTENT SPECIFIC ADJUSTMENTS
+   ============================================================================= */
+
+/* Asegurar que las imágenes en modales sean responsive */
+.modal img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Ajustes para tablas en modales */
+.modal .table-responsive {
+    border: none;
+}
+
+.modal table {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 575.98px) {
+    .modal table {
+        font-size: 0.8rem;
+    }
+    
+    .modal .table td,
+    .modal .table th {
+        padding: 0.5rem 0.25rem;
+    }
+}
+
+/* =============================================================================
+   ENHANCED USER EXPERIENCE
+   ============================================================================= */
+
+/* Smooth transitions */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+/* Focus management */
+.modal:focus {
+    outline: none;
+}
+
+/* Scroll behavior */
+.modal-body {
+    -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+}
+
+/* Loading states */
+.modal .loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* =============================================================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================================================= */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .modal-content {
+        border: 2px solid;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .modal.fade .modal-dialog {
+        transition: none;
+    }
+}
+
+/* =============================================================================
+   SPECIFIC MODAL FIXES
+   ============================================================================= */
+
+/* Product View Modal específicos */
+#ProductViewModal .modal-body {
+    padding: 0;
+}
+
+#ProductViewModal .modal-body .container-fluid {
+    padding: 1.5rem;
+}
+
+@media (max-width: 575.98px) {
+    #ProductViewModal .modal-body .container-fluid {
+        padding: 1rem;
+    }
+}
+
+/* Cart Modal específicos */
+#CartModal .cart-items {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+@media (max-width: 575.98px) {
+    #CartModal .cart-items {
+        max-height: 300px;
+    }
+}
+
+/* Payment Modal específicos */
+#PaymentModal .modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+/* Admin Modals específicos */
+#AdminPanelModal .modal-dialog,
+#ProductFormModal .modal-dialog {
+    max-width: 95vw;
+}
+
+@media (max-width: 575.98px) {
+    #AdminPanelModal .modal-dialog,
+    #ProductFormModal .modal-dialog {
+        max-width: calc(100vw - 0.5rem);
+    }
+}

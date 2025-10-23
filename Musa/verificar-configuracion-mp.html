@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Verificador de Configuración MercadoPago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .status-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        .success { color: #28a745; }
+        .warning { color: #ffc107; }
+        .danger { color: #dc3545; }
+        .card-body { padding: 1.5rem; }
+        .check-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border-left: 4px solid #e9ecef;
+        }
+        .check-item.success { 
+            background-color: #d4edda; 
+            border-left-color: #28a745; 
+        }
+        .check-item.warning { 
+            background-color: #fff3cd; 
+            border-left-color: #ffc107; 
+        }
+        .check-item.danger { 
+            background-color: #f8d7da; 
+            border-left-color: #dc3545; 
+        }
+        .code-snippet {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-shield-check"></i>
+                            Verificador de Configuración MercadoPago
+                        </h4>
+                        <small>Verifica que tu configuración esté lista para producción</small>
+                    </div>
+                    <div class="card-body">
+                        <div id="verificacion-resultados">
+                            <div class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Verificando...</span>
+                                </div>
+                                <p class="mt-2">Verificando configuración...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button id="verificar-btn" class="btn btn-primary" onclick="verificarConfiguracion()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                                Verificar Nuevamente
+                            </button>
+                            <button class="btn btn-outline-secondary ms-2" onclick="location.reload()">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                                Recargar Página
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Panel de Instrucciones -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle"></i>
+                            Instrucciones para Completar la Configuración
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="accordion" id="instrucciones">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#paso1">
+                                        <span class="badge bg-primary me-2">1</span>
+                                        Obtener Credenciales de Producción
+                                    </button>
+                                </h2>
+                                <div id="paso1" class="accordion-collapse collapse show">
+                                    <div class="accordion-body">
+                                        <ol>
+                                            <li>Ve a <a href="https://www.mercadopago.com.co/developers/panel" target="_blank">MercadoPago Developers</a></li>
+                                            <li>Crea una aplicación de producción</li>
+                                            <li>Copia tu <strong>Public Key</strong> y <strong>Access Token</strong></li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paso2">
+                                        <span class="badge bg-primary me-2">2</span>
+                                        Actualizar Configuración Frontend
+                                    </button>
+                                </h2>
+                                <div id="paso2" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        Edita <code>config/mercadopago-config.js</code>:
+                                        <div class="code-snippet">
+PROD: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PUBLIC_KEY: 'APP_USR-tu-public-key-real',<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ACCESS_TOKEN: 'APP_USR-tu-access-token-real'<br>
+}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#paso3">
+                                        <span class="badge bg-primary me-2">3</span>
+                                        Actualizar Backend PHP
+                                    </button>
+                                </h2>
+                                <div id="paso3" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        Edita <code>api/create-preference.php</code> línea 23:
+                                        <div class="code-snippet">
+$MP_ACCESS_TOKEN = 'APP_USR-tu-access-token-real';
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="config/mercadopago-config.js"></script>
+    
+    <script>
+        // Verificar configuración de MercadoPago
+        function verificarConfiguracion() {
+            console.log('🔍 Iniciando verificación de configuración...');
+            
+            const resultados = document.getElementById('verificacion-resultados');
+            let html = '<h5 class="mb-3">Resultados de Verificación:</h5>';
+            
+            // 1. Verificar si está en modo producción
+            const esProduccion = MERCADOPAGO_CONFIG.CURRENT === 'PROD';
+            html += crearCheckItem(
+                esProduccion,
+                'Modo de Configuración',
+                esProduccion ? 'Configurado para PRODUCCIÓN ✅' : 'Está en modo TESTING ⚠️',
+                !esProduccion ? 'Cambiar CURRENT a "PROD" en mercadopago-config.js' : null
+            );
+            
+            // 2. Verificar credenciales de producción
+            const config = MERCADOPAGO_CONFIG.PROD;
+            const tieneCredencialesReales = 
+                config.PUBLIC_KEY && 
+                config.ACCESS_TOKEN && 
+                !config.PUBLIC_KEY.includes('tu-public-key') && 
+                !config.ACCESS_TOKEN.includes('tu-access-token') &&
+                config.PUBLIC_KEY.startsWith('APP_USR-') &&
+                config.ACCESS_TOKEN.startsWith('APP_USR-');
+                
+            html += crearCheckItem(
+                tieneCredencialesReales,
+                'Credenciales de Producción',
+                tieneCredencialesReales ? 'Credenciales configuradas ✅' : 'Faltan credenciales reales ❌',
+                !tieneCredencialesReales ? 'Actualizar PUBLIC_KEY y ACCESS_TOKEN en config/mercadopago-config.js' : null
+            );
+            
+            // 3. Verificar URLs de respuesta
+            const urlsValidas = 
+                MERCADOPAGO_CONFIG.URLS.SUCCESS && 
+                MERCADOPAGO_CONFIG.URLS.FAILURE && 
+                MERCADOPAGO_CONFIG.URLS.PENDING &&
+                !MERCADOPAGO_CONFIG.URLS.SUCCESS.includes('localhost');
+                
+            html += crearCheckItem(
+                urlsValidas,
+                'URLs de Respuesta',
+                urlsValidas ? 'URLs configuradas para producción ✅' : 'URLs con localhost detectado ⚠️',
+                !urlsValidas ? 'Actualizar URLs en MERCADOPAGO_CONFIG.URLS para tu dominio real' : null
+            );
+            
+            // 4. Verificar HTTPS
+            const esHTTPS = window.location.protocol === 'https:';
+            html += crearCheckItem(
+                esHTTPS,
+                'Conexión Segura (HTTPS)',
+                esHTTPS ? 'Sitio con HTTPS ✅' : 'Sitio sin HTTPS ⚠️',
+                !esHTTPS ? 'Asegurar que el sitio tenga certificado SSL en producción' : null
+            );
+            
+            // 5. Estado general
+            const todoListo = esProduccion && tieneCredencialesReales && urlsValidas && esHTTPS;
+            
+            html += `
+                <div class="alert ${todoListo ? 'alert-success' : 'alert-warning'} mt-4">
+                    <h6><i class="bi bi-${todoListo ? 'check-circle' : 'exclamation-triangle'}"></i> Estado General:</h6>
+                    ${todoListo ? 
+                        '🎉 <strong>¡Configuración completa!</strong> El sistema está listo para recibir pagos reales.' :
+                        '⚠️ <strong>Configuración incompleta.</strong> Revisa los puntos marcados arriba para completar la configuración.'
+                    }
+                </div>
+            `;
+            
+            // Mostrar información adicional
+            html += `
+                <div class="mt-4">
+                    <h6>Información de Configuración Actual:</h6>
+                    <ul class="list-unstyled">
+                        <li><strong>Modo:</strong> ${MERCADOPAGO_CONFIG.CURRENT}</li>
+                        <li><strong>Public Key:</strong> ${MERCADOPAGO_CONFIG[MERCADOPAGO_CONFIG.CURRENT].PUBLIC_KEY.substring(0, 20)}...</li>
+                        <li><strong>Moneda:</strong> ${MERCADOPAGO_CONFIG.PAYMENT_CONFIG.currency}</li>
+                        <li><strong>País:</strong> ${MERCADOPAGO_CONFIG.PAYMENT_CONFIG.country}</li>
+                    </ul>
+                </div>
+            `;
+            
+            resultados.innerHTML = html;
+        }
+        
+        function crearCheckItem(exito, titulo, descripcion, solucion) {
+            const clase = exito ? 'success' : (solucion ? 'danger' : 'warning');
+            const icono = exito ? 'bi-check-circle-fill success' : 'bi-exclamation-triangle-fill warning';
+            
+            return `
+                <div class="check-item ${clase}">
+                    <div class="d-flex align-items-start">
+                        <i class="bi ${icono} status-icon"></i>
+                        <div class="flex-grow-1">
+                            <strong>${titulo}</strong><br>
+                            <span>${descripcion}</span>
+                            ${solucion ? `<br><small class="text-muted"><strong>Solución:</strong> ${solucion}</small>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Ejecutar verificación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(verificarConfiguracion, 1000);
+        });
+    </script>
+</body>
+</html>

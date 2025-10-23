@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Click Videos → Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .test-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+        .test-video {
+            max-width: 200px;
+            max-height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            margin: 5px;
+        }
+        .test-image {
+            max-width: 200px;
+            max-height: 150px;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container test-container">
+        <h1 class="text-center mb-4">🎬 Test Click Videos → Modal</h1>
+        
+        <div class="alert alert-info">
+            <h6>🧪 Test de Event Listeners:</h6>
+            <p>Verifica que al hacer clic en los videos se abra el modal ProductViewModal.</p>
+        </div>
+        
+        <div class="test-card">
+            <h4>🎬 Videos de Prueba (deben abrir modal al hacer clic)</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>Video MP4:</h6>
+                    <video src="uploads/video_68f0254985a91_1760568649.mp4" 
+                           class="test-video product-image card-img-top" 
+                           alt="Video Test MP4" 
+                           muted autoplay loop playsinline
+                           title="Click para abrir modal">
+                    </video>
+                </div>
+                <div class="col-md-4">
+                    <h6>Video MOV:</h6>
+                    <video src="uploads/test_video.mov" 
+                           class="test-video product-image card-img-top" 
+                           alt="Video Test MOV" 
+                           muted autoplay loop playsinline
+                           title="Click para abrir modal">
+                    </video>
+                </div>
+                <div class="col-md-4">
+                    <h6>Video WebM:</h6>
+                    <video src="uploads/test_video.webm" 
+                           class="test-video product-image card-img-top" 
+                           alt="Video Test WebM" 
+                           muted autoplay loop playsinline
+                           title="Click para abrir modal">
+                    </video>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h4>🖼️ Imágenes de Prueba (para comparar)</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Imagen JPG:</h6>
+                    <img src="images/placeholder.jpg" 
+                         class="test-image product-image card-img-top" 
+                         alt="Imagen Test JPG"
+                         title="Click para abrir modal">
+                </div>
+                <div class="col-md-6">
+                    <h6>Imagen que apunta a video:</h6>
+                    <img src="uploads/video_68f0254985a91_1760568649.mp4" 
+                         class="test-image card-img-top" 
+                         alt="Imagen apuntando a video"
+                         title="Esta debería convertirse a video">
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h4>🔧 Herramientas de Debug</h4>
+            <button class="btn btn-primary me-2" onclick="checkEventListeners()">🔍 Verificar Event Listeners</button>
+            <button class="btn btn-success me-2" onclick="forceReconfigure()">🔄 Reconfigurar Listeners</button>
+            <button class="btn btn-warning me-2" onclick="testDirectModalCall()">🎯 Test Modal Directo</button>
+            <button class="btn btn-info me-2" onclick="checkSystemStatus()">📊 Estado del Sistema</button>
+        </div>
+        
+        <div class="test-card">
+            <h4>📋 Resultados</h4>
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <!-- Modal simple para pruebas -->
+    <div class="modal fade" id="ProductViewModal" tabindex="-1" aria-labelledby="ProductViewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ProductViewModalLabel">Modal de Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div id="productViewCarouselInner">
+                                <div class="text-center p-4">
+                                    <p>Contenido del modal se cargará aquí...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <h3 id="productViewTitle">Producto Test</h3>
+                            <p>Este modal se abrió correctamente al hacer clic en el video.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necesarios -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/detector-inteligente-media.js"></script>
+    <script src="js/fix-video-images.js"></script>
+    <script src="js/force-video-conversion.js"></script>
+    <script src="js/configure-video-listeners.js"></script>
+    
+    <script>
+        // Función simulada showProductView
+        window.showProductView = function(element) {
+            console.log('🎯 showProductView llamada con:', element);
+            
+            const src = element.src;
+            const alt = element.alt || 'Producto';
+            
+            // Llenar modal básico
+            document.getElementById('ProductViewModalLabel').textContent = alt;
+            document.getElementById('productViewTitle').textContent = alt;
+            
+            const carouselInner = document.getElementById('productViewCarouselInner');
+            if (carouselInner && typeof generarMediaHTMLSincrono !== 'undefined') {
+                const mediaHTML = generarMediaHTMLSincrono(src, alt, "w-100", "max-height: 400px; object-fit: contain;");
+                carouselInner.innerHTML = `<div class="text-center p-4">${mediaHTML}</div>`;
+            } else {
+                carouselInner.innerHTML = `<div class="text-center p-4"><p>Elemento: ${element.tagName}</p><p>Src: ${src}</p></div>`;
+            }
+            
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('ProductViewModal'));
+            modal.show();
+            
+            // Log para debug
+            logResult('Modal abierto', element.tagName, src);
+        };
+        
+        function checkEventListeners() {
+            const videos = document.querySelectorAll('video');
+            const images = document.querySelectorAll('img');
+            
+            let videoListeners = 0;
+            let imageListeners = 0;
+            
+            videos.forEach(video => {
+                if (video.dataset.modalListener === 'true') {
+                    videoListeners++;
+                }
+            });
+            
+            images.forEach(img => {
+                if (img.dataset.modalListener === 'true') {
+                    imageListeners++;
+                }
+            });
+            
+            logResult('Event Listeners', `${videoListeners} videos, ${imageListeners} imágenes`, 'Configurados');
+        }
+        
+        function forceReconfigure() {
+            if (typeof window.reconfigureAllListeners === 'function') {
+                window.reconfigureAllListeners();
+                logResult('Reconfiguración', 'Función ejecutada', 'Éxito');
+            } else {
+                logResult('Reconfiguración', 'Función no disponible', 'Error');
+            }
+        }
+        
+        function testDirectModalCall() {
+            const testVideo = document.querySelector('video');
+            if (testVideo && typeof window.showProductView === 'function') {
+                window.showProductView(testVideo);
+                logResult('Test directo', 'Modal llamado directamente', 'Éxito');
+            } else {
+                logResult('Test directo', 'Video o función no disponible', 'Error');
+            }
+        }
+        
+        function checkSystemStatus() {
+            const status = {
+                'Videos encontrados': document.querySelectorAll('video').length,
+                'Imágenes encontradas': document.querySelectorAll('img').length,
+                'showProductView': typeof window.showProductView !== 'undefined' ? 'Disponible' : 'No disponible',
+                'configureVideoListeners': typeof window.configureVideoListeners !== 'undefined' ? 'Disponible' : 'No disponible',
+                'Detector inteligente': typeof generarMediaHTMLSincrono !== 'undefined' ? 'Disponible' : 'No disponible'
+            };
+            
+            let html = '<div class="alert alert-info"><h6>📊 Estado del Sistema:</h6>';
+            for (const [key, value] of Object.entries(status)) {
+                html += `<p><strong>${key}:</strong> ${value}</p>`;
+            }
+            html += '</div>';
+            
+            document.getElementById('testResults').innerHTML = html;
+        }
+        
+        function logResult(action, details, status) {
+            const timestamp = new Date().toLocaleTimeString();
+            const resultDiv = document.getElementById('testResults');
+            
+            const resultHTML = `
+                <div class="alert alert-secondary">
+                    <strong>${timestamp}</strong> - <strong>${action}:</strong> ${details} 
+                    <span class="badge ${status === 'Éxito' ? 'bg-success' : status === 'Error' ? 'bg-danger' : 'bg-info'}">${status}</span>
+                </div>
+            `;
+            
+            resultDiv.innerHTML += resultHTML;
+        }
+        
+        // Auto-verificar al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                checkSystemStatus();
+                checkEventListeners();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

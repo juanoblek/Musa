@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Simulador de Pago Exitoso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-credit-card me-2"></i>
+                            Simulador de Pago Exitoso
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Esta página simula un pago exitoso para probar el sistema de guardado de pedidos.
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Datos del Pedido de Prueba</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>Cliente:</strong> Juan Pérez Test</li>
+                                    <li class="list-group-item"><strong>Email:</strong> test@example.com</li>
+                                    <li class="list-group-item"><strong>Teléfono:</strong> 573001234567</li>
+                                    <li class="list-group-item"><strong>Ciudad:</strong> Bogotá</li>
+                                    <li class="list-group-item"><strong>Total:</strong> $89.999</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h5>Productos</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Camiseta Casual - Talla M (x1)</li>
+                                    <li class="list-group-item">Pantalón Jean - Talla 32 (x1)</li>
+                                </ul>
+                                
+                                <div class="mt-3">
+                                    <h6>Resumen de Costos</h6>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Subtotal:</span>
+                                        <span>$77.999</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Envío:</span>
+                                        <span>$12.000</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>Total:</span>
+                                        <span>$89.999</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button class="btn btn-success btn-lg" onclick="simularPagoExitoso()">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Simular Pago Exitoso
+                            </button>
+                        </div>
+                        
+                        <div id="resultado" class="mt-4"></div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="admin-panel.html" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-2"></i>
+                        Ir al Panel Admin
+                    </a>
+                    <a href="index.html" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-2"></i>
+                        Ir a la Tienda
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function simularPagoExitoso() {
+            const resultadoDiv = document.getElementById('resultado');
+            resultadoDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    Enviando datos del pedido a la base de datos...
+                </div>
+            `;
+
+            // Datos de prueba simulando un pedido real
+            const pedidoTest = {
+                pago_exitoso: true,
+                productos: [
+                    {
+                        id: 1,
+                        nombre: "Camiseta Casual",
+                        talla: "M",
+                        color: "Azul",
+                        precio: 35999,
+                        cantidad: 1
+                    },
+                    {
+                        id: 2,
+                        nombre: "Pantalón Jean",
+                        talla: "32",
+                        color: "Negro",
+                        precio: 42000,
+                        cantidad: 1
+                    }
+                ],
+                subtotal: 77999,
+                envio: 0,
+                total: 77999,
+                metodo_pago: 'tarjeta_credito',
+                datos_pago: {
+                    tarjeta_enmascarada: '•••• •••• •••• 1234',
+                    titular: 'Juan Pérez Test',
+                    email: 'test@example.com',
+                    fecha_pago: new Date().toISOString()
+                },
+                envio: {
+                    nombre_completo: 'Juan Pérez Test',
+                    email: 'test@example.com',
+                    telefono: '573001234567',
+                    departamento: 'Cundinamarca',
+                    ciudad: 'Bogotá',
+                    direccion: 'Calle 123 #45-67, Barrio Centro',
+                    codigo_postal: '110111',
+                    notas_adicionales: 'Entregar en horarios de oficina (8am-5pm)'
+                }
+            };
+
+            // Enviar a la API
+            fetch('api/guardar-pedido.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(pedidoTest)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    resultadoDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>¡Pedido guardado exitosamente!</strong><br>
+                            ID del Pedido: <strong>#${result.pedido_id}</strong><br>
+                            <small>Ahora puedes verificar el pedido en el panel administrativo.</small>
+                        </div>
+                    `;
+                } else {
+                    resultadoDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Error:</strong> ${result.message || 'Error desconocido'}
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultadoDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle me-2"></i>
+                        <strong>Error de conexión:</strong> ${error.message}
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+/**
+ * FORCE CLOSE BUTTON POSITION - Fuerza el botón de cerrar a la esquina
+ * CSS super específico para sobreescribir cualquier estilo conflictivo
+ */
+
+/* FORZAR POSICIÓN DEL BOTÓN DE CERRAR PERSONALIZADO - MÁXIMA ESPECIFICIDAD */
+#ProductViewModal.modal .modal-dialog .modal-content .modal-header .custom-close-btn,
+#ProductViewModal .modal-header .custom-close-btn,
+.modal#ProductViewModal .custom-close-btn {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 32px !important;
+    height: 32px !important;
+    border: none !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-radius: 6px !important;
+    backdrop-filter: blur(10px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    /* Asegurar que Bootstrap pueda detectar el botón */
+    outline: none !important;
+    text-decoration: none !important;
+}
+
+/* Hover effect mejorado para el botón personalizado */
+#ProductViewModal .modal-header .custom-close-btn:hover,
+.modal#ProductViewModal .custom-close-btn:hover {
+    background: rgba(0, 0, 0, 0.2) !important;
+    transform: scale(1.1) !important;
+    color: #000 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Focus state para el botón personalizado */
+#ProductViewModal .modal-header .custom-close-btn:focus,
+.modal#ProductViewModal .custom-close-btn:focus {
+    outline: 2px solid rgba(0, 0, 0, 0.3) !important;
+    outline-offset: 2px !important;
+}
+
+/* Active state para el botón personalizado */
+#ProductViewModal .modal-header .custom-close-btn:active,
+.modal#ProductViewModal .custom-close-btn:active {
+    transform: scale(0.95) !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Asegurar que el header simplificado funcione correctamente */
+#ProductViewModal .modal-header {
+    position: relative !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 15px !important;
+    min-height: 60px !important;
+}
+
+/* Responsive - Móvil */
+@media (max-width: 768px) {
+    #ProductViewModal.modal .modal-dialog .modal-content .modal-header .btn-close,
+    #ProductViewModal .modal-header .btn-close,
+    .modal#ProductViewModal .btn-close {
+        top: 8px !important;
+        right: 8px !important;
+        width: 28px !important;
+        height: 28px !important;
+        padding: 5px !important;
+    }
+}
+
+/* Responsive - Tablet */
+@media (min-width: 769px) and (max-width: 991px) {
+    #ProductViewModal.modal .modal-dialog .modal-content .modal-header .btn-close,
+    #ProductViewModal .modal-header .btn-close,
+    .modal#ProductViewModal .btn-close {
+        top: 10px !important;
+        right: 10px !important;
+    }
+}
+
+
+#ProductViewModal .modal-header .btn-close {
+    position: absolute !important;
+}
+
+/* Fix para evitar que otros elementos empujen el botón */
+#ProductViewModal .modal-header * {
+    position: relative !important; /* Cambiado de static a relative */
+}
+
+/* PERO el botón de cerrar DEBE ser absoluto */
+#ProductViewModal .modal-header .btn-close,
+#ProductViewModal .modal-header .custom-close-btn,
+#ProductViewModal .modal-header .ultra-force-close-btn {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+}
+
+/* ===== REGLAS GLOBALES PARA TODOS LOS MODALES ===== */
+.modal .modal-header .btn-close,
+.modal .modal-header .custom-close-btn,
+.modal .modal-header .ultra-force-close-btn,
+.modal .modal-header .custom-cart-close-btn {
+    position: absolute !important;
+    top: 50% !important;
+    right: 15px !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    float: none !important;
+}
+
+/* Específico para CartModal */
+#CartModal .modal-header .btn-close,
+#CartModal .modal-header .custom-close-btn,
+#CartModal .modal-header .ultra-force-close-btn,
+#CartModal .modal-header .custom-cart-close-btn {
+    position: absolute !important;
+    right: 15px !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+    z-index: 999999 !important;
+}
+
+/* Evitar que cualquier regla force position static */
+.modal-header .btn-close {
+    position: absolute !important; /* NUNCA static */
+}

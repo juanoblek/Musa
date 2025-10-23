@@ -1,0 +1,448 @@
+<!DOCTYPE html><!DOCTYPE html>
+
+<html lang="es"><html lang="es">
+
+<head><head>
+
+    <meta charset="UTF-8">    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Test Sistema de Pagos Mejorado</title>    <title>Test Sistema de Pagos Premium - MUSA</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>    <style>
+
+<body>        body {
+
+    <div class="container mt-5">            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        <h2 class="text-center mb-4">🧪 Test Sistema de Pagos Mejorado</h2>            min-height: 100vh;
+
+                    padding: 20px;
+
+        <div class="row">        }
+
+            <div class="col-md-8 mx-auto">        .test-container {
+
+                <div class="card">            background: white;
+
+                    <div class="card-header">            border-radius: 20px;
+
+                        <h5>💳 Métodos de Pago Disponibles</h5>            padding: 40px;
+
+                    </div>            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+
+                    <div class="card-body">            max-width: 800px;
+
+                        <!-- Contenedor donde se cargarán los métodos de pago -->            margin: 0 auto;
+
+                        <div class="payment-methods" id="payment-methods-container">        }
+
+                            <div class="text-center py-4">        .test-header {
+
+                                <div class="spinner-border text-primary" role="status">            text-align: center;
+
+                                    <span class="visually-hidden">Cargando métodos de pago...</span>            margin-bottom: 40px;
+
+                                </div>        }
+
+                                <p class="mt-2">Cargando métodos de pago...</p>        .test-section {
+
+                            </div>            background: #f8f9fa;
+
+                        </div>            border-radius: 15px;
+
+                                    padding: 25px;
+
+                        <!-- Contenedor para el progreso de pago -->            margin-bottom: 25px;
+
+                        <div id="mercadopago-payment-container" class="mt-4" style="display: none;">        }
+
+                            <!-- Aquí se mostrará el progreso del pago -->        .test-item {
+
+                        </div>            display: flex;
+
+                    </div>            justify-content: space-between;
+
+                </div>            align-items: center;
+
+                            padding: 15px;
+
+                <!-- Resumen del pedido para prueba -->            background: white;
+
+                <div class="card mt-4">            border-radius: 10px;
+
+                    <div class="card-header">            margin-bottom: 15px;
+
+                        <h6>📋 Resumen del Pedido (Prueba)</h6>            border-left: 4px solid #667eea;
+
+                    </div>        }
+
+                    <div class="card-body">        .status-indicator {
+
+                        <div class="d-flex justify-content-between">            width: 20px;
+
+                            <span>Producto de prueba</span>            height: 20px;
+
+                            <span>$50.000</span>            border-radius: 50%;
+
+                        </div>            display: inline-block;
+
+                        <div class="d-flex justify-content-between">        }
+
+                            <span>Envío</span>        .status-pending { background: #ffc107; }
+
+                            <span>$12.000</span>        .status-success { background: #28a745; }
+
+                        </div>        .status-error { background: #dc3545; }
+
+                        <hr>        .btn-test {
+
+                        <div class="d-flex justify-content-between fw-bold">            margin: 5px;
+
+                            <span>Total:</span>            padding: 10px 20px;
+
+                            <span data-total>$62.000</span>            border-radius: 25px;
+
+                        </div>            border: none;
+
+                    </div>            color: white;
+
+                </div>            cursor: pointer;
+
+            </div>            transition: transform 0.2s;
+
+        </div>        }
+
+    </div>        .btn-test:hover {
+
+            transform: translateY(-2px);
+
+    <!-- Bootstrap JS -->        }
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>        .cart-simulator {
+
+                background: #e8f5e8;
+
+    <!-- Script del sistema de pagos mejorado -->            border-radius: 15px;
+
+    <script src="payment-system-improved.js"></script>            padding: 20px;
+
+                margin-bottom: 25px;
+
+    <!-- Función de processPayment simulada para testing -->        }
+
+    <script>    </style>
+
+        // Simular función processPayment para testing</head>
+
+        function processPayment(method) {<body>
+
+            console.log(`🔄 [TEST] Procesando pago con método: ${method}`);    <div class="test-container">
+
+                    <div class="test-header">
+
+            const container = document.getElementById('mercadopago-payment-container');            <h1><i class="fas fa-rocket"></i> Test Sistema de Pagos Premium</h1>
+
+            container.style.display = 'block';            <p class="text-muted">Prueba completa del nuevo sistema MercadoPago</p>
+
+                    </div>
+
+            // Simulación de progreso
+
+            container.innerHTML = `        <!-- Simulador de carrito -->
+
+                <div class="alert alert-info">        <div class="cart-simulator">
+
+                    <h6><i class="fas fa-info-circle me-2"></i>Modo de Prueba</h6>            <h3><i class="fas fa-shopping-cart"></i> Simulador de Carrito</h3>
+
+                    <p class="mb-0">Método seleccionado: <strong>${method}</strong></p>            <div class="row">
+
+                    <p class="mb-0">En producción, aquí se conectaría con MercadoPago.</p>                <div class="col-md-6">
+
+                </div>                    <button class="btn btn-success btn-test" onclick="addTestProduct()">
+
+            `;                        <i class="fas fa-plus"></i> Agregar Producto Test
+
+                                </button>
+
+            // Simular respuesta después de 2 segundos                    <button class="btn btn-warning btn-test" onclick="clearCart()">
+
+            setTimeout(() => {                        <i class="fas fa-trash"></i> Limpiar Carrito
+
+                container.innerHTML = `                    </button>
+
+                    <div class="alert alert-success">                </div>
+
+                        <h6><i class="fas fa-check-circle me-2"></i>¡Simulación Exitosa!</h6>                <div class="col-md-6">
+
+                        <p class="mb-0">El método <strong>${method}</strong> está funcionando correctamente.</p>                    <div id="cartStatus" class="alert alert-info">
+
+                    </div>                        Carrito vacío
+
+                `;                    </div>
+
+            }, 2000);                </div>
+
+        }            </div>
+
+                </div>
+
+        // Log de funciones disponibles
+
+        setTimeout(() => {        <!-- Tests de páginas -->
+
+            console.log('🔍 Funciones de pago disponibles:');        <div class="test-section">
+
+            console.log('- selectPaymentMethod:', typeof window.selectPaymentMethod);            <h3><i class="fas fa-browser"></i> Tests de Páginas</h3>
+
+            console.log('- processPSEPayment:', typeof window.processPSEPayment);            
+
+            console.log('- processEfectyPayment:', typeof window.processEfectyPayment);            <div class="test-item">
+
+            console.log('- processNequiPayment:', typeof window.processNequiPayment);                <div>
+
+        }, 1000);                    <strong>Página de Pago Premium</strong>
+
+    </script>                    <small class="d-block text-muted">UI moderna con validaciones</small>
+
+</body>                </div>
+
+</html>                <div>
+                    <span class="status-indicator status-pending" id="page-status-1"></span>
+                    <button class="btn btn-primary btn-test" onclick="testPage('pago-premium.html', 1)">
+                        Probar
+                    </button>
+                </div>
+            </div>
+
+            <div class="test-item">
+                <div>
+                    <strong>Página de Éxito</strong>
+                    <small class="d-block text-muted">Animaciones y confetti</small>
+                </div>
+                <div>
+                    <span class="status-indicator status-pending" id="page-status-2"></span>
+                    <button class="btn btn-success btn-test" onclick="testPage('success-premium.html', 2)">
+                        Probar
+                    </button>
+                </div>
+            </div>
+
+            <div class="test-item">
+                <div>
+                    <strong>Página de Pago Pendiente</strong>
+                    <small class="d-block text-muted">Instrucciones y countdown</small>
+                </div>
+                <div>
+                    <span class="status-indicator status-pending" id="page-status-3"></span>
+                    <button class="btn btn-warning btn-test" onclick="testPage('pending-premium.html', 3)">
+                        Probar
+                    </button>
+                </div>
+            </div>
+
+            <div class="test-item">
+                <div>
+                    <strong>Página de Error</strong>
+                    <small class="d-block text-muted">Soluciones y soporte</small>
+                </div>
+                <div>
+                    <span class="status-indicator status-pending" id="page-status-4"></span>
+                    <button class="btn btn-danger btn-test" onclick="testPage('failure-premium.html', 4)">
+                        Probar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tests de API -->
+        <div class="test-section">
+            <h3><i class="fas fa-code"></i> Tests de API</h3>
+            
+            <div class="test-item">
+                <div>
+                    <strong>API Create Preference</strong>
+                    <small class="d-block text-muted">Backend MercadoPago</small>
+                </div>
+                <div>
+                    <span class="status-indicator status-pending" id="api-status-1"></span>
+                    <button class="btn btn-info btn-test" onclick="testAPI()">
+                        Probar API
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test completo -->
+        <div class="test-section">
+            <h3><i class="fas fa-play-circle"></i> Test Completo del Flujo</h3>
+            <div class="text-center">
+                <button class="btn btn-primary btn-lg" onclick="testCompleteFlow()" style="padding: 15px 40px; font-size: 1.2rem;">
+                    <i class="fas fa-rocket"></i> Probar Flujo Completo
+                </button>
+            </div>
+            <div id="flowResult" class="mt-3"></div>
+        </div>
+
+        <!-- Logs -->
+        <div class="test-section">
+            <h3><i class="fas fa-terminal"></i> Logs del Sistema</h3>
+            <div id="logs" style="background: #2c3e50; color: #ecf0f1; padding: 20px; border-radius: 10px; font-family: 'Courier New', monospace; max-height: 300px; overflow-y: auto;">
+                Sistema iniciado...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funciones de logging
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = {
+                'info': '#3498db',
+                'success': '#27ae60',
+                'error': '#e74c3c',
+                'warning': '#f39c12'
+            };
+            
+            logs.innerHTML += `<div style="color: ${color[type]};">[${timestamp}] ${message}</div>`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        // Simulador de carrito
+        function addTestProduct() {
+            const product = {
+                id: 1,
+                title: "Producto Test Premium",
+                price: 50000,
+                quantity: 1,
+                image: "test-image.jpg"
+            };
+            
+            localStorage.setItem('cart', JSON.stringify([product]));
+            updateCartStatus();
+            log('✅ Producto test agregado al carrito', 'success');
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cart');
+            updateCartStatus();
+            log('🗑️ Carrito limpiado', 'warning');
+        }
+
+        function updateCartStatus() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const status = document.getElementById('cartStatus');
+            
+            if (cart.length > 0) {
+                status.className = 'alert alert-success';
+                status.innerHTML = `${cart.length} producto(s) en el carrito - Total: $${cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString()}`;
+            } else {
+                status.className = 'alert alert-info';
+                status.innerHTML = 'Carrito vacío';
+            }
+        }
+
+        // Test de páginas
+        function testPage(pageName, statusId) {
+            log(`🔍 Probando página: ${pageName}`, 'info');
+            
+            fetch(pageName)
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById(`page-status-${statusId}`).className = 'status-indicator status-success';
+                        log(`✅ ${pageName} - OK`, 'success');
+                        window.open(pageName, '_blank');
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById(`page-status-${statusId}`).className = 'status-indicator status-error';
+                    log(`❌ ${pageName} - Error: ${error.message}`, 'error');
+                });
+        }
+
+        // Test de API
+        function testAPI() {
+            log('🔍 Probando API create-preference-premium.php', 'info');
+            
+            const testData = {
+                items: [{
+                    id: "test-001",
+                    title: "Producto Test API",
+                    quantity: 1,
+                    unit_price: 50000,
+                    currency_id: "COP"
+                }],
+                payer: {
+                    name: "Usuario Test",
+                    email: "test@test.com",
+                    phone: "1234567890"
+                }
+            };
+
+            fetch('api/create-preference-premium.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('api-status-1').className = 'status-indicator status-success';
+                    log('✅ API funcionando correctamente', 'success');
+                    log(`📋 Preference ID: ${data.id}`, 'info');
+                } else {
+                    throw new Error(data.message || 'Error desconocido');
+                }
+            })
+            .catch(error => {
+                document.getElementById('api-status-1').className = 'status-indicator status-error';
+                log(`❌ API Error: ${error.message}`, 'error');
+            });
+        }
+
+        // Test completo del flujo
+        function testCompleteFlow() {
+            log('🚀 Iniciando test completo del flujo...', 'info');
+            
+            // 1. Agregar producto al carrito
+            addTestProduct();
+            
+            // 2. Simular proceso de pago
+            setTimeout(() => {
+                log('💳 Simulando proceso de pago...', 'info');
+                window.open('pago-premium.html', '_blank');
+                
+                document.getElementById('flowResult').innerHTML = `
+                    <div class="alert alert-success">
+                        <h5>✅ Test Completo Iniciado</h5>
+                        <p>Se abrió la página de pago premium. Sigue estos pasos:</p>
+                        <ol>
+                            <li>Selecciona un método de pago</li>
+                            <li>Completa los datos requeridos</li>
+                            <li>Haz clic en "Procesar Pago"</li>
+                            <li>Serás redirigido a MercadoPago</li>
+                            <li>Después del pago, regresarás a las páginas de resultado</li>
+                        </ol>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartStatus();
+            log('🎯 Sistema de test cargado correctamente', 'success');
+        });
+    </script>
+</body>
+</html>

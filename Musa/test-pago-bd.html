@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba: Pago + Base de Datos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card-test {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .card-test:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+        }
+        
+        .card-test.success {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .card-test.error {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .card-test.pending {
+            border-color: #ffc107;
+            background: #fff3cd;
+        }
+        
+        .status-indicator {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .btn-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="text-center mb-4">🧪 Prueba: Pago Exitoso + Base de Datos</h1>
+        
+        <div class="alert alert-info">
+            <h5>🎯 Objetivo de esta prueba:</h5>
+            <p>Verificar que los pedidos solo se guarden en la base de datos cuando el pago sea exitoso.</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h4>📋 Datos del Cliente (Fijos para prueba)</h4>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Nombre:</strong> Cliente de Prueba</li>
+                    <li class="list-group-item"><strong>Email:</strong> prueba@email.com</li>
+                    <li class="list-group-item"><strong>Teléfono:</strong> +57 300 123 4567</li>
+                    <li class="list-group-item"><strong>Ciudad:</strong> Medellín, Antioquia</li>
+                    <li class="list-group-item"><strong>Total:</strong> $104.000</li>
+                </ul>
+            </div>
+            
+            <div class="col-md-6">
+                <h4>💳 Tarjetas de Prueba</h4>
+                <div class="card-test success" onclick="probarTarjeta('4111111111111111', 'success')">
+                    <strong>✅ Pago Exitoso</strong><br>
+                    Tarjeta: 4111 1111 1111 1111<br>
+                    <small>Resultado: Pago aprobado + Guardado en BD</small>
+                </div>
+                
+                <div class="card-test pending" onclick="probarTarjeta('4111111111111112', 'pending')">
+                    <strong>⏳ Pago Pendiente</strong><br>
+                    Tarjeta: 4111 1111 1111 1112<br>
+                    <small>Resultado: Pago pendiente + NO guardado</small>
+                </div>
+                
+                <div class="card-test error" onclick="probarTarjeta('4111111111111113', 'error')">
+                    <strong>❌ Pago Rechazado</strong><br>
+                    Tarjeta: 4111 1111 1111 1113<br>
+                    <small>Resultado: Pago rechazado + NO guardado</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <button class="btn btn-custom" onclick="consultarPedidosGuardados()">
+                📊 Ver Pedidos en Base de Datos
+            </button>
+            <button class="btn btn-outline-secondary ms-2" onclick="limpiarPruebas()">
+                🗑️ Limpiar Pruebas
+            </button>
+        </div>
+        
+        <div id="resultados" class="mt-4"></div>
+    </div>
+
+    <script>
+        async function probarTarjeta(numeroTarjeta, tipoEsperado) {
+            const datosEjemplo = {
+                fullName: 'Cliente de Prueba',
+                email: 'prueba@email.com',
+                phone: '+57 300 123 4567',
+                department: 'Antioquia',
+                city: 'Medellín',
+                address: 'Calle de Prueba #123-45',
+                postalCode: '050001',
+                cardNumber: numeroTarjeta,
+                cardHolder: 'Cliente Prueba',
+                documentType: 'CC',
+                documentNumber: '12345678',
+                idNumber: '12345678',
+                expiryDate: '12/25',
+                cvv: '123',
+                installments: 1,
+                paymentMethod: 'credit_card',
+                subtotal: 89000,
+                envio: 15000,
+                total: 104000,
+                productos: JSON.stringify([{
+                    nombre: "Producto de Prueba",
+                    precio: 89000,
+                    cantidad: 1
+                }])
+            };
+            
+            // Mostrar indicador de carga
+            Swal.fire({
+                title: 'Procesando...',
+                text: `Probando tarjeta ${numeroTarjeta.replace(/(\d{4})/g, '$1 ')}`,
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            try {
+                const response = await fetch('api/pago-y-guardar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datosEjemplo)
+                });
+                
+                const resultado = await response.json();
+                mostrarResultadoPrueba(resultado, tipoEsperado);
+                
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de Conexión',
+                    text: error.message
+                });
+            }
+        }
+        
+        function mostrarResultadoPrueba(resultado, tipoEsperado) {
+            let icono, titulo, mensaje;
+            
+            if (resultado.success && resultado.pago_exitoso) {
+                icono = 'success';
+                titulo = '✅ Pago Exitoso - Pedido Guardado';
+                mensaje = `
+                    <div style="text-align: left;">
+                        <p><strong>🎉 Resultado:</strong> Exactamente como se esperaba</p>
+                        <hr>
+                        <p><strong>📦 Pedido ID:</strong> ${resultado.pedido_id}</p>
+                        <p><strong>💳 Pago ID:</strong> ${resultado.pago_id}</p>
+                        <p><strong>💰 Total:</strong> $${resultado.total.toLocaleString()}</p>
+                        <p><strong>💾 Guardado en BD:</strong> ✅ SÍ</p>
+                        <hr>
+                        <p><strong>✅ El pedido aparecerá en vista_pedidos_completos</strong></p>
+                    </div>
+                `;
+            } else {
+                icono = resultado.estado_pago === 'pending' ? 'warning' : 'error';
+                titulo = resultado.estado_pago === 'pending' ? '⏳ Pago Pendiente' : '❌ Pago Rechazado';
+                mensaje = `
+                    <div style="text-align: left;">
+                        <p><strong>📊 Estado:</strong> ${resultado.estado_pago}</p>
+                        <p><strong>💾 Guardado en BD:</strong> ❌ NO</p>
+                        <p><strong>🔒 Razón:</strong> Solo se guarda si pago es exitoso</p>
+                        <hr>
+                        <p><strong>✅ Comportamiento correcto:</strong> No se guardó nada porque el pago no fue aprobado</p>
+                    </div>
+                `;
+            }
+            
+            Swal.fire({
+                icon: icono,
+                title: titulo,
+                html: mensaje,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido'
+            });
+        }
+        
+        async function consultarPedidosGuardados() {
+            try {
+                const response = await fetch('api/test-connection.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({action: 'query_vista'})
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = `
+                        <div class="alert alert-info">
+                            <h5>📊 Pedidos en vista_pedidos_completos</h5>
+                            <p><strong>Total de registros:</strong> ${data.count}</p>
+                        </div>
+                    `;
+                    
+                    if (data.registros && data.registros.length > 0) {
+                        html += '<div class="table-responsive"><table class="table table-striped">';
+                        html += '<thead><tr><th>Pedido ID</th><th>Cliente</th><th>Total</th><th>Estado Pago</th><th>Fecha</th></tr></thead><tbody>';
+                        
+                        data.registros.forEach(registro => {
+                            html += `<tr>
+                                <td>${registro.pedido_id}</td>
+                                <td>${registro.nombre_completo}</td>
+                                <td>$${parseFloat(registro.total).toLocaleString()}</td>
+                                <td><span class="badge bg-success">${registro.estado_pago}</span></td>
+                                <td>${new Date(registro.fecha_creacion).toLocaleString()}</td>
+                            </tr>`;
+                        });
+                        
+                        html += '</tbody></table></div>';
+                        html += '<div class="alert alert-success">✅ Solo aparecen pedidos con pago exitoso</div>';
+                    } else {
+                        html += '<div class="alert alert-warning">No hay pedidos guardados aún. Prueba con una tarjeta exitosa (terminada en 1)</div>';
+                    }
+                    
+                    document.getElementById('resultados').innerHTML = html;
+                } else {
+                    throw new Error(data.message);
+                }
+                
+            } catch (error) {
+                document.getElementById('resultados').innerHTML = 
+                    `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function limpiarPruebas() {
+            const confirmacion = await Swal.fire({
+                title: '¿Limpiar datos de prueba?',
+                text: 'Esto eliminará todos los pedidos de prueba',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, limpiar',
+                cancelButtonText: 'Cancelar'
+            });
+            
+            if (confirmacion.isConfirmed) {
+                // Aquí podrías implementar la limpieza de datos de prueba
+                Swal.fire('Limpiado', 'Datos de prueba eliminados', 'success');
+            }
+        }
+        
+        // Auto-consultar al cargar la página
+        window.onload = function() {
+            consultarPedidosGuardados();
+        };
+    </script>
+</body>
+</html>

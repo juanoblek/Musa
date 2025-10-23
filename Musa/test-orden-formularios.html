@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Orden de Formularios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-panel {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-button:hover { background: #0056b3; }
+        .test-button.active { background: #28a745; }
+        
+        .order-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            margin: 15px 0;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .iframe-container {
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📋 Test - Orden de Formularios de Pago</h1>
+    
+    <div class="test-panel">
+        <h2>✅ Orden Correcto Implementado</h2>
+        <div class="order-info">
+            <strong>🎯 NUEVO ORDEN:</strong><br>
+            1️⃣ <strong>Información de Pago</strong> (Tarjeta/PSE/Nequi/WhatsApp)<br>
+            2️⃣ <strong>Información de Envío</strong> (Nombre, dirección, teléfono, etc.)<br>
+            3️⃣ <strong>Botón de Pagar</strong>
+        </div>
+    </div>
+    
+    <div class="test-panel">
+        <h2>🧪 Probar Métodos de Pago</h2>
+        <p>Haz clic para cambiar entre métodos y verificar el orden:</p>
+        
+        <button class="test-button active" onclick="testMethod('card')">
+            💳 Tarjeta
+        </button>
+        <button class="test-button" onclick="testMethod('pse')">
+            🏦 PSE
+        </button>
+        <button class="test-button" onclick="testMethod('nequi_daviplata')">
+            📱 Nequi/Daviplata
+        </button>
+        <button class="test-button" onclick="testMethod('whatsapp')">
+            💬 WhatsApp
+        </button>
+    </div>
+    
+    <div class="test-panel">
+        <h2>📊 Verificación de Orden</h2>
+        <div id="orderCheck" class="debug-info">
+Cargando verificación...
+        </div>
+    </div>
+    
+    <div class="iframe-container">
+        <iframe id="paymentIframe" src="pago-premium.html" width="100%" height="800" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        let currentMethod = 'card';
+        
+        function testMethod(method) {
+            currentMethod = method;
+            
+            // Actualizar botones
+            document.querySelectorAll('.test-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Simular clic en el iframe
+            const iframe = document.getElementById('paymentIframe');
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                const tabs = iframeDoc.querySelectorAll('.method-tab');
+                
+                let targetTab = null;
+                tabs.forEach(tab => {
+                    if (tab.dataset.method === method) {
+                        targetTab = tab;
+                    }
+                });
+                
+                if (targetTab) {
+                    targetTab.click();
+                    setTimeout(() => verifyOrder(method), 500);
+                }
+                
+            } catch (e) {
+                addToOrderCheck(`❌ Error: ${e.message}`);
+            }
+        }
+        
+        function verifyOrder(method) {
+            const iframe = document.getElementById('paymentIframe');
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Obtener elementos principales
+                const paymentMethods = iframeDoc.querySelector('.payment-methods');
+                const shippingSection = iframeDoc.querySelector('.shipping-section');
+                const payButton = iframeDoc.getElementById('payButton');
+                
+                // Verificar orden visual
+                const elements = [];
+                if (paymentMethods) elements.push({name: '📋 Métodos de Pago', pos: paymentMethods.offsetTop});
+                if (shippingSection) elements.push({name: '📦 Información de Envío', pos: shippingSection.offsetTop});
+                if (payButton) elements.push({name: '💳 Botón de Pagar', pos: payButton.offsetTop});
+                
+                // Ordenar por posición
+                elements.sort((a, b) => a.pos - b.pos);
+                
+                let orderInfo = `🧪 VERIFICACIÓN PARA: ${method.toUpperCase()}\n`;
+                orderInfo += `═══════════════════════════════════════\n`;
+                
+                elements.forEach((el, index) => {
+                    orderInfo += `${index + 1}. ${el.name} (Y: ${el.pos}px)\n`;
+                });
+                
+                // Verificar visibilidad del formulario de envío
+                const shippingVisible = shippingSection && shippingSection.style.display !== 'none';
+                orderInfo += `\n📦 Formulario de Envío: ${shippingVisible ? '👁️ VISIBLE' : '🙈 OCULTO'}\n`;
+                
+                if (method === 'whatsapp') {
+                    orderInfo += `✅ Correcto: WhatsApp no necesita formulario de envío\n`;
+                } else if (shippingVisible) {
+                    orderInfo += `✅ Correcto: ${method} requiere información de envío\n`;
+                } else {
+                    orderInfo += `⚠️ Atención: ${method} debería mostrar formulario de envío\n`;
+                }
+                
+                orderInfo += `\n─────────────────────────────────────────\n`;
+                
+                document.getElementById('orderCheck').textContent = orderInfo;
+                
+            } catch (e) {
+                addToOrderCheck(`❌ Error verificando orden: ${e.message}`);
+            }
+        }
+        
+        function addToOrderCheck(message) {
+            const orderCheck = document.getElementById('orderCheck');
+            const timestamp = new Date().toLocaleTimeString();
+            orderCheck.textContent += `[${timestamp}] ${message}\n`;
+        }
+        
+        // Verificar cuando el iframe carga
+        document.getElementById('paymentIframe').onload = function() {
+            setTimeout(() => verifyOrder('card'), 1000);
+        };
+    </script>
+</body>
+</html>

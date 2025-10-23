@@ -1,0 +1,249 @@
+/* ===== ESTILOS MULTIMEDIA PARA CARRITO ===== */
+
+/* Elementos multimedia base */
+.media-elemento,
+.cart-item video,
+.cart-item img {
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #f8f9fa;
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Contenedor multimedia mejorado */
+.media-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+}
+
+.media-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(102, 126, 234, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.media-container:hover::before {
+    opacity: 1;
+}
+
+/* Indicador de video */
+.media-container.is-video::after {
+    content: '▶';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.7);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    z-index: 2;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.media-container.is-video:hover::after {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Desktop Grande (1200px+) */
+@media (min-width: 1200px) {
+    #CartModal .cart-item .media-elemento,
+    #CartModal .cart-item video,
+    #CartModal .cart-item img {
+        width: 100px !important;
+        height: 100px !important;
+        border-radius: 14px !important;
+    }
+    
+    .media-container.is-video::after {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+/* Desktop (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    #CartModal .cart-item .media-elemento,
+    #CartModal .cart-item video,
+    #CartModal .cart-item img {
+        width: 90px !important;
+        height: 90px !important;
+        border-radius: 12px !important;
+    }
+    
+    .media-container.is-video::after {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+    }
+}
+
+/* Tablet (768px - 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    #CartModal .cart-item .media-elemento,
+    #CartModal .cart-item video,
+    #CartModal .cart-item img {
+        width: 80px !important;
+        height: 80px !important;
+        border-radius: 10px !important;
+    }
+    
+    .media-container.is-video::after {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+}
+
+/* Móvil Grande (577px - 767px) */
+@media (min-width: 577px) and (max-width: 767px) {
+    #CartModal .cart-item .media-elemento,
+    #CartModal .cart-item video,
+    #CartModal .cart-item img {
+        width: 70px !important;
+        height: 70px !important;
+        border-radius: 8px !important;
+    }
+    
+    .media-container.is-video::after {
+        width: 22px;
+        height: 22px;
+        font-size: 9px;
+    }
+}
+
+/* Móvil Pequeño (576px y menor) */
+@media (max-width: 576px) {
+    #CartModal .cart-item .media-elemento,
+    #CartModal .cart-item video,
+    #CartModal .cart-item img {
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 8px !important;
+    }
+    
+    .media-container.is-video::after {
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+    }
+    
+    /* En móvil, reducir efectos de hover */
+    .media-container:hover::before {
+        opacity: 0.5;
+    }
+}
+
+/* ===== ESTADOS DE CARGA Y ERROR ===== */
+
+/* Placeholder mientras carga */
+.media-elemento.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, transparent 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Estado de error */
+.media-elemento.error {
+    background-color: #fee;
+    border-color: #fcc;
+    position: relative;
+}
+
+.media-elemento.error::before {
+    content: '⚠';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #dc3545;
+    font-size: 16px;
+}
+
+/* ===== INTERACCIONES MEJORADAS ===== */
+
+/* Efecto de click para touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .media-elemento:active,
+    .cart-item video:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Efectos de hover para dispositivos con cursor */
+@media (hover: hover) and (pointer: fine) {
+    .media-elemento:hover,
+    .cart-item video:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        border-color: #667eea;
+    }
+    
+    #CartModal .cart-item:hover .media-elemento,
+    #CartModal .cart-item:hover video {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+
+/* Focus para navegación por teclado */
+.media-elemento:focus,
+.cart-item video:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-color: #667eea;
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+    .media-elemento,
+    .cart-item video,
+    .media-container,
+    .media-container::before,
+    .media-container::after {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ===== MODO OSCURO (si se implementa) ===== */
+@media (prefers-color-scheme: dark) {
+    .media-elemento,
+    .cart-item video {
+        background-color: #2c3e50;
+        border-color: rgba(255,255,255,0.1);
+    }
+    
+    .media-container {
+        background: linear-gradient(45deg, #2c3e50, #34495e);
+    }
+}

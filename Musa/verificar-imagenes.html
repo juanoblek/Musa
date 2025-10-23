@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificador de Imágenes - Musa Moda</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+        .image-card { border: 1px solid #ddd; border-radius: 8px; padding: 10px; text-align: center; }
+        .image-card img { max-width: 100%; height: 150px; object-fit: cover; border-radius: 4px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificador de Imágenes de Productos</h1>
+    
+    <div id="status">Cargando información de imágenes...</div>
+    
+    <h2>📂 Imágenes en /uploads/</h2>
+    <div id="uploads-grid" class="image-grid"></div>
+    
+    <h2>🖼️ Imágenes en /images/</h2>
+    <div id="images-grid" class="image-grid"></div>
+    
+    <h2>📋 API de Productos</h2>
+    <div id="products-info"></div>
+    
+    <script>
+        async function checkImages() {
+            const statusDiv = document.getElementById('status');
+            const uploadsGrid = document.getElementById('uploads-grid');
+            const imagesGrid = document.getElementById('images-grid');
+            const productsInfo = document.getElementById('products-info');
+            
+            // Imágenes conocidas en uploads/
+            const knownUploads = [
+                'product_68e00c26a3760_1759513638.png',
+                'product_68e00c277856e_1759513639.jpeg',
+                'product_68f0165b0e170_1760564827.jpeg',
+                'product_68f01b6900240_1760566121.jpeg',
+                'product_68f02adfcde05_1760570079.jpeg',
+                'video_68f01980ed928_1760565632.mp4',
+                'video_68f01c6682ff5_1760566374.mp4'
+            ];
+            
+            // Imágenes conocidas en images/
+            const knownImages = [
+                'placeholder.svg',
+                'placeholder.jpg',
+                'clothes-1839935_1920.jpg',
+                'BLAZER.png',
+                'BLAZER CUADRADO.png',
+                'BLAZER MORADO.png'
+            ];
+            
+            // Mostrar imágenes de uploads/
+            knownUploads.forEach(filename => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                
+                const img = document.createElement('img');
+                img.src = `uploads/${filename}`;
+                img.alt = filename;
+                img.onload = () => {
+                    card.style.borderColor = '#28a745';
+                    card.innerHTML += `<div class="success">✅ ${filename}</div>`;
+                };
+                img.onerror = () => {
+                    card.style.borderColor = '#dc3545';
+                    card.innerHTML = `<div class="error">❌ ${filename}</div><div>No encontrada</div>`;
+                };
+                
+                card.appendChild(img);
+                uploadsGrid.appendChild(card);
+            });
+            
+            // Mostrar imágenes de images/
+            knownImages.forEach(filename => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                
+                const img = document.createElement('img');
+                img.src = `images/${filename}`;
+                img.alt = filename;
+                img.onload = () => {
+                    card.style.borderColor = '#28a745';
+                    card.innerHTML += `<div class="success">✅ ${filename}</div>`;
+                };
+                img.onerror = () => {
+                    card.style.borderColor = '#dc3545';
+                    card.innerHTML = `<div class="error">❌ ${filename}</div><div>No encontrada</div>`;
+                };
+                
+                card.appendChild(img);
+                imagesGrid.appendChild(card);
+            });
+            
+            // Cargar productos desde la API
+            try {
+                const response = await fetch('api/productos-api-v2.php');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    let infoHTML = `<div class="info">📦 Total productos: ${data.data.length}</div>`;
+                    
+                    const productsWithImages = data.data.filter(p => p.main_image && p.main_image !== 'NULL');
+                    const productsWithoutImages = data.data.filter(p => !p.main_image || p.main_image === 'NULL');
+                    
+                    infoHTML += `<div class="success">✅ Con imagen: ${productsWithImages.length}</div>`;
+                    infoHTML += `<div class="error">❌ Sin imagen: ${productsWithoutImages.length}</div>`;
+                    
+                    infoHTML += `<h3>🖼️ Productos con imágenes:</h3>`;
+                    infoHTML += `<div class="image-grid">`;
+                    
+                    productsWithImages.slice(0, 10).forEach(product => {
+                        infoHTML += `
+                            <div class="image-card">
+                                <img src="${product.main_image}" alt="${product.name}" 
+                                     onerror="this.style.border='2px solid red';"
+                                     onload="this.style.border='2px solid green';">
+                                <div><strong>${product.name}</strong></div>
+                                <div style="font-size: 0.8em; color: #666;">${product.main_image}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    infoHTML += `</div>`;
+                    
+                    if (productsWithoutImages.length > 0) {
+                        infoHTML += `<h3>❌ Productos sin imágenes:</h3>`;
+                        infoHTML += `<ul>`;
+                        productsWithoutImages.slice(0, 5).forEach(product => {
+                            infoHTML += `<li>${product.name} (ID: ${product.id})</li>`;
+                        });
+                        if (productsWithoutImages.length > 5) {
+                            infoHTML += `<li>... y ${productsWithoutImages.length - 5} más</li>`;
+                        }
+                        infoHTML += `</ul>`;
+                    }
+                    
+                    productsInfo.innerHTML = infoHTML;
+                } else {
+                    productsInfo.innerHTML = `<div class="error">❌ Error cargando productos: ${data.message || 'Error desconocido'}</div>`;
+                }
+            } catch (error) {
+                productsInfo.innerHTML = `<div class="error">❌ Error conectando con API: ${error.message}</div>`;
+            }
+            
+            statusDiv.innerHTML = '<div class="success">✅ Verificación completada</div>';
+        }
+        
+        // Ejecutar cuando la página cargue
+        document.addEventListener('DOMContentLoaded', checkImages);
+    </script>
+    
+    <hr>
+    <h2>🛠️ Herramientas</h2>
+    <p>
+        <a href="index.html" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">🏠 Volver al Index</a>
+        <a href="admin-panel.html" style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; margin-left: 10px;">⚙️ Panel Admin</a>
+    </p>
+</body>
+</html>

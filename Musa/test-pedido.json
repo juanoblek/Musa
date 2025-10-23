@@ -1,0 +1,22 @@
+{
+    "pago_exitoso": true,
+    "envio": {
+        "nombre_completo": "JUAN PEREZ",
+        "email": "test@test.com",
+        "telefono": "123456789",
+        "departamento": "Cundinamarca",
+        "ciudad": "Bogota",
+        "direccion": "Calle 123"
+    },
+    "productos": [
+        {
+            "name": "Test Product",
+            "price": 1000,
+            "quantity": 1
+        }
+    ],
+    "subtotal": 1000,
+    "costo_envio": 0,
+    "total": 1000,
+    "payment_id": "TEST_123"
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Syntax</title>
+</head>
+<body>
+    <div id="test">Testing...</div>
+    
+    <script>
+        // Test basic JavaScript execution
+        console.log('✅ JavaScript básico funcionando');
+        
+        // Test if scroll prevention is working
+        Element.prototype.scrollIntoView = function(options) {
+            console.log('🚫 Scroll bloqueado para:', this.tagName + (this.id ? '#' + this.id : ''));
+            return false;
+        };
+        
+        // Test scroll call
+        document.getElementById('test').scrollIntoView();
+        
+        console.log('✅ Test completado');
+    </script>
+</body>
+</html>

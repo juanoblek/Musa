@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verificación de Unificación del Carrito</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .pass { background: #d4edda; border-color: #c3e6cb; }
+        .fail { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificación Final del Carrito Unificado</h1>
+    
+    <div id="tests"></div>
+    
+    <button onclick="runTests()">🧪 Ejecutar Pruebas</button>
+    <button onclick="clearCart()">🗑️ Limpiar Carrito</button>
+    <button onclick="addTestProduct()">➕ Agregar Producto de Prueba</button>
+    
+    <script>
+        function runTests() {
+            const testsDiv = document.getElementById('tests');
+            let results = '';
+            
+            // Test 1: Verificar que solo existe 'carrito'
+            const carritoData = localStorage.getItem('carrito');
+            const cartData = localStorage.getItem('cart');
+            
+            results += `<div class="test ${cartData ? 'fail' : 'pass'}">
+                <strong>Test 1: Solo 'carrito' existe</strong><br>
+                'carrito': ${carritoData ? '✅ Existe' : '❌ No existe'}<br>
+                'cart': ${cartData ? '❌ Existe (PROBLEMA)' : '✅ No existe'}
+            </div>`;
+            
+            // Test 2: Estructura del carrito
+            if (carritoData) {
+                try {
+                    const carrito = JSON.parse(carritoData);
+                    const isArray = Array.isArray(carrito);
+                    const hasCorrectStructure = carrito.length === 0 || 
+                        carrito.every(item => 
+                            item.hasOwnProperty('precio') && 
+                            item.hasOwnProperty('cantidad') && 
+                            item.hasOwnProperty('nombre') && 
+                            item.hasOwnProperty('talla')
+                        );
+                    
+                    results += `<div class="test ${isArray && hasCorrectStructure ? 'pass' : 'fail'}">
+                        <strong>Test 2: Estructura correcta</strong><br>
+                        Es array: ${isArray ? '✅' : '❌'}<br>
+                        Estructura correcta: ${hasCorrectStructure ? '✅' : '❌'}<br>
+                        Productos en carrito: ${carrito.length}
+                    </div>`;
+                } catch (e) {
+                    results += `<div class="test fail">
+                        <strong>Test 2: Error parseando carrito</strong><br>
+                        ${e.message}
+                    </div>`;
+                }
+            }
+            
+            // Test 3: Verificar localStorage completo
+            const allKeys = Object.keys(localStorage);
+            const cartKeys = allKeys.filter(key => key.includes('cart') || key.includes('carrito'));
+            
+            results += `<div class="test info">
+                <strong>Test 3: Todas las claves relacionadas con carrito</strong><br>
+                Claves encontradas: ${cartKeys.join(', ') || 'Ninguna'}
+            </div>`;
+            
+            testsDiv.innerHTML = results;
+        }
+        
+        function clearCart() {
+            localStorage.removeItem('carrito');
+            localStorage.removeItem('cart');
+            alert('🗑️ Carrito limpiado');
+            runTests();
+        }
+        
+        function addTestProduct() {
+            let carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+            carrito.push({
+                nombre: 'Producto de Prueba',
+                precio: 50000,
+                cantidad: 1,
+                talla: 'M',
+                imagen: 'test.jpg'
+            });
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            alert('➕ Producto agregado al carrito');
+            runTests();
+        }
+        
+        // Ejecutar pruebas al cargar
+        runTests();
+    </script>
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Sales Counter - Tamaños Apropiados y Organizados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* ===== SALES COUNTER - TAMAÑO APROPIADO Y ORGANIZADO ===== */
+        
+        .sales-counter {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 6px !important;
+            flex-wrap: nowrap !important;
+            overflow: hidden !important;
+            min-width: 0 !important;
+            flex-shrink: 1 !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            margin-top: 2px !important;
+        }
+        
+        .sales-counter i {
+            font-size: 14px !important;
+            min-width: 14px !important;
+            max-width: 14px !important;
+            width: 14px !important;
+            height: 14px !important;
+            flex-shrink: 0 !important;
+            color: #ffc107 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .sales-counter .badge {
+            font-size: 11px !important;
+            padding: 3px 8px !important;
+            border-radius: 12px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            max-width: 110px !important;
+            min-width: 0 !important;
+            flex-shrink: 1 !important;
+            line-height: 1.3 !important;
+            font-weight: 600 !important;
+            background-color: #343a40 !important;
+            color: #ffffff !important;
+            border: none !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Rating group optimizado */
+        .rating-group {
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex: 1 !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+        }
+        
+        .stars-pulse {
+            display: flex !important;
+            gap: 1px !important;
+            color: #ffc107 !important;
+            font-size: 13px !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .rating-group small {
+            font-size: 11px !important;
+            color: #6c757d !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            min-width: 0 !important;
+        }
+        
+        /* Contenedor principal mejorado */
+        .rating-sales-container {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 1rem !important;
+            gap: 10px !important;
+            min-height: 28px !important;
+            overflow: hidden !important;
+        }
+        
+        /* ===== RESPONSIVE BREAKPOINTS - TAMAÑOS APROPIADOS ===== */
+        
+        /* Tablets (768px - 991px) */
+        @media (max-width: 991px) and (min-width: 768px) {
+            .sales-counter {
+                gap: 5px !important;
+            }
+            
+            .sales-counter .badge {
+                font-size: 10px !important;
+                padding: 2px 6px !important;
+                max-width: 95px !important;
+            }
+            
+            .sales-counter i {
+                font-size: 13px !important;
+                width: 13px !important;
+                height: 13px !important;
+            }
+            
+            .rating-group small {
+                font-size: 10px !important;
+            }
+            
+            .stars-pulse {
+                font-size: 12px !important;
+            }
+        }
+        
+        /* Móviles grandes (576px - 767px) */
+        @media (max-width: 767px) and (min-width: 576px) {
+            .sales-counter {
+                gap: 4px !important;
+                justify-content: flex-end !important;
+            }
+            
+            .sales-counter .badge {
+                font-size: 9px !important;
+                padding: 2px 5px !important;
+                max-width: 80px !important;
+                line-height: 1.2 !important;
+            }
+            
+            .sales-counter i {
+                font-size: 12px !important;
+                width: 12px !important;
+                height: 12px !important;
+            }
+            
+            .rating-sales-container {
+                gap: 8px !important;
+            }
+            
+            .rating-group small {
+                font-size: 9px !important;
+            }
+            
+            .stars-pulse {
+                font-size: 11px !important;
+            }
+        }
+        
+        /* Móviles pequeños (<576px) */
+        @media (max-width: 575px) {
+            .sales-counter {
+                gap: 3px !important;
+                justify-content: center !important;
+                margin-top: 4px !important;
+                padding: 2px 6px !important;
+                background: rgba(248, 249, 250, 0.9) !important;
+                border-radius: 8px !important;
+                width: auto !important;
+                min-width: 85px !important;
+            }
+            
+            .sales-counter .badge {
+                font-size: 8px !important;
+                padding: 2px 4px !important;
+                max-width: 70px !important;
+                min-width: 60px !important;
+                text-align: center !important;
+            }
+            
+            .sales-counter i {
+                font-size: 10px !important;
+                width: 10px !important;
+                height: 10px !important;
+            }
+            
+            .rating-sales-container {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 6px !important;
+                text-align: center !important;
+            }
+            
+            .rating-group {
+                flex-direction: row !important;
+                gap: 4px !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            
+            .rating-group small {
+                font-size: 8px !important;
+            }
+            
+            .stars-pulse {
+                font-size: 10px !important;
+            }
+        }
+        
+        /* Dispositivos ultra-pequeños */
+        @media (max-width: 320px) {
+            .sales-counter .badge {
+                font-size: 7px !important;
+                max-width: 60px !important;
+                padding: 1px 3px !important;
+            }
+            
+            .sales-counter i {
+                font-size: 9px !important;
+                width: 9px !important;
+                height: 9px !important;
+            }
+        }
+        
+        /* Estilos de demostración */
+        .demo-card {
+            max-width: 280px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            margin: 10px;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .demo-card .card-body {
+            padding: 12px;
+        }
+        
+        .viewport-simulator {
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            overflow: hidden;
+            resize: horizontal;
+            min-width: 250px;
+        }
+        
+        .current-breakpoint {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        /* Animaciones */
+        .sales-counter {
+            animation: slideInRight 0.4s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .comparison-before {
+            border: 2px solid #dc3545;
+            background: rgba(220, 53, 69, 0.1);
+        }
+        
+        .comparison-after {
+            border: 2px solid #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Indicador de breakpoint actual -->
+    <div class="current-breakpoint" id="breakpointIndicator">Desktop</div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-gradient text-white" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <h3 class="mb-0">✅ Sales Counter - Tamaños Apropiados y Organizados</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success">
+                            <h5>🎯 Mejoras Implementadas:</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="mb-0">
+                                        <li><strong>Font-size mejorado:</strong> 11px → 9px → 8px → 7px</li>
+                                        <li><strong>Padding optimizado:</strong> 3px 8px → 2px 4px</li>
+                                        <li><strong>Max-width aumentado:</strong> 110px → 70px</li>
+                                        <li><strong>Icono más visible:</strong> 14px → 10px → 9px</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="mb-0">
+                                        <li><strong>Gap aumentado:</strong> 6px → 3px para mayor claridad</li>
+                                        <li><strong>Line-height:</strong> 1.3 para mejor legibilidad</li>
+                                        <li><strong>Font-weight:</strong> 600 para mayor presencia</li>
+                                        <li><strong>Border-radius:</strong> 12px → 8px más elegante</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comparación Antes vs Después -->
+                        <h4>📊 Comparación: Antes vs Después</h4>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-danger">❌ Antes (Muy Pequeño)</h6>
+                                <div class="comparison-before p-3 rounded">
+                                    <div class="demo-card" style="max-width: 280px;">
+                                        <div style="height: 120px; background: linear-gradient(45deg, #dc3545, #e74c3c);"></div>
+                                        <div class="card-body">
+                                            <h6>Pantalón Tela Galleta Negro</h6>
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <div>
+                                                    <div style="color: #ffc107; font-size: 11px;">★★★★★</div>
+                                                    <small style="font-size: 9px; color: #6c757d;">1054 Opiniones</small>
+                                                </div>
+                                                <div style="display: flex; align-items: center; gap: 2px;">
+                                                    <i class="fas fa-bolt" style="font-size: 8px; color: #ffc107;"></i>
+                                                    <span style="font-size: 6px; padding: 1px 2px; background: #343a40; color: white; border-radius: 8px;">5 comprados hoy</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-primary fw-bold">$59.999</p>
+                                        </div>
+                                    </div>
+                                    <small class="text-danger">Texto muy pequeño, difícil de leer</small>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-success">✅ Después (Tamaño Apropiado)</h6>
+                                <div class="comparison-after p-3 rounded">
+                                    <div class="demo-card" style="max-width: 280px;">
+                                        <div style="height: 120px; background: linear-gradient(45deg, #28a745, #20c997);"></div>
+                                        <div class="card-body">
+                                            <h6>Pantalón Tela Galleta Negro</h6>
+                                            <div class="rating-sales-container">
+                                                <div class="rating-group">
+                                                    <div class="stars-pulse">★★★★★</div>
+                                                    <small class="text-muted">1054 Opiniones</small>
+                                                </div>
+                                                <div class="sales-counter">
+                                                    <i class="fas fa-bolt text-warning"></i>
+                                                    <span class="badge bg-dark">5 comprados hoy</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-primary fw-bold">$59.999</p>
+                                        </div>
+                                    </div>
+                                    <small class="text-success">Perfectamente legible y organizado</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Simuladores de diferentes tamaños -->
+                        <h4>📱 Simulación Responsive con Tamaños Apropiados</h4>
+                        
+                        <!-- Desktop -->
+                        <div class="mb-4">
+                            <h6>🖥️ Desktop (>991px) - Font: 11px, Padding: 3px 8px</h6>
+                            <div class="viewport-simulator" style="width: 350px;">
+                                <div class="demo-card" style="max-width: 320px;">
+                                    <div style="height: 150px; background: linear-gradient(45deg, #74b9ff, #0984e3);"></div>
+                                    <div class="card-body">
+                                        <h6>Pantalón Tela Galleta Negro</h6>
+                                        <div class="rating-sales-container">
+                                            <div class="rating-group">
+                                                <div class="stars-pulse">★★★★★</div>
+                                                <small class="text-muted">1054 Opiniones</small>
+                                            </div>
+                                            <div class="sales-counter">
+                                                <i class="fas fa-bolt text-warning"></i>
+                                                <span class="badge bg-dark">5 comprados hoy</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-primary fw-bold">$59.999</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tablet -->
+                        <div class="mb-4">
+                            <h6>📱 Tablet (768px - 991px) - Font: 10px, Padding: 2px 6px</h6>
+                            <div class="viewport-simulator" style="width: 300px;">
+                                <div class="demo-card" style="max-width: 280px;">
+                                    <div style="height: 150px; background: linear-gradient(45deg, #fd79a8, #e84393);"></div>
+                                    <div class="card-body">
+                                        <h6>Pantalón Tela Galleta Negro</h6>
+                                        <div class="rating-sales-container">
+                                            <div class="rating-group">
+                                                <div class="stars-pulse">★★★★★</div>
+                                                <small class="text-muted">1054 Opiniones</small>
+                                            </div>
+                                            <div class="sales-counter">
+                                                <i class="fas fa-bolt text-warning"></i>
+                                                <span class="badge bg-dark">5 comprados hoy</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-primary fw-bold">$59.999</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Móvil Grande -->
+                        <div class="mb-4">
+                            <h6>📱 Móvil Grande (576px - 767px) - Font: 9px, Padding: 2px 5px</h6>
+                            <div class="viewport-simulator" style="width: 250px;">
+                                <div class="demo-card" style="max-width: 230px;">
+                                    <div style="height: 150px; background: linear-gradient(45deg, #a29bfe, #6c5ce7);"></div>
+                                    <div class="card-body">
+                                        <h6>Pantalón Tela Galleta Negro</h6>
+                                        <div class="rating-sales-container">
+                                            <div class="rating-group">
+                                                <div class="stars-pulse">★★★★★</div>
+                                                <small class="text-muted">1054 Opiniones</small>
+                                            </div>
+                                            <div class="sales-counter">
+                                                <i class="fas fa-bolt text-warning"></i>
+                                                <span class="badge bg-dark">5 comprados hoy</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-primary fw-bold">$59.999</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Móvil Pequeño -->
+                        <div class="mb-4">
+                            <h6>📱 Móvil Pequeño (<576px) - Font: 8px, Padding: 2px 4px</h6>
+                            <div class="viewport-simulator" style="width: 200px;">
+                                <div class="demo-card" style="max-width: 180px;">
+                                    <div style="height: 120px; background: linear-gradient(45deg, #00b894, #00cec9);"></div>
+                                    <div class="card-body">
+                                        <h6>Pantalón Tela</h6>
+                                        <div class="rating-sales-container">
+                                            <div class="rating-group">
+                                                <div class="stars-pulse">★★★★★</div>
+                                                <small class="text-muted">1054 Opiniones</small>
+                                            </div>
+                                            <div class="sales-counter">
+                                                <i class="fas fa-bolt text-warning"></i>
+                                                <span class="badge bg-dark">5 comprados hoy</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-primary fw-bold">$59.999</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Especificaciones técnicas -->
+                        <div class="mt-5">
+                            <h4>⚙️ Nuevas Especificaciones (Tamaños Apropiados)</h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">📐 Desktop & Tablet</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <code class="d-block mb-2 text-success">font-size: 11px → 10px</code>
+                                            <code class="d-block mb-2 text-success">padding: 3px 8px → 2px 6px</code>
+                                            <code class="d-block mb-2 text-success">max-width: 110px → 95px</code>
+                                            <code class="d-block mb-2 text-success">icon-size: 14px → 13px</code>
+                                            <code class="d-block text-success">gap: 6px → 5px</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card border-info">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0">📱 Móvil</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <code class="d-block mb-2 text-info">font-size: 9px → 8px → 7px</code>
+                                            <code class="d-block mb-2 text-info">padding: 2px 5px → 2px 4px</code>
+                                            <code class="d-block mb-2 text-info">max-width: 80px → 70px → 60px</code>
+                                            <code class="d-block mb-2 text-info">background: rgba(248,249,250,0.9)</code>
+                                            <code class="d-block text-info">min-width: 85px → 60px</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-success btn-lg" onclick="openMainSite()">
+                                <i class="bi bi-eye me-2"></i>
+                                Ver Tamaños Apropiados en Vivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openMainSite() {
+            window.open('http://localhost/Musa/', '_blank');
+            
+            setTimeout(() => {
+                alert('✅ Sales Counter con tamaños apropiados!\n\n' +
+                      'Mejoras implementadas:\n' +
+                      '✅ Font-size aumentado para mejor legibilidad\n' +
+                      '✅ Padding optimizado para mejor presencia visual\n' +
+                      '✅ Max-width balanceado entre espacio y contenido\n' +
+                      '✅ Iconos más visibles y proporcionales\n' +
+                      '✅ Gaps aumentados para mayor claridad\n' +
+                      '✅ Font-weight 600 para mayor impacto\n\n' +
+                      'Ahora el contador se ve con un tamaño apropiado, organizado y perfecto en todos los dispositivos!');
+            }, 1000);
+        }
+
+        // Detector de breakpoint en tiempo real
+        function updateBreakpointIndicator() {
+            const width = window.innerWidth;
+            const indicator = document.getElementById('breakpointIndicator');
+            
+            if (width <= 320) {
+                indicator.textContent = 'Ultra-Small (7px)';
+                indicator.style.background = '#dc3545';
+            } else if (width <= 575) {
+                indicator.textContent = 'Móvil Pequeño (8px)';
+                indicator.style.background = '#fd7e14';
+            } else if (width <= 767) {
+                indicator.textContent = 'Móvil Grande (9px)';
+                indicator.style.background = '#6f42c1';
+            } else if (width <= 991) {
+                indicator.textContent = 'Tablet (10px)';
+                indicator.style.background = '#0dcaf0';
+            } else {
+                indicator.textContent = 'Desktop (11px)';
+                indicator.style.background = '#28a745';
+            }
+        }
+
+        // Actualizar al cargar y al redimensionar
+        updateBreakpointIndicator();
+        window.addEventListener('resize', updateBreakpointIndicator);
+
+        // Simular diferentes textos de contador
+        const counters = ['3 comprados hoy', '15 comprados hoy', '1 comprado hoy', '27 comprados hoy'];
+        let currentCounter = 0;
+
+        setInterval(() => {
+            const badges = document.querySelectorAll('.sales-counter .badge');
+            badges.forEach(badge => {
+                badge.textContent = counters[currentCounter];
+            });
+            currentCounter = (currentCounter + 1) % counters.length;
+        }, 3000);
+    </script>
+</body>
+</html>

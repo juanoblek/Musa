@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Debug Producto asdasdsa</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .debug-container { background: white; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #007bff; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .step { margin: 20px 0; padding: 15px; border-left: 4px solid #007bff; background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 Debug: Producto asdasdsa - Análisis Completo</h1>
+        
+        <div class="step">
+            <h3>1️⃣ Verificación API</h3>
+            <button onclick="checkAPI()">🔍 Verificar API productos-v2.php</button>
+            <div id="apiResults"></div>
+        </div>
+        
+        <div class="step">
+            <h3>2️⃣ Estado en el DOM</h3>
+            <button onclick="checkDOM()">🔍 Verificar DOM</button>
+            <div id="domResults"></div>
+        </div>
+        
+        <div class="step">
+            <h3>3️⃣ Interceptar Renderizado</h3>
+            <button onclick="interceptRender()">🔍 Debug Renderizado</button>
+            <div id="renderResults"></div>
+        </div>
+        
+        <div class="step">
+            <h3>4️⃣ Modal Debug</h3>
+            <button onclick="debugModal()">🔍 Debug Modal</button>
+            <div id="modalResults"></div>
+        </div>
+        
+        <div class="step">
+            <h3>5️⃣ Fix Directo</h3>
+            <button onclick="forceVideoFix()">🔧 Aplicar Fix Directo</button>
+            <div id="fixResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Verificar API
+        async function checkAPI() {
+            const results = document.getElementById('apiResults');
+            results.innerHTML = '<p>🔄 Verificando API...</p>';
+            
+            try {
+                const response = await fetch('api/productos-v2.php');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const asdasdsa = data.data.find(p => p.name === 'asdasdsa' || p.id === 'prod-68f2768519a0f');
+                    
+                    if (asdasdsa) {
+                        results.innerHTML = `
+                            <h4 class="success">✅ Producto encontrado en API</h4>
+                            <pre>${JSON.stringify(asdasdsa, null, 2)}</pre>
+                            <p><strong>main_image:</strong> <span class="${asdasdsa.main_image.includes('video') ? 'success' : 'error'}">${asdasdsa.main_image}</span></p>
+                        `;
+                    } else {
+                        results.innerHTML = '<p class="error">❌ Producto no encontrado en API</p>';
+                    }
+                } else {
+                    results.innerHTML = '<p class="error">❌ Error en respuesta API</p>';
+                }
+            } catch (error) {
+                results.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // 2. Verificar DOM
+        function checkDOM() {
+            const results = document.getElementById('domResults');
+            
+            // Buscar el producto en el DOM
+            const productElements = document.querySelectorAll('[data-id="prod-68f2768519a0f"]');
+            const allProducts = document.querySelectorAll('.product-card, .api-product, .main-product-card');
+            
+            let html = `
+                <h4>🔍 Estado del DOM:</h4>
+                <p>• Elementos con ID prod-68f2768519a0f: <strong>${productElements.length}</strong></p>
+                <p>• Total productos en DOM: <strong>${allProducts.length}</strong></p>
+            `;
+            
+            if (productElements.length > 0) {
+                productElements.forEach((el, index) => {
+                    const img = el.querySelector('img, video');
+                    const name = el.querySelector('h3, h4, .product-name, [class*="title"]');
+                    
+                    html += `
+                        <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <h5>Elemento ${index + 1}:</h5>
+                            <p>• Nombre: <strong>${name ? name.textContent : 'No encontrado'}</strong></p>
+                            <p>• Media: <strong>${img ? img.tagName.toLowerCase() : 'No encontrado'}</strong></p>
+                            <p>• Src: <span class="${img && img.src.includes('video') ? 'success' : 'error'}">${img ? img.src : 'No encontrado'}</span></p>
+                            <p>• data-image: <span class="${el.dataset.image && el.dataset.image.includes('video') ? 'success' : 'error'}">${el.dataset.image || 'No encontrado'}</span></p>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<p class="warning">⚠️ Producto no encontrado en el DOM</p>';
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        // 3. Interceptar renderizado
+        function interceptRender() {
+            const results = document.getElementById('renderResults');
+            results.innerHTML = '<p>🔄 Configurando interceptor...</p>';
+            
+            // Override de console.log para capturar logs de renderizado
+            const originalLog = console.log;
+            const logs = [];
+            
+            console.log = function(...args) {
+                const message = args.join(' ');
+                if (message.includes('asdasdsa') || message.includes('prod-68f2768519a0f') || message.includes('video_68f276851285d')) {
+                    logs.push(message);
+                }
+                originalLog.apply(console, args);
+            };
+            
+            // Forzar re-renderizado si es posible
+            setTimeout(() => {
+                if (window.mainProductsLoader && window.mainProductsLoader.renderProducts) {
+                    window.mainProductsLoader.renderProducts();
+                }
+                
+                setTimeout(() => {
+                    console.log = originalLog; // Restaurar console.log
+                    
+                    results.innerHTML = `
+                        <h4>📋 Logs capturados:</h4>
+                        <pre>${logs.length > 0 ? logs.join('\n') : 'No se capturaron logs específicos del producto'}</pre>
+                    `;
+                }, 2000);
+            }, 500);
+        }
+        
+        // 4. Debug modal
+        function debugModal() {
+            const results = document.getElementById('modalResults');
+            
+            // Simular datos del producto como deberían venir
+            const testData = {
+                id: 'prod-68f2768519a0f',
+                name: 'asdasdsa',
+                image: 'uploads/video_68f276851285d_1760720517.mp4',
+                title: 'asdasdsa',
+                price: '$212'
+            };
+            
+            let html = '<h4>🧪 Test Modal:</h4>';
+            
+            // Test 1: Verificar función populateProductModal
+            if (typeof window.populateProductModal === 'function') {
+                html += '<p class="success">✅ window.populateProductModal disponible</p>';
+                
+                // Test de detección
+                const isVideo = /\.(mp4|mov|avi|webm)$/i.test(testData.image);
+                html += `<p>• Detección video: <span class="${isVideo ? 'success' : 'error'}">${isVideo ? '✅ SÍ' : '❌ NO'}</span></p>`;
+                
+                // Intentar poblar modal
+                try {
+                    window.populateProductModal(testData);
+                    html += '<p class="success">✅ populateProductModal ejecutada sin errores</p>';
+                    
+                    // Verificar carousel
+                    const carousel = document.getElementById('productViewCarouselInner');
+                    if (carousel) {
+                        const hasVideo = carousel.innerHTML.includes('<video');
+                        const hasImg = carousel.innerHTML.includes('<img');
+                        html += `<p>• Carousel content: <span class="${hasVideo ? 'success' : 'error'}">${hasVideo ? '🎬 VIDEO' : hasImg ? '🖼️ IMG' : '⭕ VACÍO'}</span></p>`;
+                    }
+                } catch (error) {
+                    html += `<p class="error">❌ Error: ${error.message}</p>`;
+                }
+            } else {
+                html += '<p class="error">❌ window.populateProductModal no disponible</p>';
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        // 5. Fix directo
+        function forceVideoFix() {
+            const results = document.getElementById('fixResults');
+            results.innerHTML = '<p>🔧 Aplicando fix directo...</p>';
+            
+            // Buscar y corregir todos los elementos del producto asdasdsa
+            const productElements = document.querySelectorAll('[data-id="prod-68f2768519a0f"]');
+            let fixed = 0;
+            
+            productElements.forEach(el => {
+                // Corregir data-image
+                if (el.dataset.image && el.dataset.image.includes('placeholder')) {
+                    el.dataset.image = 'uploads/video_68f276851285d_1760720517.mp4';
+                    fixed++;
+                }
+                
+                // Corregir img/video elements
+                const media = el.querySelector('img, video');
+                if (media && media.src && media.src.includes('placeholder')) {
+                    // Reemplazar con video
+                    const videoElement = document.createElement('video');
+                    videoElement.src = 'uploads/video_68f276851285d_1760720517.mp4';
+                    videoElement.className = media.className;
+                    videoElement.alt = media.alt;
+                    videoElement.controls = true;
+                    videoElement.autoplay = true;
+                    videoElement.muted = true;
+                    videoElement.loop = true;
+                    videoElement.style.cssText = media.style.cssText;
+                    
+                    media.parentNode.replaceChild(videoElement, media);
+                    fixed++;
+                }
+            });
+            
+            // Corregir modal si está abierto
+            const carousel = document.getElementById('productViewCarouselInner');
+            if (carousel && carousel.innerHTML.includes('placeholder')) {
+                carousel.innerHTML = `
+                    <div class="carousel-item active">
+                        <video src="uploads/video_68f276851285d_1760720517.mp4" 
+                               class="d-block w-100" 
+                               alt="asdasdsa"
+                               style="max-height: 400px; object-fit: contain; background: #f8f9fa;"
+                               controls autoplay muted loop playsinline>
+                               Tu navegador no soporta la reproducción de video.
+                        </video>
+                    </div>
+                `;
+                fixed++;
+            }
+            
+            results.innerHTML = `
+                <h4 class="${fixed > 0 ? 'success' : 'warning'}">🔧 Fix aplicado</h4>
+                <p>• Elementos corregidos: <strong>${fixed}</strong></p>
+                <p class="${fixed > 0 ? 'success' : 'warning'}">${fixed > 0 ? '✅ Videos restaurados' : '⚠️ No se encontraron elementos para corregir'}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificador - Placeholders de Video</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .success { color: green; background: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .error { color: red; background: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .warning { color: orange; background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .info { color: blue; background: #d1ecf1; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .video-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .video-card { border: 1px solid #ddd; border-radius: 8px; padding: 10px; }
+        .video-preview { width: 100%; height: 200px; object-fit: cover; border-radius: 4px; }
+        .btn { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; margin: 5px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #0056b3; }
+        .btn.success { background: #28a745; }
+        .btn.warning { background: #ffc107; color: black; }
+    </style>
+</head>
+<body>
+    <h1>🎥 Verificador de Placeholders de Video</h1>
+    
+    <div id="status">Analizando elementos multimedia...</div>
+    
+    <h2>📊 Estadísticas</h2>
+    <div id="stats"></div>
+    
+    <h2>🔍 Elementos Problemáticos</h2>
+    <div id="problems"></div>
+    
+    <h2>🎬 Videos Detectados</h2>
+    <div id="videos" class="video-container"></div>
+    
+    <hr>
+    <h2>🛠️ Acciones</h2>
+    <p>
+        <a href="index.html" class="btn">🏠 Volver al Index</a>
+        <button onclick="analyzeMediaElements()" class="btn success">🔄 Re-analizar</button>
+        <button onclick="fixAllPlaceholders()" class="btn warning">🛠️ Corregir Placeholders</button>
+        <button onclick="showDetailedReport()" class="btn">📋 Reporte Detallado</button>
+    </p>
+    
+    <script>
+        function analyzeMediaElements() {
+            const statusDiv = document.getElementById('status');
+            const statsDiv = document.getElementById('stats');
+            const problemsDiv = document.getElementById('problems');
+            const videosDiv = document.getElementById('videos');
+            
+            // Estadísticas
+            const stats = {
+                totalVideos: 0,
+                videosWithPlaceholders: 0,
+                visiblePlaceholders: 0,
+                problematicContainers: 0,
+                fixedElements: 0
+            };
+            
+            const problems = [];
+            const videoElements = [];
+            
+            // Analizar contenedores de medios
+            const mediaContainers = document.querySelectorAll('.image-hover-wrapper, .card-img-wrap, .main-product-image');
+            
+            mediaContainers.forEach((container, index) => {
+                const videos = container.querySelectorAll('video');
+                const images = container.querySelectorAll('img');
+                const placeholderImages = container.querySelectorAll('img[src*="placeholder"], img.fallback-image');
+                
+                stats.totalVideos += videos.length;
+                
+                videos.forEach(video => {
+                    const videoInfo = {
+                        container: container,
+                        element: video,
+                        src: video.src,
+                        readyState: video.readyState,
+                        error: video.error,
+                        paused: video.paused,
+                        hasPlaceholder: placeholderImages.length > 0
+                    };
+                    
+                    videoElements.push(videoInfo);
+                    
+                    if (placeholderImages.length > 0) {
+                        stats.videosWithPlaceholders++;
+                        
+                        placeholderImages.forEach(img => {
+                            const isVisible = img.offsetWidth > 0 && img.offsetHeight > 0 && 
+                                            window.getComputedStyle(img).display !== 'none' &&
+                                            window.getComputedStyle(img).visibility !== 'hidden';
+                            
+                            if (isVisible) {
+                                stats.visiblePlaceholders++;
+                                stats.problematicContainers++;
+                                
+                                problems.push({
+                                    type: 'visible-placeholder',
+                                    message: `Placeholder visible junto con video funcionando`,
+                                    container: container,
+                                    video: video,
+                                    placeholder: img,
+                                    containerIndex: index
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Buscar placeholders visibles en general
+            const allPlaceholders = document.querySelectorAll('img[src*="placeholder"]:not([style*="display: none"])');
+            allPlaceholders.forEach(img => {
+                const rect = img.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    const container = img.closest('.image-hover-wrapper, .card-img-wrap, .main-product-image');
+                    const hasVideo = container ? container.querySelector('video') : false;
+                    
+                    if (hasVideo) {
+                        problems.push({
+                            type: 'standalone-placeholder',
+                            message: `Placeholder standalone visible con video presente`,
+                            container: container,
+                            placeholder: img
+                        });
+                    }
+                }
+            });
+            
+            // Mostrar estadísticas
+            let statsHTML = `
+                <div class="info">
+                    📊 <strong>Estadísticas Generales:</strong><br>
+                    • Total de videos: ${stats.totalVideos}<br>
+                    • Videos con placeholders: ${stats.videosWithPlaceholders}<br>
+                    • Placeholders visibles problemáticos: ${stats.visiblePlaceholders}<br>
+                    • Contenedores con problemas: ${stats.problematicContainers}
+                </div>
+            `;
+            
+            if (stats.visiblePlaceholders === 0) {
+                statsHTML += '<div class="success">✅ No se detectaron placeholders problemáticos</div>';
+            } else {
+                statsHTML += `<div class="error">❌ Se detectaron ${stats.visiblePlaceholders} placeholders problemáticos</div>`;
+            }
+            
+            statsDiv.innerHTML = statsHTML;
+            
+            // Mostrar problemas
+            if (problems.length === 0) {
+                problemsDiv.innerHTML = '<div class="success">✅ No se detectaron problemas con placeholders</div>';
+            } else {
+                let problemsHTML = '';
+                problems.forEach((problem, index) => {
+                    problemsHTML += `
+                        <div class="error">
+                            <strong>Problema ${index + 1}:</strong> ${problem.message}<br>
+                            <small>Tipo: ${problem.type}</small>
+                            ${problem.containerIndex !== undefined ? `<br><small>Contenedor: ${problem.containerIndex}</small>` : ''}
+                        </div>
+                    `;
+                });
+                problemsDiv.innerHTML = problemsHTML;
+            }
+            
+            // Mostrar videos
+            let videosHTML = '';
+            videoElements.forEach((videoInfo, index) => {
+                const statusText = videoInfo.error ? 'Error' : 
+                                 videoInfo.readyState >= 2 ? 'Funcionando' : 'Cargando';
+                const statusClass = videoInfo.error ? 'error' : 
+                                   videoInfo.readyState >= 2 ? 'success' : 'warning';
+                
+                videosHTML += `
+                    <div class="video-card">
+                        <video src="${videoInfo.src}" class="video-preview" muted controls></video>
+                        <div class="${statusClass}">
+                            <strong>Video ${index + 1}:</strong> ${statusText}<br>
+                            <small>ReadyState: ${videoInfo.readyState}</small><br>
+                            <small>Tiene placeholder: ${videoInfo.hasPlaceholder ? 'Sí' : 'No'}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (videosHTML === '') {
+                videosHTML = '<div class="info">No se detectaron videos en la página actual</div>';
+            }
+            
+            videosDiv.innerHTML = videosHTML;
+            
+            // Estado general
+            if (problems.length === 0) {
+                statusDiv.innerHTML = '<div class="success">✅ Análisis completado - No hay problemas con placeholders</div>';
+            } else {
+                statusDiv.innerHTML = `<div class="error">❌ Análisis completado - Se encontraron ${problems.length} problemas</div>`;
+            }
+        }
+        
+        function fixAllPlaceholders() {
+            if (typeof window.fixVideoPlaceholders === 'function') {
+                const fixed = window.fixVideoPlaceholders();
+                if (fixed > 0) {
+                    alert(`✅ Se corrigieron ${fixed} placeholders problemáticos`);
+                } else {
+                    alert('ℹ️ No se encontraron placeholders que necesitaran corrección');
+                }
+                setTimeout(analyzeMediaElements, 500);
+            } else {
+                alert('❌ Función de corrección no disponible. Asegúrate de que fix-video-placeholders.js esté cargado.');
+            }
+        }
+        
+        function showDetailedReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                videosFound: document.querySelectorAll('video').length,
+                placeholdersFound: document.querySelectorAll('img[src*="placeholder"]').length,
+                containersAnalyzed: document.querySelectorAll('.image-hover-wrapper, .card-img-wrap').length
+            };
+            
+            console.log('📋 Reporte detallado de placeholders:', report);
+            alert(`📋 Reporte generado en la consola del navegador\n\nVideos: ${report.videosFound}\nPlaceholders: ${report.placeholdersFound}\nContenedores: ${report.containersAnalyzed}`);
+        }
+        
+        // Ejecutar análisis automáticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(analyzeMediaElements, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Filtrado de Categorías</title>
+    <style>
+        .category-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            display: inline-block;
+            background: #f9f9f9;
+        }
+        .category-card:hover {
+            background: #e9e9e9;
+        }
+        .product-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+            background: white;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .filter-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .clear-filters {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de Filtrado de Categorías</h1>
+    
+    <!-- Categorías -->
+    <div id="categories-section">
+        <h2>Categorías</h2>
+        <div class="category-card" data-category="camisas">Camisas</div>
+        <div class="category-card" data-category="chaquetas">Chaquetas</div>
+        <div class="category-card" data-category="blazers">Blazers</div>
+        <div class="category-card" data-category="pantalones">Pantalones</div>
+    </div>
+
+    <!-- Mensaje de filtro -->
+    <div id="filter-message" style="display: none;"></div>
+
+    <!-- Productos -->
+    <div id="products-section">
+        <h2>Productos</h2>
+        
+        <!-- Camisas -->
+        <div class="product-card" data-category="camisas-hombre">
+            <h3>Camisa Azul Hombre</h3>
+            <p>Categoría: camisas-hombre</p>
+        </div>
+        <div class="product-card" data-category="camisas-mujer">
+            <h3>Camisa Rosa Mujer</h3>
+            <p>Categoría: camisas-mujer</p>
+        </div>
+        
+        <!-- Chaquetas -->
+        <div class="product-card" data-category="chaquetas-hombre">
+            <h3>Chaqueta Deportiva Hombre</h3>
+            <p>Categoría: chaquetas-hombre</p>
+        </div>
+        <div class="product-card" data-category="chaquetas-mujer">
+            <h3>Chaqueta Elegante Mujer</h3>
+            <p>Categoría: chaquetas-mujer</p>
+        </div>
+        
+        <!-- Blazers -->
+        <div class="product-card" data-category="blazer-hombre">
+            <h3>Blazer Negro Hombre</h3>
+            <p>Categoría: blazer-hombre</p>
+        </div>
+        <div class="product-card" data-category="blazer-mujer">
+            <h3>Blazer Morado Mujer</h3>
+            <p>Categoría: blazer-mujer</p>
+        </div>
+        
+        <!-- Pantalones -->
+        <div class="product-card" data-category="pantalones-hombre">
+            <h3>Pantalón Clásico Hombre</h3>
+            <p>Categoría: pantalones-hombre</p>
+        </div>
+        <div class="product-card" data-category="pantalones-mujer">
+            <h3>Pantalón Slim Mujer</h3>
+            <p>Categoría: pantalones-mujer</p>
+        </div>
+    </div>
+
+    <script>
+        // Función de filtrado corregida
+        function applyProductFilter(filterType, filterValue) {
+            console.log(`🔍 Aplicando filtro: ${filterType} = ${filterValue}`);
+            
+            // Buscar productos en la página
+            const productCards = document.querySelectorAll('.product-card, .producto-card, [data-category], [data-gender]');
+            let visibleCount = 0;
+
+            productCards.forEach(card => {
+                let shouldShow = true;
+
+                if (filterType === 'category') {
+                    const cardCategory = card.dataset.category || card.querySelector('[data-category]')?.dataset.category;
+                    console.log(`🔍 Producto categoría: ${cardCategory}, Filtro: ${filterValue}`);
+                    
+                    // Mapear categorías del API con las categorías del frontend
+                    if (filterValue === 'hombre') {
+                        shouldShow = cardCategory && cardCategory.includes('-hombre');
+                    } else if (filterValue === 'mujer') {
+                        shouldShow = cardCategory && cardCategory.includes('-mujer');
+                    } else if (filterValue === 'camisas') {
+                        shouldShow = cardCategory && cardCategory.startsWith('camisas-');
+                    } else if (filterValue === 'chaquetas') {
+                        shouldShow = cardCategory && cardCategory.startsWith('chaquetas-');
+                    } else if (filterValue === 'pantalones') {
+                        shouldShow = cardCategory && cardCategory.startsWith('pantalones-');
+                    } else if (filterValue === 'blazers' || filterValue === 'blazer') {
+                        shouldShow = cardCategory && cardCategory.startsWith('blazer-');
+                    } else if (filterValue === 'buzos') {
+                        shouldShow = cardCategory && cardCategory.startsWith('buzos-');
+                    } else if (filterValue === 'tejidos') {
+                        shouldShow = cardCategory && cardCategory.startsWith('tejidos-');
+                    } else if (filterValue === 'bodys') {
+                        shouldShow = cardCategory && cardCategory.startsWith('bodys-');
+                    } else if (filterValue === 'blusas') {
+                        shouldShow = cardCategory && cardCategory.startsWith('blusas-');
+                    } else {
+                        // Coincidencia exacta para otros casos
+                        shouldShow = cardCategory === filterValue;
+                    }
+                } else if (filterType === 'gender') {
+                    const cardGender = card.dataset.gender || card.querySelector('[data-gender]')?.dataset.gender;
+                    shouldShow = cardGender === filterValue;
+                }
+
+                // Mostrar/ocultar productos
+                if (shouldShow) {
+                    card.style.display = 'inline-block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            console.log(`👁️ Productos visibles después del filtro: ${visibleCount}`);
+            
+            // Mostrar mensaje de filtro
+            showFilterMessage(`Mostrando productos de: ${filterValue.toUpperCase()} (${visibleCount} productos)`);
+        }
+
+        function showFilterMessage(message) {
+            const messageDiv = document.getElementById('filter-message');
+            messageDiv.innerHTML = `
+                <div class="filter-message">
+                    ${message}
+                    <button class="clear-filters" onclick="clearFilters()">Mostrar todos</button>
+                </div>
+            `;
+            messageDiv.style.display = 'block';
+        }
+
+        function clearFilters() {
+            const productCards = document.querySelectorAll('.product-card');
+            productCards.forEach(card => {
+                card.style.display = 'inline-block';
+            });
+            
+            document.getElementById('filter-message').style.display = 'none';
+            console.log('🧹 Filtros limpiados - mostrando todos los productos');
+        }
+
+        // Event listeners para categorías
+        document.addEventListener('click', (e) => {
+            const categoryCard = e.target.closest('.category-card');
+            if (categoryCard) {
+                const categoryId = categoryCard.dataset.category;
+                applyProductFilter('category', categoryId);
+            }
+        });
+
+        console.log('✅ Test de filtrado de categorías cargado');
+    </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+/* Estilos optimizados para la barra de navegación */
+
+/* Layout principal del navbar */
+.navbar {
+    padding: 0.75rem 0;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.navbar .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+/* Logo y marca */
+.navbar-brand {
+    flex-shrink: 0;
+    margin-right: 2rem;
+}
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.brand-text {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 2px;
+    font-weight: 700;
+    font-size: 1.25rem;
+    white-space: nowrap;
+}
+
+.hover-scale:hover .logo-img {
+    transform: scale(1.05);
+}
+
+/* Buscador para desktop */
+.search-container-desktop {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 2rem;
+}
+
+.search-group {
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.search-input {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+}
+
+.search-input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+.search-input:focus {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    box-shadow: none;
+    outline: none;
+}
+
+.btn-search {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.btn-search:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Acciones del navbar (carrito y admin) */
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.btn-cart, .btn-admin {
+    position: relative;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-cart:hover, .btn-admin:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.btn-cart i, .btn-admin i {
+    font-size: 1.1rem;
+}
+
+/* Badge del carrito - SOLO para el carrito */
+.btn-cart .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545 !important;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.25em 0.5em;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border: 2px solid #212529;
+}
+
+/* Asegurar que el admin NO tenga badge */
+.btn-admin .cart-badge {
+    display: none !important;
+}
+
+/* Tooltips mejorados */
+.cart-tooltip, .admin-tooltip {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1050;
+}
+
+.btn-cart:hover .cart-tooltip,
+.btn-admin:hover .admin-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Menú desplegable mejorado */
+.navbar-nav {
+    margin: 0 1rem;
+}
+
+.nav-item.dropdown {
+    margin: 0 0.5rem;
+}
+
+.nav-link {
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.nav-link:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+}
+
+.dropdown-menu-dark {
+    background: rgba(33, 37, 41, 0.98);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 0.5rem 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.filter-item {
+    transition: all 0.3s ease;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    margin: 0 0.5rem;
+}
+
+.filter-item:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}
+
+/* Estilos para móvil */
+.mobile-actions {
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 1rem;
+}
+
+.search-container-mobile {
+    margin-bottom: 1.5rem;
+}
+
+.search-container-mobile .input-group {
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.search-container-mobile .search-input {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.2rem;
+}
+
+.search-container-mobile .btn-search {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 0.75rem 1.2rem;
+}
+
+.mobile-actions .btn-cart,
+.mobile-actions .btn-admin {
+    width: auto;
+    height: auto;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+}
+
+.mobile-actions .btn-cart .cart-badge {
+    position: static;
+    margin-left: 0.5rem;
+    transform: none !important;
+}
+
+/* Responsive design */
+@media (max-width: 991px) {
+    .navbar-brand {
+        margin-right: 1rem;
+    }
+    
+    .navbar-nav {
+        text-align: center;
+        margin: 1rem 0;
+    }
+    
+    .nav-link {
+        margin: 0.25rem 0;
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar-collapse {
+        flex-grow: 0;
+    }
+}
+
+/* Animaciones adicionales */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-menu.show {
+    animation: fadeInUp 0.3s ease;
+}
+
+/* Mejoras adicionales */
+.custom-toggler {
+    border-color: rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+}
+
+.custom-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.2);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}

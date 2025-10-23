@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Flujo 3 Pasos - Carrito</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">🧪 Test del Flujo de 3 Pasos del Carrito</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h5><i class="bi bi-info-circle"></i> Instrucciones del Test</h5>
+                            <ol>
+                                <li><strong>Paso 1:</strong> Agrega productos de prueba al carrito</li>
+                                <li><strong>Paso 2:</strong> Haz click en "Abrir Carrito" para ver el Paso 1</li>
+                                <li><strong>Paso 3:</strong> Haz click en "Pagar Ahora" para ir al Paso 2 (Envío)</li>
+                                <li><strong>Paso 4:</strong> Haz click en "Continuar al Pago" para ir al Paso 3 (Pago)</li>
+                            </ol>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>🛒 Gestión del Carrito</h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-success" onclick="addTestProducts()">
+                                        <i class="bi bi-plus-circle"></i> Agregar Productos Test
+                                    </button>
+                                    <button class="btn btn-primary" onclick="window.openCartModal()">
+                                        <i class="bi bi-cart"></i> Abrir Carrito (Paso 1)
+                                    </button>
+                                    <button class="btn btn-warning" onclick="showCart()">
+                                        <i class="bi bi-list"></i> Ver Contenido del Carrito
+                                    </button>
+                                    <button class="btn btn-danger" onclick="clearCart()">
+                                        <i class="bi bi-trash"></i> Limpiar Carrito
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h6>🔧 Test Directo de Pasos</h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary" onclick="testStep1()">
+                                        🛒 Test Paso 1: Modal Carrito
+                                    </button>
+                                    <button class="btn btn-outline-info" onclick="testStep2()">
+                                        📦 Test Paso 2: Modal Envío
+                                    </button>
+                                    <button class="btn btn-outline-success" onclick="testStep3()">
+                                        💳 Test Paso 3: Modal Pago
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6>📊 Estado del Carrito</h6>
+                            <div id="cartStatus" class="card border-light bg-light">
+                                <div class="card-body">
+                                    <div class="text-center text-muted">
+                                        <i class="bi bi-hourglass-split"></i>
+                                        <p class="mb-0">Verificando estado...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6>📋 Console Logs</h6>
+                            <div id="console-output" class="card border-dark">
+                                <div class="card-body bg-dark text-light" style="height: 250px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                                    <div id="log-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para logging personalizado
+        function log(message, type = 'info') {
+            const output = document.getElementById('log-content');
+            const time = new Date().toLocaleTimeString();
+            const emoji = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            output.innerHTML += `[${time}] ${emoji} ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+
+        // Función para agregar productos de prueba
+        function addTestProducts() {
+            const testProducts = [
+                {
+                    id: 1,
+                    name: 'Camisa Elegante Azul',
+                    price: 89000,
+                    size: 'M',
+                    color: 'Azul',
+                    quantity: 1,
+                    image: 'images/placeholder.svg',
+                    timestamp: Date.now()
+                },
+                {
+                    id: 2,
+                    name: 'Chaqueta Premium Negra',
+                    price: 150000,
+                    size: 'L',
+                    color: 'Negro',
+                    quantity: 2,
+                    image: 'images/placeholder.svg',
+                    timestamp: Date.now()
+                },
+                {
+                    id: 3,
+                    name: 'Pantalón Casual Gris',
+                    price: 65000,
+                    size: '32',
+                    color: 'Gris',
+                    quantity: 1,
+                    image: 'images/placeholder.svg',
+                    timestamp: Date.now()
+                }
+            ];
+            
+            localStorage.setItem('cart', JSON.stringify(testProducts));
+            log('✅ Productos de prueba agregados al carrito', 'success');
+            updateCartStatus();
+            
+            // Actualizar contador si existe la función
+            if (typeof window.updateCartCounter === 'function') {
+                window.updateCartCounter();
+            }
+        }
+
+        // Función para mostrar contenido del carrito
+        function showCart() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const total = cart.reduce((sum, item) => {
+                const price = parseFloat(item.price) || 0;
+                const quantity = parseInt(item.quantity) || 1;
+                return sum + (price * quantity);
+            }, 0);
+            
+            log(`🛒 Carrito actual: ${cart.length} productos`, 'info');
+            log(`💰 Total: $${total.toLocaleString()}`, 'info');
+            cart.forEach((item, index) => {
+                log(`   ${index + 1}. ${item.name} - $${item.price.toLocaleString()} x${item.quantity}`, 'info');
+            });
+            
+            updateCartStatus();
+        }
+
+        // Función para limpiar carrito
+        function clearCart() {
+            localStorage.removeItem('cart');
+            log('🗑️ Carrito limpiado', 'warning');
+            updateCartStatus();
+            
+            if (typeof window.updateCartCounter === 'function') {
+                window.updateCartCounter();
+            }
+        }
+
+        // Función para actualizar estado del carrito
+        function updateCartStatus() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const total = cart.reduce((sum, item) => {
+                const price = parseFloat(item.price) || 0;
+                const quantity = parseInt(item.quantity) || 1;
+                return sum + (price * quantity);
+            }, 0);
+            
+            const statusElement = document.getElementById('cartStatus');
+            
+            if (cart.length === 0) {
+                statusElement.innerHTML = `
+                    <div class="card-body text-center">
+                        <i class="bi bi-cart-x text-muted fs-1"></i>
+                        <h6 class="text-muted">Carrito Vacío</h6>
+                        <p class="text-muted mb-0">No hay productos en el carrito</p>
+                    </div>
+                `;
+            } else {
+                statusElement.innerHTML = `
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <i class="bi bi-bag-check text-success fs-3"></i>
+                                <h6 class="mb-0">${cart.length}</h6>
+                                <small class="text-muted">Productos</small>
+                            </div>
+                            <div class="col-4">
+                                <i class="bi bi-currency-dollar text-primary fs-3"></i>
+                                <h6 class="mb-0">$${total.toLocaleString()}</h6>
+                                <small class="text-muted">Total</small>
+                            </div>
+                            <div class="col-4">
+                                <i class="bi bi-check-circle text-info fs-3"></i>
+                                <h6 class="mb-0">Listo</h6>
+                                <small class="text-muted">Para comprar</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Funciones de test directo
+        function testStep1() {
+            log('🧪 TEST: Abriendo Paso 1 (Modal Carrito)', 'info');
+            if (typeof window.openCartModal === 'function') {
+                window.openCartModal();
+                log('✅ Modal del carrito abierto', 'success');
+            } else {
+                log('❌ Función openCartModal no disponible', 'error');
+            }
+        }
+
+        function testStep2() {
+            log('🧪 TEST: Abriendo Paso 2 (Modal Envío)', 'info');
+            try {
+                const shippingModal = new bootstrap.Modal(document.getElementById('ShippingModal'));
+                shippingModal.show();
+                log('✅ Modal de envío abierto', 'success');
+            } catch (error) {
+                log('❌ Error abriendo modal de envío: ' + error.message, 'error');
+            }
+        }
+
+        function testStep3() {
+            log('🧪 TEST: Abriendo Paso 3 (Modal Pago)', 'info');
+            try {
+                const paymentModal = new bootstrap.Modal(document.getElementById('PaymentModal'));
+                paymentModal.show();
+                
+                // Actualizar resumen si existe la función
+                if (typeof window.updatePaymentSummary === 'function') {
+                    window.updatePaymentSummary();
+                    log('✅ Resumen de pago actualizado', 'success');
+                }
+                
+                log('✅ Modal de pago abierto', 'success');
+            } catch (error) {
+                log('❌ Error abriendo modal de pago: ' + error.message, 'error');
+            }
+        }
+
+        // Verificar funciones al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Test del flujo de 3 pasos iniciado', 'success');
+            
+            // Verificar funciones disponibles
+            const functions = [
+                'openCartModal',
+                'proceedToPayment', 
+                'proceedToPaymentFromShipping',
+                'updatePaymentSummary'
+            ];
+            
+            functions.forEach(func => {
+                if (typeof window[func] === 'function') {
+                    log(`✅ Función ${func} disponible`, 'success');
+                } else {
+                    log(`❌ Función ${func} NO disponible`, 'error');
+                }
+            });
+            
+            updateCartStatus();
+            log('📋 Estado inicial del carrito actualizado', 'info');
+        });
+    </script>
+</body>
+</html>

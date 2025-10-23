@@ -1,0 +1,72 @@
+/* Estilos adicionales para mejorar el formulario de tarjeta en MercadoPago */
+
+/* Formateo automático de campos */
+#mercadopago-payment-container input[placeholder*="1234"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+}
+
+#mercadopago-payment-container input[placeholder*="MM/AA"] {
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+#mercadopago-payment-container input[placeholder*="123"] {
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+
+/* Animaciones para los campos */
+#mercadopago-payment-container .form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    border-color: #86b7fe !important;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+/* Iconos de tarjetas */
+.card-brand-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+}
+
+/* Botón de pago destacado */
+.btn-pay-highlight {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-pay-highlight:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+/* Mensaje de carga mejorado */
+.payment-loading-message {
+    background: linear-gradient(45deg, #f8f9fa, #ffffff);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Responsive mejorado para el formulario */
+@media (max-width: 576px) {
+    #mercadopago-payment-container .row.g-3 {
+        gap: 1rem !important;
+    }
+    
+    #mercadopago-payment-container .form-control-lg {
+        font-size: 16px !important; /* Evita zoom en iOS */
+        padding: 0.75rem 1rem !important;
+    }
+    
+    #mercadopago-payment-container .btn-lg {
+        font-size: 16px !important;
+        padding: 1rem !important;
+    }
+}

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔬 Test Debug Categories</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f8f9fa;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            background: #fafafa;
+        }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        .log { font-family: monospace; font-size: 12px; margin: 5px 0; }
+        .category-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            background: white;
+            display: inline-block;
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .category-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .category-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        #categories-grid {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Test Debug Categories</h1>
+        
+        <div class="test-section success">
+            <h3>✅ Test 1: API Connection</h3>
+            <div id="api-test">Probando conexión con API...</div>
+        </div>
+
+        <div class="test-section" id="dom-test-section">
+            <h3>🧪 Test 2: DOM Element</h3>
+            <div id="dom-test">Verificando elemento categories-grid...</div>
+        </div>
+
+        <div class="test-section" id="render-test-section">
+            <h3>🎨 Test 3: Render Categories</h3>
+            <div id="render-test">Intentando renderizar categorías...</div>
+        </div>
+
+        <!-- Elemento para prueba -->
+        <div class="test-section">
+            <h3>📋 Categories Grid (Test)</h3>
+            <div id="categories-grid" class="row">
+                <!-- Las categorías se cargarán aquí -->
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Console Logs</h3>
+            <div id="console-logs" style="max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Override console.log para mostrar en la página
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToLogs(type, ...args) {
+            const logsDiv = document.getElementById('console-logs');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${type.toUpperCase()}: ${args.join(' ')}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLogs('info', ...args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLogs('error', ...args);
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToLogs('warning', ...args);
+        };
+
+        // Test 1: API Connection
+        async function testAPI() {
+            console.log('🚀 Iniciando test de API...');
+            try {
+                const response = await fetch('api/categorias.php');
+                const data = await response.json();
+                
+                document.getElementById('api-test').innerHTML = `
+                    <strong>✅ API Funcionando</strong><br>
+                    Status: ${response.status}<br>
+                    Categorías encontradas: ${data.data?.length || 0}<br>
+                    <pre>${JSON.stringify(data, null, 2).substring(0, 500)}...</pre>
+                `;
+                
+                console.log('✅ API test exitoso:', data.data?.length, 'categorías');
+                return data.data || [];
+            } catch (error) {
+                document.getElementById('api-test').innerHTML = `
+                    <strong>❌ Error en API</strong><br>
+                    ${error.message}
+                `;
+                console.error('❌ Error en API test:', error);
+                return [];
+            }
+        }
+
+        // Test 2: DOM Element
+        function testDOM() {
+            console.log('🧪 Iniciando test de DOM...');
+            const grid = document.getElementById('categories-grid');
+            const section = document.getElementById('dom-test-section');
+            
+            if (grid) {
+                document.getElementById('dom-test').innerHTML = `
+                    <strong>✅ Elemento Encontrado</strong><br>
+                    ID: ${grid.id}<br>
+                    Tag: ${grid.tagName}<br>
+                    Classes: ${grid.className}<br>
+                    Parent: ${grid.parentElement?.tagName}
+                `;
+                section.className = 'test-section success';
+                console.log('✅ DOM test exitoso - elemento encontrado');
+                return true;
+            } else {
+                document.getElementById('dom-test').innerHTML = `
+                    <strong>❌ Elemento NO Encontrado</strong><br>
+                    El elemento 'categories-grid' no existe en el DOM
+                `;
+                section.className = 'test-section error';
+                console.error('❌ DOM test fallido - elemento no encontrado');
+                return false;
+            }
+        }
+
+        // Test 3: Render Categories
+        async function testRender(categories) {
+            console.log('🎨 Iniciando test de renderizado...');
+            const grid = document.getElementById('categories-grid');
+            const section = document.getElementById('render-test-section');
+            
+            if (!categories || categories.length === 0) {
+                document.getElementById('render-test').innerHTML = `
+                    <strong>⚠️ Sin Datos</strong><br>
+                    No hay categorías para renderizar
+                `;
+                section.className = 'test-section warning';
+                console.warn('⚠️ Render test - sin datos');
+                return;
+            }
+
+            try {
+                // Mapeo de imágenes
+                const categoryImages = {
+                    'hombre': 'images/Chaqueta Beige Botones Dorados/chaqueta_b1.jpeg',
+                    'mujer': 'images/Chaqueta Moonlit Mauve/img1.jpeg',
+                    'camisas': 'images/Camisa Blanco Purista/img1.jpeg',
+                    'pantalones': 'images/clothes-1839935_1920.jpg',
+                    'chaquetas': 'images/Chaqueta Beige Botones Dorados/chaqueta_b1.jpeg',
+                    'blazers': 'images/BLAZER CUADRADO.png',
+                    'accesorios': 'images/clothes-1839935_1920.jpg'
+                };
+
+                const categoriesHtml = categories.map(category => {
+                    const image = categoryImages[category.id] || categoryImages[category.slug] || 'images/placeholder.svg';
+                    
+                    return `
+                        <div class="category-card" data-category="${category.id}">
+                            <img src="${image}" 
+                                 alt="${category.name}" 
+                                 class="category-image"
+                                 onerror="this.src='images/clothes-1839935_1920.jpg'">
+                            <div class="category-content">
+                                <h4>${category.name}</h4>
+                                <p>${category.description || ''}</p>
+                                <small>ID: ${category.id}</small>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                grid.innerHTML = categoriesHtml;
+
+                document.getElementById('render-test').innerHTML = `
+                    <strong>✅ Renderizado Exitoso</strong><br>
+                    ${categories.length} categorías renderizadas<br>
+                    HTML generado: ${categoriesHtml.length} caracteres
+                `;
+                section.className = 'test-section success';
+                console.log('✅ Render test exitoso -', categories.length, 'categorías renderizadas');
+                
+                // Agregar event listeners
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const categoryId = card.dataset.category;
+                        console.log('🎯 Categoría clickeada:', categoryId);
+                        alert(`Categoría seleccionada: ${categoryId}`);
+                    });
+                });
+                
+            } catch (error) {
+                document.getElementById('render-test').innerHTML = `
+                    <strong>❌ Error en Renderizado</strong><br>
+                    ${error.message}
+                `;
+                section.className = 'test-section error';
+                console.error('❌ Render test fallido:', error);
+            }
+        }
+
+        // Ejecutar tests
+        async function runAllTests() {
+            console.log('🚀 Ejecutando todos los tests...');
+            
+            // Test 1: API
+            const categories = await testAPI();
+            
+            // Test 2: DOM
+            const domOK = testDOM();
+            
+            // Test 3: Render (solo si DOM está OK)
+            if (domOK) {
+                await testRender(categories);
+            }
+            
+            console.log('🏁 Tests completados');
+        }
+
+        // Ejecutar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', runAllTests);
+    </script>
+</body>
+</html>

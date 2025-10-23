@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Test de Configuración Producción MercadoPago</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h4><i class="fas fa-check-circle"></i> Test de Configuración Producción MercadoPago</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-info-circle"></i> Estado de la Plataforma:</strong>
+                            Esta página verifica que la configuración de producción esté correcta.
+                        </div>
+
+                        <div id="test-results">
+                            <h5>🔍 Resultados de Verificación:</h5>
+                            <div id="config-status" class="mb-3">
+                                <p><i class="fas fa-spinner fa-spin"></i> Verificando configuración...</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button id="test-payment-flow" class="btn btn-success me-2">
+                                <i class="fas fa-credit-card"></i> Probar Flujo de Pago
+                            </button>
+                            <button id="reload-test" class="btn btn-secondary">
+                                <i class="fas fa-refresh"></i> Verificar Nuevamente
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>📋 Lista de Verificación:</strong>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Credenciales de Producción Configuradas
+                                            <span id="check-credentials" class="badge bg-secondary">Verificando...</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Ambiente Configurado a 'production'
+                                            <span id="check-environment" class="badge bg-secondary">Verificando...</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Frontend con Public Key de Producción
+                                            <span id="check-frontend" class="badge bg-secondary">Verificando...</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Backend con Access Token de Producción
+                                            <span id="check-backend" class="badge bg-secondary">Verificando...</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Simulación de Testing Deshabilitada
+                                            <span id="check-simulation" class="badge bg-secondary">Verificando...</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 alert alert-warning">
+                            <strong><i class="fas fa-exclamation-triangle"></i> ¡IMPORTANTE!</strong>
+                            <p class="mb-0">Ahora estás en <strong>MODO PRODUCCIÓN</strong>. Los pagos que se procesen serán <strong>REALES</strong> y se descontará dinero real de las tarjetas de crédito.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            verifyProductionSetup();
+
+            document.getElementById('test-payment-flow').addEventListener('click', function() {
+                window.location.href = 'pago-premium.html';
+            });
+
+            document.getElementById('reload-test').addEventListener('click', function() {
+                location.reload();
+            });
+        });
+
+        async function verifyProductionSetup() {
+            console.log('🔍 Verificando configuración de producción...');
+
+            // 1. Verificar credenciales en configuración
+            try {
+                const configResponse = await fetch('config/mercadopago.php?get_config=true');
+                const config = await configResponse.json();
+                
+                if (config.environment === 'production' && 
+                    config.public_key && 
+                    config.public_key.startsWith('APP_USR-')) {
+                    updateCheckStatus('check-credentials', 'success', '✅ Configuradas');
+                    updateCheckStatus('check-environment', 'success', '✅ Producción');
+                } else {
+                    updateCheckStatus('check-credentials', 'danger', '❌ Error');
+                    updateCheckStatus('check-environment', 'danger', '❌ Error');
+                }
+            } catch (error) {
+                updateCheckStatus('check-credentials', 'danger', '❌ Error');
+                updateCheckStatus('check-environment', 'danger', '❌ Error');
+                console.error('Error verificando config:', error);
+            }
+
+            // 2. Verificar frontend
+            try {
+                const frontendResponse = await fetch('pago-premium.html');
+                const frontendCode = await frontendResponse.text();
+                
+                if (frontendCode.includes('APP_USR-3ad42f77-3f44-427e-8dee-ce7a0f84eeae') &&
+                    frontendCode.includes('PRODUCCIÓN') &&
+                    !frontendCode.includes('showTestingSimulation')) {
+                    updateCheckStatus('check-frontend', 'success', '✅ Configurado');
+                    updateCheckStatus('check-simulation', 'success', '✅ Deshabilitada');
+                } else {
+                    updateCheckStatus('check-frontend', 'danger', '❌ Error');
+                    updateCheckStatus('check-simulation', 'danger', '❌ Activa');
+                }
+            } catch (error) {
+                updateCheckStatus('check-frontend', 'danger', '❌ Error');
+                console.error('Error verificando frontend:', error);
+            }
+
+            // 3. Verificar backend
+            try {
+                const backendResponse = await fetch('api/process-payment.php');
+                const backendCode = await backendResponse.text();
+                
+                if (backendCode.includes('APP_USR-6153740999578703') &&
+                    backendCode.includes('PRODUCCIÓN')) {
+                    updateCheckStatus('check-backend', 'success', '✅ Configurado');
+                } else {
+                    updateCheckStatus('check-backend', 'danger', '❌ Error');
+                }
+            } catch (error) {
+                updateCheckStatus('check-backend', 'warning', '⚠️ No verificable');
+                console.error('Error verificando backend:', error);
+            }
+
+            // Mostrar resumen final
+            setTimeout(() => {
+                const allChecks = document.querySelectorAll('[id^="check-"]');
+                let successCount = 0;
+                let totalChecks = allChecks.length;
+
+                allChecks.forEach(check => {
+                    if (check.classList.contains('bg-success')) {
+                        successCount++;
+                    }
+                });
+
+                const statusDiv = document.getElementById('config-status');
+                if (successCount === totalChecks) {
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <strong><i class="fas fa-check-circle"></i> ¡Perfecto!</strong>
+                            Tu plataforma está completamente configurada para producción.
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-warning">
+                            <strong><i class="fas fa-exclamation-triangle"></i> Atención:</strong>
+                            ${successCount}/${totalChecks} verificaciones exitosas. Revisa los elementos marcados en rojo.
+                        </div>
+                    `;
+                }
+            }, 2000);
+        }
+
+        function updateCheckStatus(elementId, type, text) {
+            const element = document.getElementById(elementId);
+            element.className = `badge bg-${type}`;
+            element.textContent = text;
+        }
+    </script>
+</body>
+</html>

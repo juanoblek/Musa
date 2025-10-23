@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Categorías Rápido</title>
+    <style>
+        .category-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 10px;
+            display: inline-block;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        .debug { background: #e9ecef; padding: 15px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Rápido de Categorías</h1>
+    
+    <div class="debug">
+        <strong>Estado:</strong> <span id="status">Iniciando...</span>
+    </div>
+
+    <div id="categories-grid">
+        <!-- Las categorías aparecerán aquí -->
+    </div>
+
+    <script>
+        async function testCategories() {
+            const statusEl = document.getElementById('status');
+            const gridEl = document.getElementById('categories-grid');
+
+            try {
+                statusEl.textContent = 'Cargando categorías...';
+                console.log('🚀 Probando API de categorías');
+
+                const response = await fetch('api/categorias.php');
+                console.log('📡 Respuesta recibida:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('📊 Datos:', data);
+
+                if (data.success && data.data) {
+                    statusEl.textContent = `✅ ${data.data.length} categorías cargadas`;
+                    
+                    // Renderizar categorías
+                    const html = data.data.map(cat => `
+                        <div class="category-card">
+                            <h3>${cat.name}</h3>
+                            <p>ID: ${cat.id}</p>
+                            <p>Slug: ${cat.slug || 'N/A'}</p>
+                        </div>
+                    `).join('');
+                    
+                    gridEl.innerHTML = html;
+                    console.log('✅ Categorías renderizadas');
+                } else {
+                    throw new Error('Datos inválidos en respuesta');
+                }
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                statusEl.textContent = `❌ Error: ${error.message}`;
+                gridEl.innerHTML = `<div class="debug">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Ejecutar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', testCategories);
+    </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Database</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .setup-section {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Order Database Integration</h1>
+    
+    <div class="setup-section">
+        <h2>Setup: Agregar productos al carrito</h2>
+        <button onclick="setupTestCart()">📦 Agregar Productos de Prueba</button>
+        <button onclick="clearTestCart()">🗑️ Limpiar Carrito</button>
+        <button onclick="showCart()">👀 Ver Carrito</button>
+    </div>
+    
+    <h2>Test 1: API de Guardado Directo</h2>
+    <button onclick="testSaveOrderAPI()">💾 Probar API Guardar Pedido</button>
+    <div id="result1" class="result"></div>
+    
+    <h2>Test 2: Flujo Completo de Pago</h2>
+    <button onclick="goToPaymentPage()">🚀 Ir a Página de Pago</button>
+    <div id="result2" class="result"></div>
+
+    <script>
+        function setupTestCart() {
+            const cart = [
+                {
+                    "nombre": "Camisa Test",
+                    "precio": 85000,
+                    "cantidad": 1,
+                    "imagen": "camisa-test.jpg",
+                    "talla": "M",
+                    "color": "Azul"
+                },
+                {
+                    "nombre": "Pantalón Test", 
+                    "precio": 120000,
+                    "cantidad": 2,
+                    "imagen": "pantalon-test.jpg",
+                    "talla": "L",
+                    "color": "Negro"
+                }
+            ];
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            document.getElementById('result2').textContent = 
+                '✅ Carrito configurado con productos de prueba:\n' + 
+                JSON.stringify(cart, null, 2);
+        }
+        
+        function clearTestCart() {
+            localStorage.removeItem('cart');
+            document.getElementById('result2').textContent = '🗑️ Carrito limpiado';
+        }
+        
+        function showCart() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            document.getElementById('result2').textContent = 
+                'Carrito actual:\n' + JSON.stringify(cart, null, 2);
+        }
+        
+        async function testSaveOrderAPI() {
+            const resultDiv = document.getElementById('result1');
+            resultDiv.textContent = 'Probando API...';
+            
+            try {
+                const orderData = {
+                    pago_exitoso: true,
+                    envio: {
+                        nombre_completo: "Juan Pérez Test",
+                        email: "test@example.com",
+                        telefono: "3001234567",
+                        departamento: "Cundinamarca",
+                        ciudad: "Bogotá D.C.",
+                        direccion: "Calle 123 #45-67, Barrio Test",
+                        codigo_postal: "110111",
+                        notas_adicionales: "Entrega en horario de oficina"
+                    },
+                    productos: [
+                        {
+                            nombre: "Producto Test API",
+                            precio: 75000,
+                            cantidad: 1,
+                            imagen: "test.jpg",
+                            talla: "M",
+                            color: "Rojo"
+                        }
+                    ],
+                    subtotal: 75000,
+                    envio: 0,
+                    total: 75000,
+                    metodo_pago: "mercadopago_test",
+                    datos_pago: {
+                        transaction_id: "TEST-" + Date.now(),
+                        status: "approved",
+                        payment_method: "visa",
+                        amount: 87000,
+                        currency: "COP",
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                const response = await fetch('/Musa/api/guardar-pedido.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                resultDiv.textContent = JSON.stringify(result, null, 2);
+                
+                if (result.success) {
+                    resultDiv.textContent += '\n\n✅ ¡Pedido guardado exitosamente!';
+                    resultDiv.textContent += '\n📦 ID del pedido: ' + result.pedido_id;
+                }
+                
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        function goToPaymentPage() {
+            window.open('/Musa/pago-premium.html', '_blank');
+        }
+    </script>
+</body>
+</html>

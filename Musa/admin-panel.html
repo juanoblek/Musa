@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrativo - M & A MODA ACTUAL</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Custom Admin Styles -->
+    <style>
+        /* === ESTILOS DEL PANEL ADMINISTRATIVO === */
+        :root {
+            --admin-primary: #2c3e50;
+            --admin-secondary: #34495e;
+            --admin-accent: #3498db;
+            --admin-success: #27ae60;
+            --admin-warning: #f39c12;
+            --admin-danger: #e74c3c;
+            --admin-light: #ecf0f1;
+            --admin-dark: #1a252f;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            margin: 2rem auto;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .admin-sidebar {
+            background: linear-gradient(180deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+            min-height: 100vh;
+            padding: 0;
+            position: relative;
+            padding-bottom: 5rem; /* Espacio para el botón de logout */
+        }
+
+        .sidebar-header {
+            background: var(--admin-dark);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--admin-accent);
+        }
+
+        .sidebar-header h3 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .sidebar-header p {
+            color: var(--admin-light);
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+        }
+
+        .nav-pills .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 0;
+            padding: 1.2rem 2rem;
+            margin: 0.2rem 0;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-pills .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left-color: var(--admin-accent);
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--admin-accent);
+            color: white;
+            border-left-color: white;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 1rem;
+        }
+
+        /* Main Content */
+        .admin-content {
+            padding: 2rem;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards y Components */
+        .admin-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-secondary) 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+            border: none;
+        }
+
+        .card-header-custom h5 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header-custom i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+        }
+
+        /* Form Styles */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e0e6ed;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--admin-accent);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+        }
+
+        /* Button Styles */
+        .btn-admin-primary {
+            background: linear-gradient(135deg, var(--admin-accent) 0%, #2980b9 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-admin-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-admin-success {
+            background: linear-gradient(135deg, var(--admin-success) 0%, #229954 100%);
+            border: none;
+            border-radius: 10px;
+        }
+
+        .btn-admin-danger {
+            background: linear-gradient(135deg, var(--admin-danger) 0%, #c0392b 100%);
+            border: none;
+            border-radius: 10px;
+        }
+
+        /* Tables */
+        .table-admin {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .table-admin thead th {
+            background: var(--admin-primary);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            font-weight: 600;
+        }
+
+        .table-admin tbody td {
+            padding: 1rem 1.2rem;
+            border-color: #f1f3f4;
+        }
+
+        .table-admin tbody tr:hover {
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        /* Image Upload */
+        .image-upload-container {
+            border: 3px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f8f9fa;
+        }
+
+        .image-upload-container:hover {
+            border-color: var(--admin-accent);
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .image-upload-container.dragover {
+            border-color: var(--admin-success);
+            background: rgba(39, 174, 96, 0.05);
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin: 1rem 0;
+        }
+
+        /* === ESTILOS DEL FORMULARIO MEJORADO === */
+        .color-input-group {
+            margin-bottom: 0.5rem;
+        }
+
+        .color-picker {
+            max-width: 60px;
+            border: none;
+            padding: 0.25rem;
+        }
+
+        .color-name {
+            border-left: none;
+        }
+
+        .remove-color {
+            border-left: none;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--admin-accent);
+            border-color: var(--admin-accent);
+        }
+
+        .card {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            font-weight: 600;
+        }
+
+        .image-upload-container {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .image-upload-container:hover {
+            border-color: var(--admin-accent) !important;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .image-upload-container.dragover {
+            border-color: var(--admin-success) !important;
+            background-color: rgba(39, 174, 96, 0.05);
+        }
+
+        #imagePreview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Discount Badge Styles */
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Loading States */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Loading Overlay Styles */
+        #loadingOverlay {
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s ease;
+        }
+
+        #loadingOverlay.show {
+            display: flex !important;
+            opacity: 1 !important;
+        }
+
+        #loadingOverlay.hide {
+            display: none !important;
+            opacity: 0 !important;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Product Preview Styles */
+        .product-preview-card {
+            max-width: 350px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .product-preview-card .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .size-selector, .color-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .size-option, .color-option {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid var(--admin-accent);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--admin-accent);
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+            .sidebar-header {
+                padding: 1.5rem;
+            }
+
+            .nav-pills .nav-link {
+                padding: 1rem 1.5rem;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, var(--admin-danger) 0%, #c0392b 100%);
+            border: none;
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            color: white;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 6px rgba(231, 76, 60, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+            color: white;
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(231, 76, 60, 0.3);
+        }
+
+        .logout-btn i {
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive adjustments for logout button */
+        @media (max-width: 768px) {
+            .logout-btn {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                margin: 1rem;
+                margin-top: 2rem;
+            }
+            
+            .admin-sidebar {
+                padding-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .logout-btn {
+                font-size: 0.8rem;
+                padding: 0.5rem 0.8rem;
+            }
+            
+            .logout-btn i {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Verificación de Autenticación -->
+    <script>
+        // Verificar autenticación inmediatamente
+        if (!sessionStorage.getItem('adminAuthenticated')) {
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="position-fixed w-100 h-100 d-flex align-items-center justify-content-center hide" style="top: 0; left: 0; background: rgba(0,0,0,0.8); z-index: 9999;">
+        <div class="text-center text-white">
+            <div class="spinner-border spinner-border-lg text-primary mb-3" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <h5>Procesando...</h5>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 admin-sidebar">
+                <div class="sidebar-header">
+                    <h3><i class="fas fa-crown me-2"></i>M & A Admin</h3>
+                    <p>Panel de Control</p>
+                </div>
+
+                <nav class="nav nav-pills flex-column mt-4">
+                    <a class="nav-link active" href="#" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a>
+                    <a class="nav-link" href="#" data-section="products">
+                        <i class="fas fa-box"></i>Productos
+                    </a>
+                    <a class="nav-link" href="#" data-section="categories">
+                        <i class="fas fa-tags"></i>Categorías
+                    </a>
+                    <a class="nav-link" href="#" data-section="orders">
+                        <i class="fas fa-shopping-cart"></i>Pedidos
+                    </a>
+                    <a class="nav-link" href="#" data-section="navigation">
+                        <i class="fas fa-bars"></i>Navegación
+                    </a>
+                    <a class="nav-link" href="#" data-section="settings">
+                        <i class="fas fa-cog"></i>Configuración
+                    </a>
+                </nav>
+
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 admin-content">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="content-section active">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="text-primary fw-bold">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </h2>
+                        <div class="text-muted">
+                            <i class="fas fa-calendar me-2"></i>
+                            <span id="currentDate"></span>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card">
+                                <i class="fas fa-box text-primary mb-2" style="font-size: 2rem;"></i>
+                                <div class="stat-number" id="totalProducts">0</div>
+                                <div class="stat-label">Total Productos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card" style="border-left-color: var(--admin-success);">
+                                <i class="fas fa-tags text-success mb-2" style="font-size: 2rem;"></i>
+                                <div class="stat-number text-success" id="totalCategories">0</div>
+                                <div class="stat-label">Categorías</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card" style="border-left-color: var(--admin-warning);">
+                                <i class="fas fa-shopping-cart text-warning mb-2" style="font-size: 2rem;"></i>
+                                <div class="stat-number text-warning" id="totalOrders">0</div>
+                                <div class="stat-label">Pedidos</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="stat-card" style="border-left-color: var(--admin-danger);">
+                                <i class="fas fa-dollar-sign text-danger mb-2" style="font-size: 2rem;"></i>
+                                <div class="stat-number text-danger" id="totalRevenue">$0</div>
+                                <div class="stat-label">Ingresos</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="admin-card">
+                                <div class="card-header-custom">
+                                    <h5><i class="fas fa-chart-line me-2"></i>Actividad Reciente</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="recentActivity">
+                                        <p class="text-muted">No hay actividad reciente</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="admin-card">
+                                <div class="card-header-custom">
+                                    <h5><i class="fas fa-exclamation-triangle me-2"></i>Alertas</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="alerts">
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Sistema funcionando correctamente
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div id="products" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="text-primary fw-bold">
+                            <i class="fas fa-box me-2"></i>Gestión de Productos
+                        </h2>
+                        <button class="btn btn-admin-primary" onclick="showAddProductModal()">
+                            <i class="fas fa-plus me-2"></i>Nuevo Producto
+                        </button>
+                    </div>
+
+                    <!-- Products Table -->
+                    <div class="admin-card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-admin mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Imagen</th>
+                                            <th>Nombre</th>
+                                            <th>Categoría</th>
+                                            <th>Precio</th>
+                                            <th>Stock</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productsTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Section -->
+                <div id="categories" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="text-primary fw-bold">
+                            <i class="fas fa-tags me-2"></i>Gestión de Categorías
+                        </h2>
+                        <button class="btn btn-admin-primary" onclick="showAddCategoryModal()">
+                            <i class="fas fa-plus me-2"></i>Nueva Categoría
+                        </button>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="admin-card">
+                                <div class="card-header-custom">
+                                    <h5><i class="fas fa-list me-2"></i>Categorías Existentes</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="categoriesList">
+                                        <!-- Dynamic content -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-card">
+                                <div class="card-header-custom">
+                                    <h5><i class="fas fa-filter me-2"></i>Filtros de Navegación</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="navigationFilters">
+                                        <!-- Dynamic content -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div id="orders" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="text-primary fw-bold">
+                            <i class="fas fa-shopping-cart me-2"></i>Gestión de Pedidos
+                        </h2>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="orderFilter" onchange="filterOrders()">
+                                <option value="all">Todos los pedidos</option>
+                                <option value="pending">Pendientes</option>
+                                <option value="processing">En proceso</option>
+                                <option value="completed">Completados</option>
+                                <option value="cancelled">Cancelados</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-admin mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>#ID</th>
+                                            <th>Cliente</th>
+                                            <th>Productos</th>
+                                            <th>Total</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTableBody">
+                                        <tr id="loadingOrders">
+                                            <td colspan="7" class="text-center">
+                                                <div class="d-flex justify-content-center align-items-center py-4">
+                                                    <div class="spinner-border text-primary me-2" role="status"></div>
+                                                    <span>Cargando pedidos...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Section -->
+                <div id="navigation" class="content-section">
+                    <h2 class="text-primary fw-bold mb-4">
+                        <i class="fas fa-bars me-2"></i>Configuración de Navegación
+                    </h2>
+
+                    <div class="admin-card">
+                        <div class="card-header-custom">
+                            <h5><i class="fas fa-navigation me-2"></i>Menú Principal</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="navigationForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold mb-3">Categorías Hombre</h6>
+                                        <div id="menCategoriesForm">
+                                            <!-- Dynamic content -->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold mb-3">Categorías Mujer</h6>
+                                        <div id="womenCategoriesForm">
+                                            <!-- Dynamic content -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end mt-4">
+                                    <button type="button" class="btn btn-admin-success" onclick="saveNavigation()">
+                                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settings" class="content-section">
+                    <h2 class="text-primary fw-bold mb-4">
+                        <i class="fas fa-cog me-2"></i>Configuración del Sistema
+                    </h2>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="admin-card">
+                                <div class="card-header-custom">
+                                    <h5><i class="fas fa-store me-2"></i>Información de la Tienda</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="storeSettingsForm">
+                                        <div class="mb-3">
+                                            <label class="form-label">Nombre de la Tienda</label>
+                                            <input type="text" class="form-control" id="storeName" value="M & A MODA ACTUAL">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Eslogan</label>
+                                            <input type="text" class="form-control" id="storeSlogan" value="Estilo y Elegancia">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Teléfono de Contacto</label>
+                                            <input type="text" class="form-control" id="storePhone" value="573232212316">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Instagram</label>
+                                            <input type="text" class="form-control" id="storeInstagram" value="musa.arion">
+                                        </div>
+                                        <button type="button" class="btn btn-admin-success" onclick="saveStoreSettings()">
+                                            <i class="fas fa-save me-2"></i>Guardar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="admin-card">
+                                <div class="card-header-custom">
+                                    <h5><i class="fas fa-tools me-2"></i>Herramientas del Sistema</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-3">
+                                        <button class="btn btn-admin-primary" onclick="exportData()">
+                                            <i class="fas fa-download me-2"></i>Exportar Datos
+                                        </button>
+                                        <button class="btn btn-admin-primary" onclick="importData()">
+                                            <i class="fas fa-upload me-2"></i>Importar Datos
+                                        </button>
+                                        <button class="btn btn-admin-warning text-white" onclick="backupData()">
+                                            <i class="fas fa-database me-2"></i>Crear Backup
+                                        </button>
+                                        <button class="btn btn-success" onclick="syncWithFrontend()">
+                                            <i class="fas fa-sync me-2"></i>Sincronizar con Frontend
+                                        </button>
+                                        <button class="btn btn-warning" onclick="resetCompleto()">
+                                            <i class="fas fa-refresh me-2"></i>Reset Completo
+                                        </button>
+                                        <button class="btn btn-admin-danger" onclick="clearCache()">
+                                            <i class="fas fa-broom me-2"></i>Limpiar Caché
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2"></i>Agregar Nuevo Producto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addProductForm">
+                        <div class="row">
+                            <!-- Columna Izquierda - Información Básica -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Nombre del Producto *</label>
+                                    <input type="text" class="form-control" id="productName" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Descripción</label>
+                                    <textarea class="form-control" id="productDescription" rows="3" placeholder="Describe las características del producto"></textarea>
+                                </div>
+                                
+                                <!-- Precios y Descuentos -->
+                                <div class="card border-info mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-tags me-2"></i>Precios y Ofertas</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Precio Regular *</label>
+                                                    <input type="number" class="form-control" id="productPrice" required min="0" step="1000">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-bold">Precio de Oferta</label>
+                                                    <input type="number" class="form-control" id="productSalePrice" min="0" step="1000">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="hasDiscount">
+                                                    <label class="form-check-label fw-bold text-danger" for="hasDiscount">
+                                                        <i class="fas fa-percentage me-1"></i>Producto en Oferta
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Porcentaje de Descuento</label>
+                                                    <select class="form-select" id="discountPercentage" disabled>
+                                                        <option value="">Sin descuento</option>
+                                                        <option value="10">10% OFF</option>
+                                                        <option value="20">20% OFF</option>
+                                                        <option value="30">30% OFF</option>
+                                                        <option value="40">40% OFF</option>
+                                                        <option value="50">50% OFF</option>
+                                                        <option value="60">60% OFF</option>
+                                                        <option value="70">70% OFF</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Categorización -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Categoría *</label>
+                                            <select class="form-select" id="productCategory" required>
+                                                <option value="">Seleccionar categoría</option>
+                                                <option value="pantalones">Pantalones</option>
+                                                <option value="chaquetas">Chaquetas</option>
+                                                <option value="blazers">Blazers</option>
+                                                <option value="camisas">Camisas</option>
+                                                <option value="vestidos">Vestidos</option>
+                                                <option value="faldas">Faldas</option>
+                                                <option value="tejidos">Tejidos</option>
+                                                <option value="accesorios">Accesorios</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Género *</label>
+                                            <select class="form-select" id="productGender" required>
+                                                <option value="">Seleccionar género</option>
+                                                <option value="hombre">Hombre</option>
+                                                <option value="mujer">Mujer</option>
+                                                <option value="unisex">Unisex</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Cantidad en Stock *</label>
+                                    <input type="number" class="form-control" id="productStock" required min="0">
+                                </div>
+                            </div>
+
+                            <!-- Columna Derecha - Imagen, Tallas y Colores -->
+                            <div class="col-md-6">
+                                <!-- Upload de Imagen -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Imagen Principal *</label>
+                                    <div class="image-upload-container border rounded p-4 text-center" 
+                                         onclick="document.getElementById('productImage').click()" 
+                                         style="cursor: pointer; border-style: dashed !important;">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted mb-2">Haz clic o arrastra una imagen aquí</p>
+                                        <small class="text-muted">Formatos: JPG, PNG, WEBP (Max: 5MB)</small>
+                                        <input type="file" id="productImage" accept="image/*" style="display: none;" onchange="previewImage(this, 'imagePreview')">
+                                    </div>
+                                    <div id="imagePreview" class="text-center mt-3"></div>
+                                </div>
+
+                                <!-- Tallas Colombianas -->
+                                <div class="card border-success mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-ruler me-2"></i>Tallas Disponibles (Colombia)</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Tallas de Letra -->
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Tallas de Letra</label>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="XS" id="sizeXS">
+                                                    <label class="form-check-label" for="sizeXS">XS</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="S" id="sizeS">
+                                                    <label class="form-check-label" for="sizeS">S</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="M" id="sizeM">
+                                                    <label class="form-check-label" for="sizeM">M</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="L" id="sizeL">
+                                                    <label class="form-check-label" for="sizeL">L</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="XL" id="sizeXL">
+                                                    <label class="form-check-label" for="sizeXL">XL</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="XXL" id="sizeXXL">
+                                                    <label class="form-check-label" for="sizeXXL">XXL</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Tallas Numéricas Colombianas -->
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold">Tallas Numéricas (Colombia)</label>
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <!-- Tallas de Ropa -->
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="6" id="size6">
+                                                    <label class="form-check-label" for="size6">6</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="8" id="size8">
+                                                    <label class="form-check-label" for="size8">8</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="10" id="size10">
+                                                    <label class="form-check-label" for="size10">10</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="12" id="size12">
+                                                    <label class="form-check-label" for="size12">12</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="14" id="size14">
+                                                    <label class="form-check-label" for="size14">14</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="16" id="size16">
+                                                    <label class="form-check-label" for="size16">16</label>
+                                                </div>
+                                                <!-- Tallas de Pantalones -->
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="28" id="size28">
+                                                    <label class="form-check-label" for="size28">28</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="30" id="size30">
+                                                    <label class="form-check-label" for="size30">30</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="32" id="size32">
+                                                    <label class="form-check-label" for="size32">32</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="34" id="size34">
+                                                    <label class="form-check-label" for="size34">34</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="36" id="size36">
+                                                    <label class="form-check-label" for="size36">36</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value="38" id="size38">
+                                                    <label class="form-check-label" for="size38">38</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Colores Hexadecimales -->
+                                <div class="card border-warning mb-3">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0"><i class="fas fa-palette me-2"></i>Colores Disponibles</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="colorSelector" class="mb-3">
+                                            <div class="color-input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="color" class="form-control form-control-color color-picker" value="#000000" title="Seleccionar color">
+                                                    <input type="text" class="form-control color-name" placeholder="Nombre del color (ej: Negro)" value="Negro">
+                                                    <button class="btn btn-outline-danger remove-color" type="button" onclick="removeColorInput(this)">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addColorInput()">
+                                            <i class="fas fa-plus me-1"></i>Agregar Color
+                                        </button>
+                                        <div class="mt-2">
+                                            <small class="text-muted">Los colores seleccionados aparecerán como opciones en la tarjeta del producto</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Estado del Producto -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Estado del Producto</label>
+                                    <select class="form-select" id="productStatus">
+                                        <option value="active">✅ Activo</option>
+                                        <option value="inactive">⏸️ Inactivo</option>
+                                        <option value="out_of_stock">❌ Agotado</option>
+                                        <option value="coming_soon">🔜 Próximamente</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div>
+                        <button type="button" class="btn btn-outline-info" onclick="previewProduct()">
+                            <i class="fas fa-eye me-2"></i>Vista Previa
+                        </button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </button>
+                        <button type="button" class="btn btn-admin-success" onclick="saveProduct()" id="saveProductBtn">
+                            <i class="fas fa-save me-2"></i>Guardar Producto
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Vista Previa del Producto -->
+    <div class="modal fade" id="productPreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-eye me-2"></i>Vista Previa del Producto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="productPreviewContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Loader de productos con función global de imágenes -->
+    <script src="js/products-loader-final.js?v=20250908_prices"></script>
+    <!-- Admin Database System - Solo Base de Datos -->
+    <script src="js/admin-database-system.js?v=20250828_02"></script>
+
+    <!-- Funciones del Formulario Mejorado -->
+    <script>
+        // === MANEJO DE COLORES HEXADECIMALES ===
+        function addColorInput() {
+            const colorSelector = document.getElementById('colorSelector');
+            const colorInputGroup = document.createElement('div');
+            colorInputGroup.className = 'color-input-group mb-2';
+            
+            colorInputGroup.innerHTML = `
+                <div class="input-group">
+                    <input type="color" class="form-control form-control-color color-picker" value="#000000" title="Seleccionar color">
+                    <input type="text" class="form-control color-name" placeholder="Nombre del color">
+                    <button class="btn btn-outline-danger remove-color" type="button" onclick="removeColorInput(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            colorSelector.appendChild(colorInputGroup);
+        }
+
+        function removeColorInput(button) {
+            const colorInputGroup = button.closest('.color-input-group');
+            if (document.querySelectorAll('.color-input-group').length > 1) {
+                colorInputGroup.remove();
+            } else {
+                alert('Debe haber al menos un color disponible');
+            }
+        }
+
+        // === MANEJO DE DESCUENTOS ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const hasDiscountCheckbox = document.getElementById('hasDiscount');
+            const discountSelect = document.getElementById('discountPercentage');
+            const priceInput = document.getElementById('productPrice');
+            const salePriceInput = document.getElementById('productSalePrice');
+
+            hasDiscountCheckbox.addEventListener('change', function() {
+                discountSelect.disabled = !this.checked;
+                if (!this.checked) {
+                    discountSelect.value = '';
+                    salePriceInput.value = '';
+                }
+            });
+
+            discountSelect.addEventListener('change', function() {
+                if (this.value && priceInput.value) {
+                    const regularPrice = parseFloat(priceInput.value);
+                    const discountPercent = parseFloat(this.value);
+                    const salePrice = regularPrice * (1 - discountPercent / 100);
+                    salePriceInput.value = Math.round(salePrice);
+                }
+            });
+
+            priceInput.addEventListener('input', function() {
+                if (discountSelect.value) {
+                    const regularPrice = parseFloat(this.value);
+                    const discountPercent = parseFloat(discountSelect.value);
+                    const salePrice = regularPrice * (1 - discountPercent / 100);
+                    salePriceInput.value = Math.round(salePrice);
+                }
+            });
+        });
+
+        // === VISTA PREVIA DEL PRODUCTO ===
+        function previewProduct() {
+            const formData = collectFormData();
+            if (!formData.name || !formData.price) {
+                alert('Por favor completa al menos el nombre y precio del producto');
+                return;
+            }
+
+            const previewContent = document.getElementById('productPreviewContent');
+            const hasDiscount = formData.salePrice && formData.salePrice < formData.price;
+            const discountPercent = hasDiscount ? Math.round(((formData.price - formData.salePrice) / formData.price) * 100) : 0;
+
+            previewContent.innerHTML = `
+                <div class="product-preview-card card">
+                    ${hasDiscount ? `<div class="discount-badge">-${discountPercent}% OFF</div>` : ''}
+                    <div class="position-relative">
+                        <img src="${formData.imageUrl || 'images/placeholder.svg'}" 
+                             class="card-img-top" 
+                             alt="${formData.name}"
+                             style="height: 250px; object-fit: cover;"
+                             onerror="this.src='images/placeholder.svg'">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">${formData.name}</h5>
+                        <p class="card-text text-muted">${formData.description || 'Sin descripción'}</p>
+                        <p class="text-muted mb-2">
+                            <small><i class="fas fa-tag me-1"></i>${formData.category || 'Sin categoría'} - ${formData.gender || 'Sin género'}</small>
+                        </p>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                ${hasDiscount ? `
+                                    <div>
+                                        <span class="text-decoration-line-through text-muted">$${formData.price.toLocaleString()}</span>
+                                        <span class="fw-bold text-danger fs-5 ms-2">$${formData.salePrice.toLocaleString()}</span>
+                                        <small class="text-success d-block">Ahorras $${(formData.price - formData.salePrice).toLocaleString()}</small>
+                                    </div>
+                                ` : `
+                                    <span class="fw-bold text-primary fs-5">$${formData.price.toLocaleString()}</span>
+                                `}
+                            </div>
+                        </div>
+
+                        ${formData.sizes.length > 0 ? `
+                            <div class="mb-3">
+                                <small class="text-muted">Tallas disponibles:</small>
+                                <div class="size-selector">
+                                    ${formData.sizes.map(size => `<span class="size-option">${size}</span>`).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${formData.colors.length > 0 ? `
+                            <div class="mb-3">
+                                <small class="text-muted">Colores disponibles:</small>
+                                <div class="color-selector">
+                                    ${formData.colors.map(color => `
+                                        <span class="color-option" 
+                                              style="background-color: ${color.hex}; width: 25px; height: 25px; display: inline-block; border-radius: 50%; margin: 2px; border: 1px solid #ddd;" 
+                                              title="${color.name}"></span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <button class="btn btn-primary w-100">
+                            <i class="fas fa-shopping-cart me-2"></i>Agregar al Carrito
+                        </button>
+                        
+                        <div class="mt-2 text-center">
+                            <small class="text-muted">Stock: ${formData.stock} unidades</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const previewModal = new bootstrap.Modal(document.getElementById('productPreviewModal'));
+            previewModal.show();
+        }
+
+        // === RECOLECCIÓN DE DATOS DEL FORMULARIO ===
+        function collectFormData() {
+            // Recolectar tallas seleccionadas
+            const sizes = [];
+            document.querySelectorAll('input[type="checkbox"][id^="size"]:checked').forEach(checkbox => {
+                sizes.push(checkbox.value);
+            });
+
+            // Recolectar colores con hex (actualizado para el nuevo formato)
+            const colors = [];
+            document.querySelectorAll('.color-input-group').forEach(group => {
+                const hexInput = group.querySelector('.color-picker');
+                const nameInput = group.querySelector('.color-name');
+                if (hexInput && nameInput && nameInput.value.trim()) {
+                    colors.push({
+                        hex: hexInput.value,
+                        name: nameInput.value.trim(),
+                        codigo_hex: hexInput.value, // Para compatibilidad con backend
+                        nombre: nameInput.value.trim() // Para compatibilidad con backend
+                    });
+                }
+            });
+
+            // Obtener URL de imagen si existe
+            let imageUrl = '';
+            const imagePreview = document.querySelector('#imagePreview img');
+            if (imagePreview) {
+                imageUrl = imagePreview.src;
+            }
+
+            return {
+                name: document.getElementById('productName').value,
+                description: document.getElementById('productDescription').value,
+                price: parseFloat(document.getElementById('productPrice').value) || 0,
+                salePrice: parseFloat(document.getElementById('productSalePrice').value) || 0,
+                category: document.getElementById('productCategory').value,
+                gender: document.getElementById('productGender').value,
+                stock: parseInt(document.getElementById('productStock').value) || 0,
+                sizes: sizes,
+                colors: colors,
+                status: document.getElementById('productStatus').value,
+                imageUrl: imageUrl,
+                hasDiscount: document.getElementById('hasDiscount').checked,
+                discountPercent: document.getElementById('discountPercentage').value
+            };
+        }
+
+        // === PREVIEW DE IMAGEN MEJORADO ===
+        function previewImage(input, previewId) {
+            const preview = document.getElementById(previewId);
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Validar tipo de archivo
+                if (!file.type.startsWith('image/')) {
+                    alert('Por favor selecciona un archivo de imagen válido');
+                    input.value = '';
+                    return;
+                }
+                
+                // Validar tamaño (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('La imagen es demasiado grande. Máximo 5MB');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <div class="position-relative">
+                            <img src="${e.target.result}" alt="Preview" class="img-fluid rounded" style="max-height: 200px;">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" 
+                                    onclick="clearImagePreview('${input.id}', '${previewId}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted d-block mt-2">
+                            ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)
+                        </small>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearImagePreview(inputId, previewId) {
+            document.getElementById(inputId).value = '';
+            document.getElementById(previewId).innerHTML = '';
+        }
+
+        // === DRAG & DROP PARA IMÁGENES ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadContainer = document.querySelector('.image-upload-container');
+            if (uploadContainer) {
+                uploadContainer.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+
+                uploadContainer.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                });
+
+                uploadContainer.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        const fileInput = document.getElementById('productImage');
+                        fileInput.files = files;
+                        previewImage(fileInput, 'imagePreview');
+                    }
+                });
+            }
+        });
+
+        // === FUNCIONES GLOBALES PARA LA INTERFAZ ===
+        function showAddProductModal() {
+            if (window.databaseAdmin) {
+                window.databaseAdmin.showAddProductModal();
+            } else {
+                console.error('DatabaseAdminSystem no está disponible');
+            }
+        }
+
+        function saveProduct() {
+            if (window.databaseAdmin) {
+                window.databaseAdmin.saveProduct();
+            } else {
+                console.error('DatabaseAdminSystem no está disponible');
+            }
+        }
+
+        function showAddCategoryModal() {
+            console.log('Función de categorías pendiente de implementación');
+        }
+
+        // === GESTIÓN DE PEDIDOS EN TIEMPO REAL ===
+        let ordersRefreshInterval;
+        
+        function loadOrders() {
+            console.log('🔄 Cargando pedidos desde la API...');
+            
+            fetch('api/obtener-pedidos.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderOrders(data.pedidos);
+                        updateOrdersStats(data.pedidos);
+                    } else {
+                        console.error('❌ Error cargando pedidos:', data.message);
+                        showEmptyOrdersMessage();
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error de red cargando pedidos:', error);
+                    showEmptyOrdersMessage();
+                });
+        }
+        
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                                <h5>No hay pedidos registrados</h5>
+                                <p>Los pedidos aparecerán aquí cuando los clientes realicen compras.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = orders.map(order => {
+                const statusBadge = getStatusBadge(order.estado);
+                const productsList = JSON.parse(order.productos || '[]').map(p => 
+                    `${p.name || p.nombre} (x${p.quantity || p.cantidad})`
+                ).join(', ');
+                
+                return `
+                    <tr>
+                        <td class="fw-bold">#${order.id}</td>
+                        <td>
+                            <div>
+                                <strong>${order.nombre_completo}</strong><br>
+                                <small class="text-muted">${order.email}</small><br>
+                                <small class="text-muted">📱 ${order.telefono || 'N/A'}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <small class="text-muted" title="${productsList}">
+                                ${productsList.length > 50 ? productsList.substring(0, 50) + '...' : productsList}
+                            </small>
+                        </td>
+                        <td class="fw-bold text-success">$${parseFloat(order.total).toLocaleString('es-CO')}</td>
+                        <td>
+                            <small>${new Date(order.fecha_pedido).toLocaleDateString('es-ES')}</small><br>
+                            <small class="text-muted">${new Date(order.fecha_pedido).toLocaleTimeString('es-ES')}</small>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="viewOrderDetails(${order.id})" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-success" onclick="updateOrderStatus(${order.id}, 'completed')" title="Marcar como completado">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="printOrder(${order.id})" title="Imprimir">
+                                    <i class="fas fa-print"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': '<span class="badge bg-warning text-dark">⏳ Pendiente</span>',
+                'processing': '<span class="badge bg-info">🔄 En Proceso</span>',
+                'completed': '<span class="badge bg-success">✅ Completado</span>',
+                'cancelled': '<span class="badge bg-danger">❌ Cancelado</span>'
+            };
+            return badges[status] || '<span class="badge bg-secondary">❓ Desconocido</span>';
+        }
+        
+        function updateOrdersStats(orders) {
+            const totalOrdersElement = document.getElementById('totalOrders');
+            if (totalOrdersElement) {
+                totalOrdersElement.textContent = orders.length;
+            }
+        }
+        
+        function showEmptyOrdersMessage() {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center py-4">
+                        <div class="text-danger">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                            <h5>Error cargando pedidos</h5>
+                            <p>No se pudieron cargar los pedidos. Verifica la conexión.</p>
+                            <button class="btn btn-outline-primary" onclick="loadOrders()">
+                                <i class="fas fa-refresh me-2"></i>Reintentar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        function filterOrders() {
+            const filter = document.getElementById('orderFilter').value;
+            console.log('🔍 Filtrado por:', filter);
+            // TODO: Implementar filtrado en el frontend o en la API
+            loadOrders();
+        }
+        
+        function viewOrderDetails(orderId) {
+            console.log('👁️ Ver detalles del pedido:', orderId);
+            // TODO: Implementar modal con detalles completos
+            alert(`Ver detalles del pedido #${orderId}`);
+        }
+        
+        function updateOrderStatus(orderId, newStatus) {
+            console.log('📝 Actualizando estado del pedido:', orderId, 'a', newStatus);
+            // TODO: Implementar actualización de estado
+            alert(`Pedido #${orderId} marcado como ${newStatus}`);
+        }
+        
+        function printOrder(orderId) {
+            console.log('🖨️ Imprimir pedido:', orderId);
+            // TODO: Implementar impresión
+            alert(`Imprimir pedido #${orderId}`);
+        }
+        
+        // Inicializar carga automática de pedidos
+        function startOrdersAutoRefresh() {
+            // Cargar inmediatamente
+            loadOrders();
+            
+            // Refrescar cada 30 segundos
+            ordersRefreshInterval = setInterval(loadOrders, 30000);
+            console.log('🔄 Auto-refresh de pedidos activado (30s)');
+        }
+        
+        function stopOrdersAutoRefresh() {
+            if (ordersRefreshInterval) {
+                clearInterval(ordersRefreshInterval);
+                console.log('⏹️ Auto-refresh de pedidos desactivado');
+            }
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                sessionStorage.removeItem('adminAuthenticated');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // === FUNCIONES DE CONFIGURACIÓN ===
+        function saveStoreSettings() {
+            alert('Configuración guardada exitosamente');
+        }
+
+        function exportData() {
+            if (window.databaseAdmin) {
+                window.databaseAdmin.exportData();
+            }
+        }
+
+        function importData() {
+            if (window.databaseAdmin) {
+                window.databaseAdmin.importData();
+            }
+        }
+
+        function backupData() {
+            if (window.databaseAdmin) {
+                window.databaseAdmin.backupData();
+            }
+        }
+
+        function syncWithFrontend() {
+            if (window.databaseAdmin) {
+                window.databaseAdmin.syncWithFrontend();
+            }
+        }
+
+        function clearCache() {
+            if (confirm('¿Estás seguro de limpiar el caché? Esta acción no se puede deshacer.')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                location.reload();
+            }
+        }
+
+        // === INICIALIZACIÓN DE FECHA ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDateEl = document.getElementById('currentDate');
+            if (currentDateEl) {
+                currentDateEl.textContent = new Date().toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+            
+            // Hacer funciones de pedidos globalmente disponibles
+            window.loadOrders = loadOrders;
+            window.startOrdersAutoRefresh = startOrdersAutoRefresh;
+            window.stopOrdersAutoRefresh = stopOrdersAutoRefresh;
+            window.filterOrders = filterOrders;
+            window.viewOrderDetails = viewOrderDetails;
+            window.updateOrderStatus = updateOrderStatus;
+            window.printOrder = printOrder;
+            
+            console.log('✅ Funciones de pedidos disponibles globalmente');
+        });
+    </script>
+
+</body>
+</html>

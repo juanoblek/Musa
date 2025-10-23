@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 TEST: Pago Real MercadoPago + Base de Datos</title>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .mercadopago-section {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .resumen {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+        
+        .precio {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .test-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .test-info h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row, .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Test: Pago Real + Base de Datos</h1>
+            <p>Solo guarda en BD cuando MercadoPago confirma pago exitoso</p>
+        </div>
+        
+        <div class="test-info">
+            <h4>🧪 Información de Prueba</h4>
+            <p><strong>Tarjeta de Prueba:</strong> 4509 9535 6623 3704</p>
+            <p><strong>Vencimiento:</strong> 11/25 | <strong>CVV:</strong> 123</p>
+            <p><strong>Documento:</strong> 12345678</p>
+            <p><strong>Estado esperado:</strong> Solo si el pago es APROBADO se guardará en la base de datos</p>
+        </div>
+        
+        <form id="checkout-form">
+            <div class="form-group">
+                <h3>📋 Datos del Cliente</h3>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fullName">Nombre Completo *</label>
+                    <input type="text" id="fullName" name="fullName" value="Juan Pérez Test" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" value="test@musamoda.com" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="tel" id="phone" name="phone" value="3001234567">
+                </div>
+                <div class="form-group">
+                    <label for="department">Departamento</label>
+                    <select id="department" name="department">
+                        <option value="Bogotá D.C.">Bogotá D.C.</option>
+                        <option value="Antioquia">Antioquia</option>
+                        <option value="Valle del Cauca">Valle del Cauca</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">Ciudad</label>
+                    <input type="text" id="city" name="city" value="Bogotá">
+                </div>
+                <div class="form-group">
+                    <label for="address">Dirección</label>
+                    <input type="text" id="address" name="address" value="Calle 123 # 45-67">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Notas Adicionales</label>
+                <textarea id="notes" name="notes" rows="3" placeholder="Instrucciones especiales para el envío...">Entrega entre 9am y 5pm</textarea>
+            </div>
+            
+            <div class="resumen">
+                <h3>🛒 Resumen del Pedido</h3>
+                <div id="productos-lista">
+                    <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                        <span>Blusa Premium Test</span>
+                        <span>$89.900 x 2</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                        <span>Falda Elegante Test</span>
+                        <span>$65.000 x 1</span>
+                    </div>
+                    <hr>
+                    <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                        <strong>Subtotal:</strong>
+                        <strong id="subtotal">$244.800</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 10px 0;">
+                        <span>Envío:</span>
+                        <span id="envio">$15.000</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 20px;">
+                        <strong>Total:</strong>
+                        <strong class="precio" id="total">$259.800</strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mercadopago-section">
+                <h3>💳 Datos de Pago (MercadoPago)</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="form-checkout__cardholderEmail">Email del Titular</label>
+                        <input type="email" id="form-checkout__cardholderEmail" value="test@musamoda.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-checkout__cardholderName">Nombre en la Tarjeta</label>
+                        <input type="text" id="form-checkout__cardholderName" placeholder="Nombre como aparece en la tarjeta">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="form-checkout__identificationType">Tipo de Documento</label>
+                        <select id="form-checkout__identificationType"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="form-checkout__identificationNumber">Número de Documento</label>
+                        <input type="text" id="form-checkout__identificationNumber" placeholder="12345678">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="form-checkout__cardNumber">Número de Tarjeta</label>
+                    <input type="text" id="form-checkout__cardNumber" placeholder="4509 9535 6623 3704">
+                </div>
+                
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label for="form-checkout__expirationDate">Vencimiento</label>
+                        <input type="text" id="form-checkout__expirationDate" placeholder="11/25">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-checkout__securityCode">Código de Seguridad</label>
+                        <input type="text" id="form-checkout__securityCode" placeholder="123">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-checkout__installments">Cuotas</label>
+                        <select id="form-checkout__installments"></select>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="display: none;">
+                    <label for="form-checkout__issuer">Banco Emisor</label>
+                    <select id="form-checkout__issuer"></select>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submit-btn">
+                🔥 Procesar Pago Real y Guardar en BD
+            </button>
+        </form>
+    </div>
+    
+    <!-- Script del sistema de pago -->
+    <script src="js/pago-real-mercadopago.js"></script>
+    <script>
+        // Esperar a que MercadoPago SDK esté listo
+        function initializarSistema() {
+            // Configurar productos del carrito para el test
+            window.carrito = [
+                {
+                    id: 1,
+                    nombre: "Blusa Premium Test",
+                    precio: 89900,
+                    cantidad: 2,
+                    talla: "M",
+                    color: "Rosa"
+                },
+                {
+                    id: 2,
+                    nombre: "Falda Elegante Test", 
+                    precio: 65000,
+                    cantidad: 1,
+                    talla: "S",
+                    color: "Negro"
+                }
+            ];
+            
+            // Verificar que MercadoPago esté disponible
+            if (typeof MercadoPago === 'undefined') {
+                console.error('❌ MercadoPago SDK no está cargado');
+                alert('Error: MercadoPago SDK no se pudo cargar. Verifica tu conexión a internet.');
+                return;
+            }
+            
+            // Verificar que nuestra clase esté disponible
+            if (typeof PagoRealMercadoPago === 'undefined') {
+                console.error('❌ PagoRealMercadoPago class no está disponible');
+                alert('Error: Sistema de pago no disponible. Recarga la página.');
+                return;
+            }
+            
+            console.log('🔥 Inicializando sistema de pago real...');
+            
+            // Public Key de TEST - cambiar por el de producción cuando estés listo
+            const publicKey = 'TEST-b3d5b663-664a-4e8f-b759-de5d7c12ef8f';
+            
+            // Crear instancia del pagador
+            try {
+                const pagoReal = new PagoRealMercadoPago(publicKey, true); // debug = true
+                
+                // Inicializar formulario
+                pagoReal.inicializarFormulario('#checkout-form', '#submit-btn');
+                
+                console.log('✅ Sistema de pago real inicializado');
+                console.log('📋 Datos de prueba cargados');
+                console.log('🎯 Solo pagos APROBADOS se guardarán en la base de datos');
+                
+                // Actualizar email del cardholderEmail cuando cambie el email principal
+                const emailPrincipal = document.getElementById('email');
+                const emailTarjeta = document.getElementById('form-checkout__cardholderEmail');
+                
+                if (emailPrincipal && emailTarjeta) {
+                    emailPrincipal.addEventListener('input', function() {
+                        emailTarjeta.value = this.value;
+                    });
+                }
+                
+            } catch (error) {
+                console.error('❌ Error inicializando sistema:', error);
+                alert('Error al inicializar el sistema de pago: ' + error.message);
+            }
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dar tiempo para que MercadoPago SDK se inicialice completamente
+            setTimeout(initializarSistema, 1000);
+        });
+        
+        // Función para probar diferentes estados de pago
+        function testearEstado(estado) {
+            alert(`En producción real, MercadoPago devolvería estado: ${estado}\n\nSolo el estado "approved" guardará en la base de datos.`);
+        }
+    </script>
+    
+    <div style="margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 8px; text-align: center;">
+        <h4>🧪 Estados de Prueba Disponibles</h4>
+        <p>En ambiente real, MercadoPago puede devolver diferentes estados:</p>
+        <button onclick="testearEstado('approved')" style="margin: 5px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px;">✅ Aprobado (Guarda en BD)</button>
+        <button onclick="testearEstado('pending')" style="margin: 5px; padding: 8px 15px; background: #FF9800; color: white; border: none; border-radius: 4px;">⏳ Pendiente (NO guarda)</button>
+        <button onclick="testearEstado('rejected')" style="margin: 5px; padding: 8px 15px; background: #F44336; color: white; border: none; border-radius: 4px;">❌ Rechazado (NO guarda)</button>
+        <button onclick="testearEstado('cancelled')" style="margin: 5px; padding: 8px 15px; background: #9E9E9E; color: white; border: none; border-radius: 4px;">🚫 Cancelado (NO guarda)</button>
+    </div>
+</body>
+</html>

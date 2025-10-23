@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificador - Eliminación Menú UNISEX</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .success { color: green; background: #d4edda; padding: 10px; border-radius: 5px; }
+        .error { color: red; background: #f8d7da; padding: 10px; border-radius: 5px; }
+        .info { color: blue; background: #d1ecf1; padding: 10px; border-radius: 5px; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificador: Eliminación del Menú UNISEX</h1>
+    
+    <div id="status">Verificando...</div>
+    
+    <h2>📋 Resultados de la Verificación</h2>
+    <div id="results"></div>
+    
+    <hr>
+    <h2>🛠️ Acciones</h2>
+    <p>
+        <a href="index.html" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">🏠 Ir al Index</a>
+        <button onclick="forceCheck()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; margin-left: 10px; cursor: pointer;">🔄 Re-verificar</button>
+        <button onclick="window.location.reload()" style="padding: 10px 20px; background: #ffc107; color: black; border: none; border-radius: 5px; margin-left: 10px; cursor: pointer;">♻️ Recargar Página</button>
+    </p>
+    
+    <script>
+        function checkUnisexRemoval() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            let results = [];
+            
+            // 1. Verificar si existe elemento con ID 'coleccion-unisex'
+            const unisexById = document.getElementById('coleccion-unisex');
+            if (unisexById) {
+                results.push({
+                    test: 'ID coleccion-unisex',
+                    status: 'error',
+                    message: 'ENCONTRADO - El elemento con ID "coleccion-unisex" sigue existiendo',
+                    element: unisexById
+                });
+            } else {
+                results.push({
+                    test: 'ID coleccion-unisex',
+                    status: 'success',
+                    message: 'NO ENCONTRADO - Correctamente eliminado'
+                });
+            }
+            
+            // 2. Verificar enlaces que contengan "UNISEX"
+            const unisexLinks = Array.from(document.querySelectorAll('a')).filter(link => 
+                link.textContent.trim().toUpperCase().includes('UNISEX')
+            );
+            
+            if (unisexLinks.length > 0) {
+                results.push({
+                    test: 'Enlaces con texto UNISEX',
+                    status: 'error',
+                    message: `ENCONTRADOS ${unisexLinks.length} enlaces con texto "UNISEX"`,
+                    elements: unisexLinks
+                });
+            } else {
+                results.push({
+                    test: 'Enlaces con texto UNISEX',
+                    status: 'success',
+                    message: 'NO ENCONTRADOS - Correctamente eliminados'
+                });
+            }
+            
+            // 3. Verificar elementos en la barra de navegación
+            const navbar = document.querySelector('.navbar-nav');
+            let navbarItems = [];
+            if (navbar) {
+                const navItems = navbar.querySelectorAll('li');
+                navItems.forEach(item => {
+                    if (item.textContent.toUpperCase().includes('UNISEX')) {
+                        navbarItems.push(item);
+                    }
+                });
+            }
+            
+            if (navbarItems.length > 0) {
+                results.push({
+                    test: 'Items de navegación UNISEX',
+                    status: 'error',
+                    message: `ENCONTRADOS ${navbarItems.length} items de navegación con "UNISEX"`,
+                    elements: navbarItems
+                });
+            } else {
+                results.push({
+                    test: 'Items de navegación UNISEX',
+                    status: 'success',
+                    message: 'NO ENCONTRADOS - Navegación limpia'
+                });
+            }
+            
+            // 4. Verificar dropdowns con aria-labelledby relacionado a unisex
+            const unisexDropdowns = document.querySelectorAll('[aria-labelledby*="unisex"]');
+            if (unisexDropdowns.length > 0) {
+                results.push({
+                    test: 'Dropdowns UNISEX',
+                    status: 'error',
+                    message: `ENCONTRADOS ${unisexDropdowns.length} dropdowns relacionados con "unisex"`,
+                    elements: Array.from(unisexDropdowns)
+                });
+            } else {
+                results.push({
+                    test: 'Dropdowns UNISEX',
+                    status: 'success',
+                    message: 'NO ENCONTRADOS - Dropdowns limpios'
+                });
+            }
+            
+            // 5. Verificar si los scripts de limpieza están cargados
+            const removeScript = document.querySelector('script[src*="remove-unisex-menu.js"]');
+            if (removeScript) {
+                results.push({
+                    test: 'Script de eliminación',
+                    status: 'success',
+                    message: 'CARGADO - Script remove-unisex-menu.js está presente'
+                });
+            } else {
+                results.push({
+                    test: 'Script de eliminación',
+                    status: 'error',
+                    message: 'NO CARGADO - Script remove-unisex-menu.js no encontrado'
+                });
+            }
+            
+            // Generar HTML de resultados
+            let html = '';
+            let hasErrors = false;
+            
+            results.forEach(result => {
+                const statusClass = result.status === 'success' ? 'success' : 'error';
+                if (result.status === 'error') hasErrors = true;
+                
+                html += `<div class="${statusClass}">`;
+                html += `<strong>${result.test}:</strong> ${result.message}`;
+                
+                if (result.elements && result.elements.length > 0) {
+                    html += `<div class="code">Elementos encontrados:<br>`;
+                    result.elements.forEach((el, i) => {
+                        html += `${i + 1}. ${el.tagName}: "${el.textContent.trim().substring(0, 50)}..."<br>`;
+                    });
+                    html += `</div>`;
+                }
+                
+                html += `</div><br>`;
+            });
+            
+            // Estado general
+            if (hasErrors) {
+                statusDiv.innerHTML = '<div class="error">❌ VERIFICACIÓN FALLIDA - Se encontraron elementos UNISEX</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="success">✅ VERIFICACIÓN EXITOSA - Menú UNISEX eliminado correctamente</div>';
+            }
+            
+            resultsDiv.innerHTML = html;
+            
+            return results;
+        }
+        
+        function forceCheck() {
+            // Ejecutar función global de eliminación si existe
+            if (typeof window.forceRemoveUnisex === 'function') {
+                window.forceRemoveUnisex();
+                setTimeout(() => {
+                    checkUnisexRemoval();
+                }, 500);
+            } else {
+                checkUnisexRemoval();
+            }
+        }
+        
+        // Ejecutar verificación cuando cargue la página
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(checkUnisexRemoval, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,172 @@
+{
+  "success": true,
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Chaqueta Deportiva Premium",
+      "descripcion": "Chaqueta deportiva de alta calidad con material transpirable",
+      "precio": 89.99,
+      "precio_oferta": null,
+      "stock": 15,
+      "categoria": "Chaquetas",
+      "categoria_id": 1,
+      "imagen_principal": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+      ],
+      "destacado": true,
+      "nuevo": true,
+      "oferta": false,
+      "variantes": [
+        {"tipo": "talla", "valor": "S"},
+        {"tipo": "talla", "valor": "M"},
+        {"tipo": "talla", "valor": "L"}
+      ],
+      "badges": [
+        {"tipo": "nuevo", "texto": "Nuevo"},
+        {"tipo": "destacado", "texto": "Destacado"}
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "Vestido Elegante Nocturno",
+      "descripcion": "Vestido elegante perfecto para ocasiones especiales",
+      "precio": 120.00,
+      "precio_oferta": 95.00,
+      "stock": 8,
+      "categoria": "Vestidos",
+      "categoria_id": 2,
+      "imagen_principal": "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop"
+      ],
+      "destacado": false,
+      "nuevo": false,
+      "oferta": true,
+      "variantes": [
+        {"tipo": "talla", "valor": "XS"},
+        {"tipo": "talla", "valor": "S"},
+        {"tipo": "talla", "valor": "M"},
+        {"tipo": "color", "valor": "Negro"},
+        {"tipo": "color", "valor": "Azul"}
+      ],
+      "badges": [
+        {"tipo": "oferta", "texto": "Oferta"}
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "Pantalón Clásico Formal",
+      "descripcion": "Pantalón formal de corte clásico para oficina",
+      "precio": 65.50,
+      "precio_oferta": null,
+      "stock": 12,
+      "categoria": "Pantalones",
+      "categoria_id": 3,
+      "imagen_principal": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop"
+      ],
+      "destacado": false,
+      "nuevo": false,
+      "oferta": false,
+      "variantes": [
+        {"tipo": "talla", "valor": "28"},
+        {"tipo": "talla", "valor": "30"},
+        {"tipo": "talla", "valor": "32"},
+        {"tipo": "talla", "valor": "34"}
+      ],
+      "badges": []
+    },
+    {
+      "id": 4,
+      "nombre": "Blusa Casual Verano",
+      "descripcion": "Blusa fresca y cómoda para el día a día",
+      "precio": 45.00,
+      "precio_oferta": null,
+      "stock": 20,
+      "categoria": "Blusas",
+      "categoria_id": 4,
+      "imagen_principal": "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400&h=400&fit=crop"
+      ],
+      "destacado": true,
+      "nuevo": false,
+      "oferta": false,
+      "variantes": [
+        {"tipo": "talla", "valor": "XS"},
+        {"tipo": "talla", "valor": "S"},
+        {"tipo": "talla", "valor": "M"},
+        {"tipo": "color", "valor": "Blanco"},
+        {"tipo": "color", "valor": "Rosa"}
+      ],
+      "badges": [
+        {"tipo": "destacado", "texto": "Destacado"}
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "Falda Moderna Ejecutiva",
+      "descripcion": "Falda moderna para look profesional",
+      "precio": 55.00,
+      "precio_oferta": 40.00,
+      "stock": 6,
+      "categoria": "Faldas",
+      "categoria_id": 5,
+      "imagen_principal": "https://images.unsplash.com/photo-1583496661160-fb5886a13d14?w=400&h=400&fit=crop",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1583496661160-fb5886a13d14?w=400&h=400&fit=crop"
+      ],
+      "destacado": true,
+      "nuevo": false,
+      "oferta": true,
+      "variantes": [
+        {"tipo": "talla", "valor": "XS"},
+        {"tipo": "talla", "valor": "S"},
+        {"tipo": "talla", "valor": "M"}
+      ],
+      "badges": [
+        {"tipo": "destacado", "texto": "Destacado"},
+        {"tipo": "oferta", "texto": "Oferta"},
+        {"tipo": "stock-bajo", "texto": "Últimas unidades"}
+      ]
+    },
+    {
+      "id": 6,
+      "nombre": "Conjunto Deportivo Complete",
+      "descripcion": "Set completo para actividades deportivas",
+      "precio": 85.00,
+      "precio_oferta": null,
+      "stock": 10,
+      "categoria": "Deportivo",
+      "categoria_id": 6,
+      "imagen_principal": "https://images.unsplash.com/photo-1506629905607-ce2a6c49e8d4?w=400&h=400&fit=crop",
+      "imagenes": [
+        "https://images.unsplash.com/photo-1506629905607-ce2a6c49e8d4?w=400&h=400&fit=crop"
+      ],
+      "destacado": false,
+      "nuevo": true,
+      "oferta": false,
+      "variantes": [
+        {"tipo": "talla", "valor": "S"},
+        {"tipo": "talla", "valor": "M"},
+        {"tipo": "talla", "valor": "L"},
+        {"tipo": "color", "valor": "Negro"},
+        {"tipo": "color", "valor": "Gris"}
+      ],
+      "badges": [
+        {"tipo": "nuevo", "texto": "Nuevo"}
+      ]
+    }
+  ],
+  "categorias": [
+    {"id": 1, "nombre": "Chaquetas", "slug": "chaquetas"},
+    {"id": 2, "nombre": "Vestidos", "slug": "vestidos"},
+    {"id": 3, "nombre": "Pantalones", "slug": "pantalones"},
+    {"id": 4, "nombre": "Blusas", "slug": "blusas"},
+    {"id": 5, "nombre": "Faldas", "slug": "faldas"},
+    {"id": 6, "nombre": "Deportivo", "slug": "deportivo"}
+  ],
+  "total": 6
+}

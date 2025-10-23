@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Específico - Chaqueta See</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .media-test {
+            max-width: 300px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container test-container">
+        <h1 class="text-center mb-4">🔍 Test Específico - Chaqueta See</h1>
+        
+        <div id="loadingMessage" class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p>Cargando información del producto...</p>
+        </div>
+        
+        <div id="productInfo" style="display: none;"></div>
+        
+        <div class="mt-4">
+            <h3>🧪 Test Manual de URLs</h3>
+            <div class="mb-3">
+                <label for="testUrl" class="form-label">URL a probar:</label>
+                <input type="text" class="form-control" id="testUrl" placeholder="Ingresa una URL...">
+            </div>
+            <button class="btn btn-primary" onclick="testUrl()">🔍 Probar</button>
+            
+            <div id="testResult" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script src="js/detector-inteligente-media.js"></script>
+    
+    <script>
+        // Cargar información del producto Chaqueta See
+        async function loadChaquetaSeeInfo() {
+            try {
+                const response = await fetch('api/productos-v2.php');
+                const data = await response.json();
+                
+                const loadingElement = document.getElementById('loadingMessage');
+                const productInfoElement = document.getElementById('productInfo');
+                
+                if (data.success && data.data) {
+                    // Buscar productos con "chaqueta" en el nombre
+                    const chaquetas = data.data.filter(product => 
+                        product.name.toLowerCase().includes('chaqueta') ||
+                        product.name.toLowerCase().includes('see')
+                    );
+                    
+                    loadingElement.style.display = 'none';
+                    productInfoElement.style.display = 'block';
+                    
+                    if (chaquetas.length > 0) {
+                        let html = '<h2>📋 Productos encontrados:</h2>';
+                        
+                        for (const product of chaquetas) {
+                            const mainImage = product.main_image;
+                            const tipoDetectado = detectarTipoMediaSincrono(mainImage);
+                            
+                            html += `
+                                <div class="product-card">
+                                    <h4>${product.name} (ID: ${product.id})</h4>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Main Image:</strong> ${mainImage}</p>
+                                            <p><strong>Tipo detectado:</strong> ${tipoDetectado}</p>
+                                            <p><strong>Stock:</strong> ${product.stock_quantity || 'N/A'}</p>
+                                            <p><strong>Precio:</strong> $${product.price || 'N/A'}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Vista previa:</h6>
+                                            <div class="border p-2">
+                                                ${generarMediaHTMLSincrono(mainImage, product.name, "media-test", "")}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h6 class="mt-3">Como aparecería en el índice:</h6>
+                                    <div class="border p-3">
+                                        <div class="carousel-item active">
+                                            ${generarMediaHTMLSincrono(
+                                                mainImage, 
+                                                product.name, 
+                                                "d-block w-100 card-img-top product-image glasseffect", 
+                                                "object-fit: cover; width: 100%; height: 200px;"
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        productInfoElement.innerHTML = html;
+                    } else {
+                        productInfoElement.innerHTML = '<div class="alert alert-warning">No se encontraron productos con "chaqueta" o "see" en el nombre</div>';
+                    }
+                } else {
+                    loadingElement.style.display = 'none';
+                    productInfoElement.style.display = 'block';
+                    productInfoElement.innerHTML = '<div class="alert alert-danger">Error al cargar productos</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('productInfo').style.display = 'block';
+                document.getElementById('productInfo').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Test manual de URL
+        function testUrl() {
+            const url = document.getElementById('testUrl').value;
+            const resultContainer = document.getElementById('testResult');
+            
+            if (!url.trim()) {
+                resultContainer.innerHTML = '<div class="alert alert-warning">Por favor ingresa una URL</div>';
+                return;
+            }
+
+            const tipo = detectarTipoMediaSincrono(url);
+            const html = generarMediaHTMLSincrono(url, "Test", "media-test", "max-width: 300px;");
+            
+            resultContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Resultado del test</h5>
+                        <p><strong>URL:</strong> ${url}</p>
+                        <p><strong>Tipo detectado:</strong> ${tipo}</p>
+                        <h6>Vista previa:</h6>
+                        <div class="border p-2">
+                            ${html}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Cargar al iniciar
+        document.addEventListener('DOMContentLoaded', loadChaquetaSeeInfo);
+
+        // Permitir test con Enter
+        document.getElementById('testUrl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testUrl();
+            }
+        });
+    </script>
+</body>
+</html>

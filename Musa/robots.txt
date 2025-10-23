@@ -1,0 +1,42 @@
+User-agent: *
+Allow: /
+
+# Permitir acceso a imágenes y recursos
+Allow: /images/
+Allow: /css/
+Allow: /js/
+Allow: /api/
+
+# Bloquear rutas administrativas
+Disallow: /admin-panel.php
+Disallow: /login.php
+Disallow: /logout.php
+Disallow: /api/admin/
+Disallow: /admin/
+Disallow: /backup/
+Disallow: /logs/
+
+# Permitir específicamente el sitemap
+Allow: /sitemap.xml
+
+# Ubicación del sitemap
+Sitemap: https://www.musa-moda.com/sitemap.xml
+
+# Configuración para crawl-delay (opcional)
+Crawl-delay: 1
+
+# Para bots específicos
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Bloquear bots maliciosos
+User-agent: BadBot
+Disallow: /
+
+User-agent: ScrapeBot
+Disallow: /

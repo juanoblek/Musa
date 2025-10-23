@@ -1,0 +1,151 @@
+/**
+ * MODAL HEADER FIX - ProductViewModal
+ * Arregla el header desordenado y posiciona correctamente el botón de cerrar
+ */
+
+/* Reset y estructura base del header */
+#ProductViewModal .modal-header {
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    position: relative !important;
+    padding: 1.25rem 3rem 1.25rem 1.5rem !important; /* Más padding a la derecha para el botón */
+    border-bottom: none !important;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    min-height: 70px !important;
+}
+
+/* Contenedor del contenido del header (título + icono) */
+#ProductViewModal .modal-header .d-flex {
+    flex: 1 !important;
+    align-items: center !important;
+    margin-right: 0 !important; /* Quitar margen ya que el botón está absoluto */
+    max-width: calc(100% - 50px) !important; /* Dejar espacio para el botón */
+}
+
+/* Icono del header */
+#ProductViewModal .modal-header .icon-wrapper {
+    flex-shrink: 0 !important;
+    background: rgba(255,255,255,0.2) !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+    margin-right: 12px !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.3s ease !important;
+}
+
+#ProductViewModal .modal-header .icon-wrapper:hover {
+    background: rgba(255,255,255,0.3) !important;
+    transform: scale(1.05) !important;
+}
+
+#ProductViewModal .modal-header .icon-wrapper i {
+    font-size: 1.3rem !important;
+    color: white !important;
+    display: block !important;
+}
+
+/* Contenedor del título */
+#ProductViewModal .modal-header .modal-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.01em !important;
+}
+
+#ProductViewModal .modal-header small {
+    font-size: 0.8rem !important;
+    opacity: 0.85 !important;
+    margin-top: 2px !important;
+    display: block !important;
+}
+
+/* BOTÓN DE CERRAR - POSICIONAMIENTO CORRECTO */
+#ProductViewModal .modal-header .btn-close {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    z-index: 10 !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    padding: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    background-size: 1em !important;
+    opacity: 0.8 !important;
+    transition: all 0.3s ease !important;
+    border-radius: 6px !important;
+    background-color: rgba(255,255,255,0.1) !important;
+}
+
+#ProductViewModal .modal-header .btn-close:hover {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+    background-color: rgba(255,255,255,0.2) !important;
+    background-size: 1.1em !important;
+}
+
+#ProductViewModal .modal-header .btn-close:focus {
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.3) !important;
+    outline: none !important;
+}
+
+/* Elementos decorativos de fondo - NO INTERFIEREN */
+#ProductViewModal .modal-header .position-absolute {
+    pointer-events: none !important;
+    z-index: 0 !important;
+}
+
+/* Asegurar que el contenido esté por encima de los decorativos */
+#ProductViewModal .modal-header .d-flex,
+#ProductViewModal .modal-header .btn-close {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* RESPONSIVE - MÓVIL */
+@media (max-width: 768px) {
+    #ProductViewModal .modal-header {
+        padding: 1rem 2.5rem 1rem 1rem !important; /* Menos padding pero manteniendo espacio para botón */
+        min-height: 60px !important;
+    }
+    
+    #ProductViewModal .modal-header .modal-title {
+        font-size: 1.1rem !important;
+    }
+    
+    #ProductViewModal .modal-header small {
+        font-size: 0.75rem !important;
+    }
+    
+    #ProductViewModal .modal-header .icon-wrapper {
+        padding: 6px !important;
+        margin-right: 10px !important;
+    }
+    
+    #ProductViewModal .modal-header .icon-wrapper i {
+        font-size: 1.1rem !important;
+    }
+    
+    #ProductViewModal .modal-header .btn-close {
+        top: 10px !important;
+        right: 10px !important;
+        width: 28px !important;
+        height: 28px !important;
+        padding: 6px !important;
+    }
+    
+    /* Ajustar contenido para móvil */
+    #ProductViewModal .modal-header .d-flex {
+        max-width: calc(100% - 40px) !important;
+    }
+}
+
+/* TABLET */
+@media (min-width: 769px) and (max-width: 991px) {
+    #ProductViewModal .modal-header {
+        padding: 1.15rem 1.25rem !important;
+    }
+}

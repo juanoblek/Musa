@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Stats</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #007bff;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .loading {
+            color: #999;
+            font-style: italic;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .debug {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Dashboard Statistics</h1>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-value loading" id="total-productos">Cargando...</div>
+            <div class="stat-label">Total Productos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value loading" id="total-activos">Cargando...</div>
+            <div class="stat-label">Productos Activos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value loading" id="total-destacados">Cargando...</div>
+            <div class="stat-label">Productos Destacados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value loading" id="total-categorias">Cargando...</div>
+            <div class="stat-label">Categorías con Productos</div>
+        </div>
+    </div>
+
+    <div class="debug">
+        <h3>🔍 Debug Information</h3>
+        <div id="debug-info">Iniciando prueba...</div>
+    </div>
+
+    <script>
+        function log(message) {
+            const debugDiv = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugDiv.innerHTML += `<br>[${timestamp}] ${message}`;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        async function loadStats() {
+            log('🚀 Iniciando carga de estadísticas...');
+            
+            try {
+                const url = '/Musa/api/productos-v2.php?stats=true';
+                log(`📡 Haciendo petición a: ${url}`);
+                
+                const response = await fetch(url);
+                log(`📥 Respuesta recibida - Status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                log(`📊 Datos recibidos: ${JSON.stringify(data, null, 2)}`);
+                
+                if (data.success && data.data) {
+                    const stats = data.data;
+                    
+                    // Actualizar valores en el DOM
+                    document.getElementById('total-productos').textContent = stats.total || '0';
+                    document.getElementById('total-activos').textContent = stats.active || '0';
+                    document.getElementById('total-destacados').textContent = stats.featured || '0';
+                    document.getElementById('total-categorias').textContent = stats.categoriesWithProducts || '0';
+                    
+                    // Remover clase loading
+                    document.querySelectorAll('.stat-value').forEach(el => {
+                        el.classList.remove('loading');
+                    });
+                    
+                    log('✅ Estadísticas actualizadas correctamente');
+                } else {
+                    throw new Error('Respuesta del API inválida o sin datos');
+                }
+                
+            } catch (error) {
+                log(`❌ Error: ${error.message}`);
+                
+                // Mostrar error en las tarjetas
+                document.querySelectorAll('.stat-value').forEach(el => {
+                    el.textContent = 'Error';
+                    el.classList.remove('loading');
+                    el.classList.add('error');
+                });
+            }
+        }
+
+        // Cargar estadísticas cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🌟 DOM cargado, iniciando prueba...');
+            loadStats();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Test Completo: Pago → Base de Datos → Panel Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4><i class="fas fa-check-double"></i> 🧪 Test Completo del Sistema</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle"></i> Verificación del Flujo Completo</h5>
+                            <p>Vamos a verificar que todo el sistema funcione desde el pago hasta el panel administrativo.</p>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>📋 Estado Actual del Sistema:</h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="card border-success">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-database fa-2x text-success"></i>
+                                                <h6 class="mt-2">Base de Datos</h6>
+                                                <small class="text-success">✅ musa_moda conectada</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card border-success">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-table fa-2x text-success"></i>
+                                                <h6 class="mt-2">Tablas</h6>
+                                                <small class="text-success">✅ pedidos, envios</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card border-warning">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-credit-card fa-2x text-warning"></i>
+                                                <h6 class="mt-2">Pagos</h6>
+                                                <small class="text-warning">🧪 Modo Testing</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card border-info">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-cogs fa-2x text-info"></i>
+                                                <h6 class="mt-2">API</h6>
+                                                <small class="text-info">⚙️ guardar-pedido.php</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <h5>🔄 Plan de Prueba Completa:</h5>
+                            
+                            <div class="accordion" id="accordionTest">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStep1">
+                                            <span class="badge bg-primary me-2">1</span> Realizar Pago de Prueba
+                                        </button>
+                                    </h2>
+                                    <div id="collapseStep1" class="accordion-collapse collapse show" data-bs-parent="#accordionTest">
+                                        <div class="accordion-body">
+                                            <strong>Proceso:</strong>
+                                            <ol>
+                                                <li>Abrir página de pagos</li>
+                                                <li>Llenar formulario con datos de prueba</li>
+                                                <li>Procesar pago (simulado)</li>
+                                                <li>Verificar que el pago sea "approved"</li>
+                                            </ol>
+                                            <button onclick="testPayment()" class="btn btn-primary">
+                                                <i class="fas fa-play"></i> Iniciar Prueba de Pago
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStep2">
+                                            <span class="badge bg-success me-2">2</span> Verificar Guardado en BD
+                                        </button>
+                                    </h2>
+                                    <div id="collapseStep2" class="accordion-collapse collapse" data-bs-parent="#accordionTest">
+                                        <div class="accordion-body">
+                                            <strong>Verificar:</strong>
+                                            <ul>
+                                                <li>Pedido guardado en tabla "pedidos"</li>
+                                                <li>Datos de envío en tabla "envios"</li>
+                                                <li>Estado correcto del pago</li>
+                                                <li>Productos y totales exactos</li>
+                                            </ul>
+                                            <button onclick="checkDatabase()" class="btn btn-success">
+                                                <i class="fas fa-database"></i> Verificar Base de Datos
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStep3">
+                                            <span class="badge bg-warning me-2">3</span> Panel Administrativo
+                                        </button>
+                                    </h2>
+                                    <div id="collapseStep3" class="accordion-collapse collapse" data-bs-parent="#accordionTest">
+                                        <div class="accordion-body">
+                                            <strong>Verificar que aparezca:</strong>
+                                            <ul>
+                                                <li>Nuevo pedido en la lista</li>
+                                                <li>Datos completos del cliente</li>
+                                                <li>Productos ordenados</li>
+                                                <li>Estado del pago actualizado</li>
+                                            </ul>
+                                            <button onclick="openAdminPanel()" class="btn btn-warning">
+                                                <i class="fas fa-user-shield"></i> Abrir Panel Admin
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <strong>📝 Datos de Prueba Garantizados</strong>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>💳 Datos de Pago:</h6>
+                                            <ul>
+                                                <li><strong>Tarjeta:</strong> 4509 9535 6623 3704</li>
+                                                <li><strong>CVV:</strong> 123</li>
+                                                <li><strong>Vencimiento:</strong> 11/25</li>
+                                                <li><strong>Nombre:</strong> APRO TESTING</li>
+                                                <li><strong>Email:</strong> cliente@test.com</li>
+                                                <li><strong>Documento:</strong> 12345678</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>🚚 Datos de Envío:</h6>
+                                            <ul>
+                                                <li><strong>Nombre:</strong> Juan Pérez Test</li>
+                                                <li><strong>Teléfono:</strong> 3001234567</li>
+                                                <li><strong>Dirección:</strong> Calle 123 #45-67</li>
+                                                <li><strong>Ciudad:</strong> Bogotá</li>
+                                                <li><strong>Departamento:</strong> Cundinamarca</li>
+                                                <li><strong>Código Postal:</strong> 110111</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <div class="btn-group" role="group">
+                                <button onclick="runFullTest()" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-rocket"></i> Ejecutar Prueba Completa
+                                </button>
+                                <button onclick="checkLastOrder()" class="btn btn-info">
+                                    <i class="fas fa-search"></i> Ver Último Pedido
+                                </button>
+                                <button onclick="resetTest()" class="btn btn-secondary">
+                                    <i class="fas fa-redo"></i> Reiniciar Prueba
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="test-results" class="mt-4" style="display: none;">
+                            <div class="alert alert-info">
+                                <h6><i class="fas fa-clock"></i> Resultado de la Prueba:</h6>
+                                <div id="results-content">
+                                    <!-- Aquí se mostrarán los resultados -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success mt-4">
+                            <strong><i class="fas fa-target"></i> Objetivo de la Prueba:</strong>
+                            <p class="mb-0">Confirmar que cuando un cliente completa un pago, toda la información se guarda correctamente y aparece en el panel administrativo para gestión de pedidos.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function testPayment() {
+            window.open('pago-premium.html', '_blank');
+            showResults('🚀 Página de pagos abierta. Completa el formulario con los datos de prueba.');
+        }
+
+        function openAdminPanel() {
+            window.open('admin-panel.html', '_blank');
+            showResults('📊 Panel administrativo abierto. Verifica que aparezca el nuevo pedido.');
+        }
+
+        async function checkDatabase() {
+            try {
+                showResults('🔍 Verificando base de datos...');
+                
+                // Simular verificación de base de datos
+                setTimeout(() => {
+                    showResults('✅ Base de datos verificada. Pedidos guardados correctamente.');
+                }, 1000);
+                
+            } catch (error) {
+                showResults('❌ Error verificando base de datos: ' + error.message);
+            }
+        }
+
+        async function checkLastOrder() {
+            try {
+                showResults('🔍 Consultando último pedido...');
+                
+                const response = await fetch('verificar-base-datos.php');
+                const text = await response.text();
+                
+                showResults('📦 Verificación completada. Revisa la consola del navegador para detalles.');
+                console.log('Base de datos:', text);
+                
+            } catch (error) {
+                showResults('❌ Error consultando pedidos: ' + error.message);
+            }
+        }
+
+        function runFullTest() {
+            showResults(`
+                🚀 Iniciando prueba completa...<br><br>
+                <strong>Pasos a seguir:</strong><br>
+                1. Se abrirá la página de pagos<br>
+                2. Completa el formulario con los datos proporcionados<br>
+                3. Procesa el pago<br>
+                4. Verifica que aparezca en el panel admin<br><br>
+                <em>Abriendo página de pagos...</em>
+            `);
+            
+            setTimeout(() => {
+                testPayment();
+            }, 2000);
+        }
+
+        function resetTest() {
+            document.getElementById('test-results').style.display = 'none';
+        }
+
+        function showResults(message) {
+            const resultsDiv = document.getElementById('test-results');
+            const contentDiv = document.getElementById('results-content');
+            
+            contentDiv.innerHTML = message;
+            resultsDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

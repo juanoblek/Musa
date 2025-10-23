@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Test Modal Carrito - Botón Cerrar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">🧪 Test Modal Carrito - Botón Cerrar</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <h5>🎯 Verificaciones del Botón Cerrar (ACTUALIZADO):</h5>
+                            <ul class="mb-0">
+                                <li>✅ Diseño: X clara y visible (ícono Bootstrap)</li>
+                                <li>✅ Posición: Esquina superior derecha</li>
+                                <li>✅ Estilo: Circular con borde y fondo claro</li>
+                                <li>✅ Hover: Efecto rojo con escala</li>
+                                <li>✅ Responsive: Adaptado a móviles</li>
+                                <li>✅ Envío: GRATIS implementado</li>
+                            </ul>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <button class="btn btn-success btn-lg" onclick="openCartModal()">
+                                <i class="bi bi-cart3 me-2"></i>
+                                Abrir Modal del Carrito
+                            </button>
+                            
+                            <button class="btn btn-primary" onclick="addTestProduct()">
+                                <i class="bi bi-plus-circle me-2"></i>
+                                Agregar Producto de Prueba
+                            </button>
+                            
+                            <button class="btn btn-info" onclick="testCartWithItems()">
+                                <i class="bi bi-bag-check me-2"></i>
+                                Test con 3 Productos
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6>🔧 Cambios Realizados (ACTUALIZADO):</h6>
+                            <div class="alert alert-success">
+                                <small>
+                                    <strong>CSS Optimizado V2:</strong><br>
+                                    • Ícono X claro usando Bootstrap Icons (bi-x-lg)<br>
+                                    • Fondo claro con borde definido<br>
+                                    • Efecto hover rojo profesional<br>
+                                    • Z-index alto para asegurar visibilidad<br>
+                                    • Responsive para móviles<br><br>
+                                    <strong>Visual Mejorado:</strong><br>
+                                    • Ya no es una "bola blanca"<br>
+                                    • X clara y reconocible<br>
+                                    • Estilo estándar de modal de cierre<br>
+                                    • Animaciones suaves<br><br>
+                                    <strong>Envío Gratuito:</strong><br>
+                                    • Cambio de $12.000 a "GRATIS"<br>
+                                    • Mensaje actualizado a "Envío GRATIS en toda Colombia"<br>
+                                    • Barra de progreso al 100%
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openCartModal() {
+            // Abrir en nueva ventana para ver el modal real
+            window.open('http://localhost/Musa/', '_blank');
+            
+            // También mostrar info local
+            setTimeout(() => {
+                alert('🎯 Modal del carrito abierto en nueva ventana.\n\n' +
+                      'Verifica que:\n' +
+                      '✅ El botón X está claramente visible\n' +
+                      '✅ Ya NO es una bola blanca\n' +
+                      '✅ Usa ícono Bootstrap X estándar\n' +
+                      '✅ El envío aparece como GRATIS\n' +
+                      '✅ El botón tiene efecto hover rojo');
+            }, 1000);
+        }
+
+        function addTestProduct() {
+            alert('💡 Tip: Ve a la página principal y agrega un producto al carrito para probarlo con elementos reales.');
+        }
+
+        function testCartWithItems() {
+            alert('🧪 Para probar con productos:\n\n' +
+                  '1. Ve a http://localhost/Musa/\n' +
+                  '2. Agrega varios productos al carrito\n' +
+                  '3. Haz clic en el ícono del carrito\n' +
+                  '4. Verifica el botón de cerrar X en la esquina superior derecha');
+        }
+
+        // Auto-abrir la página principal en 3 segundos
+        setTimeout(() => {
+            if (confirm('¿Quieres abrir la página principal de MUSA para probar el carrito?')) {
+                window.open('http://localhost/Musa/', '_blank');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix Tarjetas - Información Completa</title>
+</head>
+<body>
+    <h1>🔧 Fix para Mostrar Información Completa en Tarjetas</h1>
+    <button onclick="applyFix()" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">
+        ✅ Aplicar Fix de Altura Automática
+    </button>
+    
+    <div id="status" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+        Haz clic en el botón para aplicar el fix que permite ver toda la información de las tarjetas.
+    </div>
+
+    <script>
+        function applyFix() {
+            const status = document.getElementById('status');
+            status.innerHTML = '🔄 Aplicando fix...';
+            
+            try {
+                // 1. Remover restricciones de altura
+                const style = document.createElement('style');
+                style.id = 'cards-height-fix';
+                style.innerHTML = `
+                    /* Fix para mostrar información completa */
+                    .product-card .card,
+                    .product-item,
+                    .hover-3d {
+                        height: auto !important;
+                        min-height: 480px !important;
+                        max-height: none !important;
+                        aspect-ratio: none !important;
+                        overflow: visible !important;
+                    }
+                    
+                    .card-body {
+                        height: auto !important;
+                        min-height: auto !important;
+                        flex: 1 !important;
+                        overflow: visible !important;
+                        padding: 12px !important;
+                    }
+                    
+                    .card-img-wrap,
+                    .image-hover-wrapper {
+                        height: 160px !important;
+                        flex-shrink: 0 !important;
+                    }
+                    
+                    .main-products-grid {
+                        grid-template-columns: repeat(auto-fit, minmax(280px, 320px)) !important;
+                        justify-content: center !important;
+                    }
+                `;
+                
+                // Remover estilo anterior si existe
+                const oldStyle = document.getElementById('cards-height-fix');
+                if (oldStyle) oldStyle.remove();
+                
+                document.head.appendChild(style);
+                
+                // 2. Aplicar estilos directamente a las tarjetas existentes
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.product-card .card, .product-item, .hover-3d');
+                    let fixedCount = 0;
+                    
+                    cards.forEach(card => {
+                        card.style.height = 'auto';
+                        card.style.minHeight = '480px';
+                        card.style.maxHeight = 'none';
+                        card.style.aspectRatio = 'none';
+                        card.style.overflow = 'visible';
+                        
+                        const cardBody = card.querySelector('.card-body');
+                        if (cardBody) {
+                            cardBody.style.height = 'auto';
+                            cardBody.style.flex = '1';
+                            cardBody.style.overflow = 'visible';
+                            cardBody.style.padding = '12px';
+                        }
+                        
+                        const imageWrap = card.querySelector('.card-img-wrap, .image-hover-wrapper');
+                        if (imageWrap) {
+                            imageWrap.style.height = '160px';
+                            imageWrap.style.flexShrink = '0';
+                        }
+                        
+                        fixedCount++;
+                    });
+                    
+                    status.innerHTML = `✅ Fix aplicado exitosamente a ${fixedCount} tarjetas. Ahora deberías ver toda la información completa (precios, colores, tallas).`;
+                    status.style.background = '#d4edda';
+                    status.style.color = '#155724';
+                    
+                }, 100);
+                
+            } catch (error) {
+                status.innerHTML = `❌ Error aplicando fix: ${error.message}`;
+                status.style.background = '#f8d7da';
+                status.style.color = '#721c24';
+            }
+        }
+        
+        // Auto-aplicar después de 2 segundos
+        setTimeout(() => {
+            applyFix();
+        }, 2000);
+    </script>
+</body>
+</html>

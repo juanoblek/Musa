@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💡 TEST DIRECTO: Pago Real sin SDK</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        .btn-pagar {
+            width: 100%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .btn-pagar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .status {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        
+        .card-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">
+            💡 Test Directo: Simulación de Pago Real
+        </h1>
+        
+        <div class="card-info">
+            <h4>🧪 Tarjeta de Prueba Simulada</h4>
+            <p><strong>Número:</strong> 4509 9535 6623 3704</p>
+            <p><strong>Vencimiento:</strong> 11/25 | <strong>CVV:</strong> 123</p>
+            <p><strong>Estado:</strong> Esta simulación creará un pago "aprobado" que se guardará en la BD</p>
+        </div>
+        
+        <div id="status-container">
+            <div class="status info">✅ Sistema listo para procesar pago simulado</div>
+        </div>
+        
+        <form id="payment-form">
+            <div class="form-group">
+                <label for="fullName">Nombre Completo *</label>
+                <input type="text" id="fullName" name="fullName" value="Juan Test Directo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" value="test-directo@test.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" id="phone" name="phone" value="3001234567">
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Dirección</label>
+                <input type="text" id="address" name="address" value="Calle 123 # 45-67">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label for="city">Ciudad</label>
+                    <input type="text" id="city" name="city" value="Bogotá">
+                </div>
+                <div class="form-group">
+                    <label for="department">Departamento</label>
+                    <select id="department" name="department">
+                        <option value="Bogotá D.C.">Bogotá D.C.</option>
+                        <option value="Antioquia">Antioquia</option>
+                        <option value="Valle del Cauca">Valle del Cauca</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-pagar" id="submit-btn">
+                🚀 Simular Pago Real Aprobado ($259.800)
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        console.log('💡 Test directo iniciado - Sin dependencia de SDK MercadoPago');
+        
+        // Datos del carrito de prueba
+        window.carrito = [
+            { id: 1, nombre: "Producto Test Directo", precio: 244800, cantidad: 1 }
+        ];
+        
+        function updateStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        async function procesarPagoDirecto(event) {
+            event.preventDefault();
+            
+            try {
+                updateStatus('🔄 Simulando pago con MercadoPago...', 'info');
+                
+                // Simular datos de pago como si vinieran de MercadoPago
+                const paymentData = {
+                    // Datos del cliente
+                    fullName: document.getElementById('fullName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    documentType: 'CC',
+                    documentNumber: '12345678',
+                    
+                    // Datos de envío
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    department: document.getElementById('department').value,
+                    postalCode: '110111',
+                    notes: 'Pedido de prueba directo',
+                    
+                    // Datos del pedido
+                    productos: JSON.stringify(window.carrito),
+                    subtotal: 244800,
+                    envio: 15000,
+                    total: 259800,
+                    
+                    // Simular token de pago (en realidad vendría de MercadoPago)
+                    token: 'simulated_token_' + Date.now(),
+                    paymentMethod: 'simulated_credit_card',
+                    mercadopago: true,
+                    simulacion: true,
+                    
+                    // Simular respuesta de MercadoPago exitosa
+                    mp_simulation: {
+                        status: 'approved',
+                        status_detail: 'accredited',
+                        payment_method_id: 'visa',
+                        card_last_four_digits: '3704',
+                        installments: 1,
+                        transaction_amount: 259800
+                    }
+                };
+                
+                updateStatus('🔄 Enviando al servidor (simulando pago aprobado)...', 'info');
+                
+                // Enviar al backend especial para simulación
+                const response = await fetch('/Musa/api/simular-pago-aprobado.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('📥 Respuesta simulación:', result);
+                
+                if (result.success) {
+                    updateStatus(
+                        `🎉 ¡SIMULACIÓN EXITOSA! Pago "aprobado" guardado en BD. Pedido: ${result.pedido_id}`, 
+                        'success'
+                    );
+                    
+                    // Mostrar detalles
+                    setTimeout(() => {
+                        updateStatus(
+                            `✅ El pedido ${result.pedido_id} aparece ahora en tu panel de administración. Total: $259.800`, 
+                            'success'
+                        );
+                    }, 3000);
+                    
+                } else {
+                    updateStatus(
+                        `⚠️ ${result.message || 'Error en simulación'}`, 
+                        'error'
+                    );
+                }
+                
+            } catch (error) {
+                updateStatus('❌ Error: ' + error.message, 'error');
+                console.error('❌ Error en simulación:', error);
+            }
+        }
+        
+        // Configurar evento
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('payment-form').addEventListener('submit', procesarPagoDirecto);
+            
+            console.log('✅ Test directo listo');
+            console.log('🎯 Este test simula un pago aprobado y lo guarda en la BD');
+            console.log('📊 Puedes verificar en el panel admin que el pedido aparece');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Endpoints - MUSA MODA</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .loading { background-color: #fff3cd; border-color: #ffeaa7; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test de API Endpoints - MUSA MODA</h1>
+    <p><strong>Entorno detectado:</strong> <span id="environment"></span></p>
+    <p><strong>Base URL:</strong> <span id="baseUrl"></span></p>
+    
+    <button onclick="runAllTests()">🚀 Ejecutar Todos los Tests</button>
+    <button onclick="clearResults()">🧹 Limpiar Resultados</button>
+    
+    <div id="results"></div>
+
+    <script>
+        // Configuración automática de entorno
+        const API_CONFIG = {
+            baseURL: (() => {
+                const hostname = window.location.hostname;
+                const protocol = window.location.protocol;
+                
+                if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                    return 'http://localhost/Musa/api/';
+                } else if (hostname === 'musaarion.com' || hostname.includes('musaarion.com')) {
+                    return 'https://musaarion.com/api/';
+                } else {
+                    return `${protocol}//${hostname}/api/`;
+                }
+            })(),
+            timeout: 15000
+        };
+
+        // Mostrar configuración
+        document.getElementById('environment').textContent = 
+            window.location.hostname === 'localhost' ? 'Desarrollo (localhost)' : 'Producción (hosting)';
+        document.getElementById('baseUrl').textContent = API_CONFIG.baseURL;
+
+        const resultsContainer = document.getElementById('results');
+
+        function addResult(title, status, message, data = null) {
+            const div = document.createElement('div');
+            div.className = `test-item ${status}`;
+            
+            let content = `<h3>${title}</h3><p>${message}</p>`;
+            
+            if (data) {
+                content += `<details><summary>Ver datos</summary><pre>${JSON.stringify(data, null, 2)}</pre></details>`;
+            }
+            
+            div.innerHTML = content;
+            resultsContainer.appendChild(div);
+        }
+
+        function clearResults() {
+            resultsContainer.innerHTML = '';
+        }
+
+        async function testEndpoint(name, endpoint, expectedFields = []) {
+            addResult(`🔄 Testing ${name}...`, 'loading', `Probando endpoint: ${endpoint}`);
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
+                
+                const response = await fetch(API_CONFIG.baseURL + endpoint, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Verificar estructura esperada
+                let structureValid = true;
+                let missingFields = [];
+                
+                for (const field of expectedFields) {
+                    if (!(field in data)) {
+                        structureValid = false;
+                        missingFields.push(field);
+                    }
+                }
+                
+                if (structureValid) {
+                    addResult(
+                        `✅ ${name} - ÉXITO`, 
+                        'success', 
+                        `Endpoint funcional. Respuesta válida recibida.`,
+                        data
+                    );
+                } else {
+                    addResult(
+                        `⚠️ ${name} - ESTRUCTURA INESPERADA`, 
+                        'error', 
+                        `Campos faltantes: ${missingFields.join(', ')}`,
+                        data
+                    );
+                }
+                
+            } catch (error) {
+                addResult(
+                    `❌ ${name} - ERROR`, 
+                    'error', 
+                    `Error: ${error.message}`,
+                    null
+                );
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            
+            addResult('🚀 Iniciando Tests', 'loading', 'Probando todos los endpoints de la API...');
+            
+            // Test 1: Productos
+            await testEndpoint('Productos', 'productos.php', ['products']);
+            
+            // Test 2: Categorías
+            await testEndpoint('Categorías', 'categorias.php', ['success', 'data']);
+            
+            // Test 3: Pedidos
+            await testEndpoint('Pedidos', 'obtener-pedidos.php', ['success', 'data']);
+            
+            // Test 4: Productos con filtros
+            await testEndpoint('Productos (con filtros)', 'productos.php?status=active&limit=5');
+            
+            // Test 5: Categorías específicas
+            await testEndpoint('Categorías (específica)', 'categorias.php?id=camisas');
+            
+            // Test 6: Pedidos con paginación
+            await testEndpoint('Pedidos (paginados)', 'obtener-pedidos.php?page=1&limit=10');
+            
+            addResult('🎉 Tests Completados', 'success', 'Todos los tests han sido ejecutados. Revisa los resultados arriba.');
+        }
+
+        // Auto-ejecutar al cargar la página
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>

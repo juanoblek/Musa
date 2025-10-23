@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test MercadoPago Integration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1>🧪 Test de Integración MercadoPago</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Estado del Carrito</h3>
+                <div id="cart-status" class="alert alert-info">
+                    Cargando...
+                </div>
+                
+                <button class="btn btn-primary" onclick="addTestProduct()">➕ Agregar Producto de Prueba</button>
+                <button class="btn btn-warning" onclick="clearCart()">🗑️ Limpiar Carrito</button>
+            </div>
+            
+            <div class="col-md-6">
+                <h3>Test MercadoPago</h3>
+                <div id="payment-test-area">
+                    <button class="btn btn-success btn-lg" onclick="testMercadoPago()">
+                        💳 Probar MercadoPago
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3>Log de Eventos</h3>
+                <div id="log" class="border p-3" style="height: 300px; overflow-y: auto; background: #f8f9fa;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateCartStatus() {
+            const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            const statusDiv = document.getElementById('cart-status');
+            
+            if (cart.length === 0) {
+                statusDiv.innerHTML = '🛒 Carrito vacío';
+                statusDiv.className = 'alert alert-warning';
+            } else {
+                const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                statusDiv.innerHTML = `
+                    🛒 ${cart.length} producto(s) en carrito<br>
+                    💰 Total: $${total.toLocaleString()} COP
+                `;
+                statusDiv.className = 'alert alert-success';
+            }
+            
+            log(`Carrito actualizado: ${cart.length} productos`);
+        }
+        
+        function addTestProduct() {
+            let cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            
+            const testProduct = {
+                nombre: 'Producto de Prueba ' + (cart.length + 1),
+                precio: Math.floor(Math.random() * 100000) + 20000,
+                cantidad: 1,
+                talla: ['S', 'M', 'L'][Math.floor(Math.random() * 3)],
+                imagen: 'test.jpg'
+            };
+            
+            cart.push(testProduct);
+            localStorage.setItem('carrito', JSON.stringify(cart));
+            
+            log(`Producto agregado: ${testProduct.nombre} - $${testProduct.precio}`);
+            updateCartStatus();
+        }
+        
+        function clearCart() {
+            localStorage.removeItem('carrito');
+            log('Carrito limpiado');
+            updateCartStatus();
+        }
+        
+        function testMercadoPago() {
+            const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            
+            if (cart.length === 0) {
+                alert('⚠️ Agrega productos al carrito primero');
+                return;
+            }
+            
+            log('Iniciando test de MercadoPago...');
+            
+            const testArea = document.getElementById('payment-test-area');
+            testArea.innerHTML = `
+                <div class="border rounded p-3">
+                    <h5>💳 Simulación MercadoPago</h5>
+                    <p>Productos: ${cart.length}</p>
+                    <p>Total: $${cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0).toLocaleString()} COP</p>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" onclick="simulatePayment('credit_card')">
+                            💳 Tarjeta de Crédito
+                        </button>
+                        <button class="btn btn-success" onclick="simulatePayment('pse')">
+                            🏦 PSE
+                        </button>
+                        <button class="btn btn-warning" onclick="simulatePayment('efecty')">
+                            🏪 Efecty
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            log('Interface de pago mostrada');
+        }
+        
+        function simulatePayment(method) {
+            log(`Iniciando pago con método: ${method}`);
+            
+            const testArea = document.getElementById('payment-test-area');
+            testArea.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3"></div>
+                    <h6>Procesando pago...</h6>
+                    <p class="text-muted">Método: ${method}</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                testArea.innerHTML = `
+                    <div class="alert alert-success text-center">
+                        <i class="bi bi-check-circle fs-1"></i>
+                        <h5>¡Pago Exitoso!</h5>
+                        <p>Método: ${method}</p>
+                        <button class="btn btn-success" onclick="completePurchase()">
+                            Finalizar
+                        </button>
+                    </div>
+                `;
+                log(`Pago completado con ${method}`);
+            }, 2000);
+        }
+        
+        function completePurchase() {
+            clearCart();
+            log('Compra finalizada - carrito limpiado');
+            
+            const testArea = document.getElementById('payment-test-area');
+            testArea.innerHTML = `
+                <button class="btn btn-success btn-lg" onclick="testMercadoPago()">
+                    💳 Probar MercadoPago
+                </button>
+            `;
+        }
+        
+        // Inicializar
+        updateCartStatus();
+        log('Test de MercadoPago iniciado');
+    </script>
+</body>
+</html>

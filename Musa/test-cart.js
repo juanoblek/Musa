@@ -1,0 +1,1 @@
+const cart = [{"nombre":"Producto Test","precio":50000,"cantidad":1,"imagen":"test.jpg","talla":"M","color":"Azul"}]; localStorage.setItem("cart", JSON.stringify(cart)); console.log("Carrito de prueba agregado:", cart);

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐛 Depuración Videos - Paso a Paso</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .step { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; border-left: 4px solid #007bff; }
+        .success { border-left-color: #28a745; background: #f8fff8; }
+        .warning { border-left-color: #ffc107; background: #fffbf0; }
+        .error { border-left-color: #dc3545; background: #fff5f5; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        textarea { width: 100%; height: 100px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🐛 Depuración de Videos - Diagnóstico Completo</h1>
+    
+    <div class="step">
+        <h2>Paso 1: Verificar Base de Datos</h2>
+        <p>Revisar si los videos se están guardando correctamente en la base de datos.</p>
+        <button class="button" onclick="verificarBaseDatos()">🔍 Verificar BD</button>
+        <div id="resultBD" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="step">
+        <h2>Paso 2: Probar API de Productos</h2>
+        <p>Verificar si la API devuelve correctamente los productos con videos.</p>
+        <button class="button" onclick="probarAPI()">🌐 Probar API</button>
+        <div id="resultAPI" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="step">
+        <h2>Paso 3: Simular Creación de Producto con Video</h2>
+        <p>Simular la creación de un producto con video para verificar el flujo completo.</p>
+        <button class="button" onclick="simularCreacion()">➕ Simular Creación</button>
+        <div id="resultCreacion" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="step">
+        <h2>Paso 4: Verificar Archivos JavaScript</h2>
+        <p>Comprobar que todos los archivos JS estén usando la lógica correcta para videos.</p>
+        <button class="button" onclick="verificarJS()">🔧 Verificar JS</button>
+        <div id="resultJS" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="step">
+        <h2>Paso 5: Generar HTML de Prueba</h2>
+        <p>Generar HTML de prueba para ver cómo se renderiza un producto con video.</p>
+        <button class="button" onclick="generarHTML()">🎬 Generar HTML</button>
+        <div id="resultHTML" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="step">
+        <h2>Paso 6: Verificar Archivos Subidos</h2>
+        <p>Revisar qué archivos de video existen en el directorio uploads.</p>
+        <button class="button" onclick="verificarArchivos()">📁 Verificar Archivos</button>
+        <div id="resultArchivos" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function verificarBaseDatos() {
+            const result = document.getElementById('resultBD');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Verificando base de datos...';
+            
+            try {
+                window.open('verificar-productos-videos.php', '_blank');
+                result.innerHTML = '✅ Página de verificación abierta en nueva pestaña';
+                result.className = 'result success';
+            } catch (error) {
+                result.innerHTML = '❌ Error: ' + error.message;
+                result.className = 'result error';
+            }
+        }
+
+        async function probarAPI() {
+            const result = document.getElementById('resultAPI');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Consultando API...';
+            
+            try {
+                const response = await fetch('api/productos-v2.php');
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <h4>📊 Respuesta de la API:</h4>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Productos encontrados:</strong> ${data.data ? data.data.length : 0}</p>
+                    <p><strong>Productos con videos:</strong> ${data.data ? data.data.filter(p => p.main_image && /\.(mp4|mov|avi|webm)$/i.test(p.main_image)).length : 0}</p>
+                    <textarea readonly>${JSON.stringify(data, null, 2)}</textarea>
+                `;
+                result.className = 'result success';
+            } catch (error) {
+                result.innerHTML = '❌ Error al consultar API: ' + error.message;
+                result.className = 'result error';
+            }
+        }
+
+        async function simularCreacion() {
+            const result = document.getElementById('resultCreacion');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Simulando creación...';
+            
+            const productoSimulado = {
+                name: 'Producto Test Video ' + Date.now(),
+                description: 'Producto de prueba con video',
+                price: 99.99,
+                category_id: 1,
+                main_image: 'uploads/video_test_' + Date.now() + '.mp4',
+                status: 'active'
+            };
+
+            try {
+                const response = await fetch('api/productos-v2.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(productoSimulado)
+                });
+
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <h4>📝 Resultado de creación:</h4>
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Éxito:</strong> ${data.success ? 'SÍ' : 'NO'}</p>
+                    <p><strong>Mensaje:</strong> ${data.message || 'Sin mensaje'}</p>
+                    <textarea readonly>${JSON.stringify(data, null, 2)}</textarea>
+                `;
+                
+                if (data.success) {
+                    result.className = 'result success';
+                } else {
+                    result.className = 'result warning';
+                }
+            } catch (error) {
+                result.innerHTML = '❌ Error en simulación: ' + error.message;
+                result.className = 'result error';
+            }
+        }
+
+        async function verificarJS() {
+            const result = document.getElementById('resultJS');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Verificando archivos JavaScript...';
+            
+            const archivosJS = [
+                'js/products-loader.js',
+                'js/product-sync.js', 
+                'js/frontend-database.js',
+                'js/hybrid-products.js',
+                'js/product-sync-optimized.js'
+            ];
+            
+            let verificaciones = [];
+            
+            for (const archivo of archivosJS) {
+                try {
+                    const response = await fetch(archivo);
+                    const codigo = await response.text();
+                    
+                    const tieneDeteccionVideo = codigo.includes('/\\.(mp4|mov|avi|webm)$/i.test');
+                    const tieneElementoVideo = codigo.includes('<video');
+                    
+                    verificaciones.push({
+                        archivo,
+                        existe: response.ok,
+                        tieneDeteccionVideo,
+                        tieneElementoVideo,
+                        tamaño: codigo.length
+                    });
+                } catch (error) {
+                    verificaciones.push({
+                        archivo,
+                        existe: false,
+                        error: error.message
+                    });
+                }
+            }
+            
+            let html = '<h4>🔧 Estado de archivos JavaScript:</h4>';
+            verificaciones.forEach(v => {
+                const status = v.existe && v.tieneDeteccionVideo && v.tieneElementoVideo ? '✅' : '❌';
+                html += `
+                    <p>${status} <strong>${v.archivo}</strong></p>
+                    <ul>
+                        <li>Existe: ${v.existe ? '✅' : '❌'}</li>
+                        <li>Detección de video: ${v.tieneDeteccionVideo ? '✅' : '❌'}</li>
+                        <li>Elemento video: ${v.tieneElementoVideo ? '✅' : '❌'}</li>
+                        <li>Tamaño: ${v.tamaño || 'N/A'} caracteres</li>
+                    </ul>
+                `;
+            });
+            
+            result.innerHTML = html;
+            result.className = 'result success';
+        }
+
+        async function generarHTML() {
+            const result = document.getElementById('resultHTML');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Generando HTML de prueba...';
+            
+            // Simular un producto con video
+            const productoConVideo = {
+                id: 'test-video-123',
+                name: 'Producto de Prueba Video',
+                main_image: 'uploads/video_test.mp4',
+                price: 129.99
+            };
+            
+            // Simular la lógica de detección de video que usamos en los JS
+            const isVideo = /\.(mp4|mov|avi|webm)$/i.test(productoConVideo.main_image);
+            
+            const htmlGenerado = `
+                <div class="card-img-wrap position-relative overflow-hidden">
+                    <div class="image-hover-wrapper">
+                        ${isVideo 
+                            ? `<video src="${productoConVideo.main_image}" 
+                                     class="card-img-top product-image glasseffect" 
+                                     alt="${productoConVideo.name}"
+                                     muted autoplay loop playsinline
+                                     style="object-fit: cover;">
+                               </video>`
+                            : `<img src="${productoConVideo.main_image}" 
+                                   class="card-img-top product-image glasseffect" 
+                                   alt="${productoConVideo.name}">`
+                        }
+                        <div class="hover-3d-layer"></div>
+                    </div>
+                </div>
+            `;
+            
+            result.innerHTML = `
+                <h4>🎬 HTML Generado (${isVideo ? 'VIDEO detectado' : 'IMAGEN detectada'}):</h4>
+                <p><strong>Archivo:</strong> ${productoConVideo.main_image}</p>
+                <p><strong>Es video:</strong> ${isVideo ? 'SÍ' : 'NO'}</p>
+                
+                <h5>HTML generado:</h5>
+                <textarea readonly style="height: 200px;">${htmlGenerado}</textarea>
+                
+                <h5>Preview visual:</h5>
+                <div style="border: 1px solid #ddd; padding: 10px; max-width: 300px;">
+                    ${htmlGenerado}
+                </div>
+            `;
+            
+            result.className = 'result success';
+        }
+
+        async function verificarArchivos() {
+            const result = document.getElementById('resultArchivos');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Verificando archivos en uploads...';
+            
+            try {
+                // Verificar si podemos acceder al directorio uploads
+                const testFiles = [
+                    'uploads/video_68f01c6682ff5_1760566374.mp4',
+                    'uploads/video_68f0254985a91_1760568649.mp4'
+                ];
+                
+                let verificaciones = [];
+                
+                for (const file of testFiles) {
+                    try {
+                        const response = await fetch(file, { method: 'HEAD' });
+                        verificaciones.push({
+                            archivo: file,
+                            existe: response.ok,
+                            tamaño: response.headers.get('content-length'),
+                            tipo: response.headers.get('content-type')
+                        });
+                    } catch (error) {
+                        verificaciones.push({
+                            archivo: file,
+                            existe: false,
+                            error: error.message
+                        });
+                    }
+                }
+                
+                let html = '<h4>📁 Estado de archivos de video:</h4>';
+                verificaciones.forEach(v => {
+                    html += `
+                        <p>${v.existe ? '✅' : '❌'} <strong>${v.archivo}</strong></p>
+                        <ul>
+                            <li>Existe: ${v.existe ? 'SÍ' : 'NO'}</li>
+                            <li>Tamaño: ${v.tamaño || 'N/A'} bytes</li>
+                            <li>Tipo: ${v.tipo || 'N/A'}</li>
+                        </ul>
+                    `;
+                });
+                
+                result.innerHTML = html;
+                result.className = 'result success';
+                
+            } catch (error) {
+                result.innerHTML = '❌ Error al verificar archivos: ' + error.message;
+                result.className = 'result error';
+            }
+        }
+
+        // Auto-ejecutar verificación al cargar
+        window.addEventListener('load', () => {
+            console.log('🐛 Sistema de depuración cargado');
+            console.log('📊 Verificaciones disponibles: BD, API, Creación, JS, HTML, Archivos');
+        });
+    </script>
+</body>
+</html>

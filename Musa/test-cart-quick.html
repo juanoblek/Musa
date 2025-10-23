@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Rápido del Carrito</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>🧪 Test Rápido del Carrito</h2>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Producto de Prueba</h5>
+                        <p>Chaqueta Deportiva - $120.000</p>
+                        
+                        <div class="mb-3">
+                            <label>Talla:</label>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="size" id="sizeS" value="S" checked>
+                                <label class="btn btn-outline-primary" for="sizeS">S</label>
+                                
+                                <input type="radio" class="btn-check" name="size" id="sizeM" value="M">
+                                <label class="btn btn-outline-primary" for="sizeM">M</label>
+                                
+                                <input type="radio" class="btn-check" name="size" id="sizeL" value="L">
+                                <label class="btn btn-outline-primary" for="sizeL">L</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label>Color:</label>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="color" id="colorRojo" value="Rojo" checked>
+                                <label class="btn btn-outline-secondary" for="colorRojo">Rojo</label>
+                                
+                                <input type="radio" class="btn-check" name="color" id="colorNegro" value="Negro">
+                                <label class="btn btn-outline-secondary" for="colorNegro">Negro</label>
+                                
+                                <input type="radio" class="btn-check" name="color" id="colorAzul" value="Azul">
+                                <label class="btn btn-outline-secondary" for="colorAzul">Azul</label>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="testAddToCart()">
+                            🛒 Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Controles de Test</h5>
+                        
+                        <button class="btn btn-info mb-2 w-100" onclick="showCurrentCart()">
+                            📦 Ver Carrito Actual
+                        </button>
+                        
+                        <button class="btn btn-warning mb-2 w-100" onclick="clearCart()">
+                            🧹 Limpiar Carrito
+                        </button>
+                        
+                        <button class="btn btn-success mb-2 w-100" onclick="testCartModal()">
+                            🪟 Probar Modal del Carrito
+                        </button>
+                        
+                        <button class="btn btn-secondary mb-2 w-100" onclick="debugCart()">
+                            🔧 Debug del Carrito
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6>Estado del Carrito:</h6>
+                        <pre id="cartStatus" class="bg-light p-2 rounded" style="font-size: 12px;">Cargando...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Cart System Simple -->
+    <script src="js/cart-system-simple.js"></script>
+    
+    <script>
+        // Funciones de test específicas
+        function testAddToCart() {
+            const selectedSize = document.querySelector('input[name="size"]:checked').value;
+            const selectedColor = document.querySelector('input[name="color"]:checked').value;
+            
+            console.log('🧪 Test: Agregando producto con:', { selectedSize, selectedColor });
+            
+            const testProduct = {
+                id: 'test-product-' + Date.now(),
+                name: 'Chaqueta Deportiva',
+                price: 120000,
+                size: selectedSize,
+                color: selectedColor,
+                quantity: 1,
+                image: 'images/placeholder.svg'
+            };
+            
+            // Usar la función del sistema
+            if (typeof window.addToCartUnified === 'function') {
+                window.addToCartUnified(testProduct);
+            } else if (typeof window.addToCart === 'function') {
+                window.addToCart('test-product-' + Date.now());
+            } else {
+                console.error('❌ No se encontró función addToCart');
+            }
+            
+            updateCartStatus();
+        }
+        
+        function showCurrentCart() {
+            const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            console.log('📦 Carrito actual:', cart);
+            alert('Ver carrito en la consola (F12)');
+            updateCartStatus();
+        }
+        
+        function clearCart() {
+            localStorage.removeItem('carrito');
+            console.log('🧹 Carrito limpiado');
+            updateCartStatus();
+        }
+        
+        function testCartModal() {
+            const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            if (cart.length > 0) {
+                if (typeof window.showCartModal === 'function') {
+                    window.showCartModal(cart);
+                } else {
+                    console.error('❌ Función showCartModal no encontrada');
+                }
+            } else {
+                alert('Carrito vacío. Agrega productos primero.');
+            }
+        }
+        
+        function debugCart() {
+            if (typeof window.debugAndFixCart === 'function') {
+                window.debugAndFixCart();
+            } else {
+                console.error('❌ Función debugAndFixCart no encontrada');
+            }
+            updateCartStatus();
+        }
+        
+        function updateCartStatus() {
+            const cart = JSON.parse(localStorage.getItem('carrito') || '[]');
+            const status = {
+                productos: cart.length,
+                items: cart,
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+            };
+            
+            document.getElementById('cartStatus').textContent = JSON.stringify(status, null, 2);
+        }
+        
+        // Actualizar estado inicial
+        updateCartStatus();
+        
+        // Actualizar cada 2 segundos
+        setInterval(updateCartStatus, 2000);
+    </script>
+</body>
+</html>

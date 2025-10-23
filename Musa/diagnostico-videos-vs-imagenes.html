@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Diagnóstico Videos vs Imágenes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .test-section { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; border-left: 4px solid #007bff; }
+        .success { border-left-color: #28a745; background: #f8fff8; }
+        .error { border-left-color: #dc3545; background: #fff5f5; }
+        .warning { border-left-color: #ffc107; background: #fffbf0; }
+        .code { background: #f1f1f1; padding: 10px; border-radius: 5px; font-family: monospace; margin: 10px 0; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .preview { max-width: 200px; max-height: 150px; border: 2px solid #ddd; margin: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+        th { background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnóstico: ¿Por qué los videos no se ven pero las imágenes sí?</h1>
+
+    <div class="test-section">
+        <h2>Paso 1: Verificar productos en la base de datos</h2>
+        <p>Vamos a consultar directamente la API para ver qué productos tenemos y cuáles son videos.</p>
+        <button class="button" onclick="verificarAPI()">📡 Consultar API</button>
+        <div id="resultAPI" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Paso 2: Simular renderizado de productos</h2>
+        <p>Vamos a simular cómo se renderizan productos con imágenes vs videos usando nuestra lógica.</p>
+        <button class="button" onclick="simularRenderizado()">🎬 Simular Renderizado</button>
+        <div id="resultRender" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Paso 3: Probar detección de videos</h2>
+        <p>Verificar que nuestra función de detección de videos está funcionando correctamente.</p>
+        <button class="button" onclick="probarDeteccion()">🔍 Probar Detección</button>
+        <div id="resultDeteccion" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Paso 4: Verificar HTML generado</h2>
+        <p>Examinar el HTML que se está generando en tiempo real para productos con videos.</p>
+        <button class="button" onclick="verificarHTML()">📝 Verificar HTML</button>
+        <div id="resultHTML" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Paso 5: Verificar cache del navegador</h2>
+        <p>Comprobar si el navegador está usando archivos JavaScript en cache.</p>
+        <button class="button" onclick="verificarCache()">🗂️ Verificar Cache</button>
+        <div id="resultCache" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function verificarAPI() {
+            const result = document.getElementById('resultAPI');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Consultando API...';
+            
+            try {
+                const response = await fetch('../api/productos-v2.php');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    const productos = data.data;
+                    const conVideos = productos.filter(p => p.main_image && /\.(mp4|mov|avi|webm)$/i.test(p.main_image));
+                    const conImagenes = productos.filter(p => p.main_image && /\.(jpg|jpeg|png|gif|webp)$/i.test(p.main_image));
+                    
+                    let html = `
+                        <h4>📊 Resultados de la API:</h4>
+                        <table>
+                            <tr><th>Tipo</th><th>Cantidad</th><th>Ejemplos</th></tr>
+                            <tr>
+                                <td>Total productos</td>
+                                <td>${productos.length}</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Con videos</td>
+                                <td style="color: ${conVideos.length > 0 ? 'green' : 'red'};">${conVideos.length}</td>
+                                <td>${conVideos.slice(0, 2).map(p => p.name).join(', ')}</td>
+                            </tr>
+                            <tr>
+                                <td>Con imágenes</td>
+                                <td style="color: green;">${conImagenes.length}</td>
+                                <td>${conImagenes.slice(0, 2).map(p => p.name).join(', ')}</td>
+                            </tr>
+                        </table>
+                        
+                        <h5>🎬 Productos con videos:</h5>
+                    `;
+                    
+                    if (conVideos.length > 0) {
+                        conVideos.forEach(p => {
+                            html += `
+                                <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+                                    <strong>${p.name}</strong><br>
+                                    <small>Archivo: ${p.main_image}</small><br>
+                                    <small>ID: ${p.id}</small>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html += '<p style="color: red;">❌ No se encontraron productos con videos</p>';
+                    }
+                    
+                    result.innerHTML = html;
+                    result.className = 'result success';
+                } else {
+                    result.innerHTML = '❌ Error: Respuesta inválida de la API';
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = '❌ Error al consultar API: ' + error.message;
+                result.className = 'result error';
+            }
+        }
+
+        async function simularRenderizado() {
+            const result = document.getElementById('resultRender');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Simulando renderizado...';
+            
+            // Productos de prueba
+            const productosTest = [
+                {
+                    id: 'test-1',
+                    name: 'Producto con Imagen',
+                    main_image: 'uploads/imagen_test.jpg',
+                    price: 100
+                },
+                {
+                    id: 'test-2', 
+                    name: 'Producto con Video',
+                    main_image: 'uploads/video_test.mp4',
+                    price: 200
+                }
+            ];
+            
+            let html = '<h4>🎬 Simulación de renderizado:</h4>';
+            
+            productosTest.forEach(product => {
+                const isVideo = /\.(mp4|mov|avi|webm)$/i.test(product.main_image);
+                const mediaElement = isVideo 
+                    ? `<video src="${product.main_image}" class="preview" muted autoplay loop playsinline style="object-fit: cover;">`
+                    : `<img src="${product.main_image}" class="preview" style="object-fit: cover;">`;
+                
+                html += `
+                    <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-left: 4px solid ${isVideo ? 'red' : 'green'};">
+                        <h5>${product.name} (${isVideo ? 'VIDEO' : 'IMAGEN'})</h5>
+                        <p><strong>Archivo:</strong> ${product.main_image}</p>
+                        <p><strong>Detectado como:</strong> ${isVideo ? 'Video' : 'Imagen'}</p>
+                        <p><strong>HTML generado:</strong></p>
+                        <div class="code">${mediaElement.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                        <p><strong>Vista previa:</strong></p>
+                        ${mediaElement}
+                    </div>
+                `;
+            });
+            
+            result.innerHTML = html;
+            result.className = 'result success';
+        }
+
+        async function probarDeteccion() {
+            const result = document.getElementById('resultDeteccion');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Probando detección...';
+            
+            const archivosTest = [
+                'producto.jpg',
+                'video.mp4',
+                'imagen.png',
+                'archivo.mov',
+                'test.gif',
+                'demo.avi',
+                'foto.webp',
+                'clip.webm'
+            ];
+            
+            let html = '<h4>🔍 Pruebas de detección de archivos:</h4><table><tr><th>Archivo</th><th>Tipo detectado</th><th>Correcto</th></tr>';
+            
+            archivosTest.forEach(archivo => {
+                const isVideo = /\.(mp4|mov|avi|webm)$/i.test(archivo);
+                const tipoReal = ['mp4', 'mov', 'avi', 'webm'].some(ext => archivo.includes(ext)) ? 'video' : 'imagen';
+                const tipoDetectado = isVideo ? 'video' : 'imagen';
+                const correcto = tipoReal === tipoDetectado;
+                
+                html += `
+                    <tr style="background: ${correcto ? '#f8fff8' : '#fff5f5'};">
+                        <td>${archivo}</td>
+                        <td>${tipoDetectado}</td>
+                        <td>${correcto ? '✅' : '❌'}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</table>';
+            result.innerHTML = html;
+            result.className = 'result success';
+        }
+
+        async function verificarHTML() {
+            const result = document.getElementById('resultHTML');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Verificando HTML del DOM...';
+            
+            // Buscar elementos de productos en la página actual
+            const productCards = document.querySelectorAll('.product-card, .card.product-item, [data-dynamic="true"]');
+            const videosEncontrados = document.querySelectorAll('video.product-image, video.card-img-top');
+            const imagenesEncontrados = document.querySelectorAll('img.product-image, img.card-img-top');
+            
+            let html = `
+                <h4>📝 Análisis del DOM actual:</h4>
+                <table>
+                    <tr><th>Elemento</th><th>Cantidad</th></tr>
+                    <tr><td>Tarjetas de productos</td><td>${productCards.length}</td></tr>
+                    <tr><td>Videos como productos</td><td style="color: ${videosEncontrados.length > 0 ? 'green' : 'red'};">${videosEncontrados.length}</td></tr>
+                    <tr><td>Imágenes como productos</td><td>${imagenesEncontrados.length}</td></tr>
+                </table>
+                
+                <h5>🎬 Videos encontrados:</h5>
+            `;
+            
+            if (videosEncontrados.length > 0) {
+                videosEncontrados.forEach((video, index) => {
+                    html += `
+                        <div style="border: 1px solid #28a745; padding: 10px; margin: 5px 0;">
+                            <strong>Video ${index + 1}:</strong> ${video.src}<br>
+                            <small>Clases: ${video.className}</small>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<p style="color: red;">❌ No se encontraron elementos &lt;video&gt; con clases de producto</p>';
+            }
+            
+            html += '<h5>🖼️ Imágenes encontradas (primeras 5):</h5>';
+            Array.from(imagenesEncontrados).slice(0, 5).forEach((img, index) => {
+                const esVideo = /\.(mp4|mov|avi|webm)$/i.test(img.src);
+                html += `
+                    <div style="border: 1px solid ${esVideo ? '#dc3545' : '#6c757d'}; padding: 10px; margin: 5px 0;">
+                        <strong>Imagen ${index + 1}:</strong> ${img.src}<br>
+                        <small>Clases: ${img.className}</small><br>
+                        ${esVideo ? '<span style="color: red;">⚠️ Esta imagen tiene extensión de video!</span>' : ''}
+                    </div>
+                `;
+            });
+            
+            result.innerHTML = html;
+            result.className = 'result success';
+        }
+
+        async function verificarCache() {
+            const result = document.getElementById('resultCache');
+            result.style.display = 'block';
+            result.innerHTML = '🔄 Verificando cache...';
+            
+            const archivosJS = [
+                'js/products-loader.js',
+                'js/product-sync.js',
+                'js/frontend-database.js',
+                'js/hybrid-products.js'
+            ];
+            
+            let html = '<h4>🗂️ Estado del cache de archivos JS:</h4>';
+            
+            for (const archivo of archivosJS) {
+                try {
+                    const timestamp = new Date().getTime();
+                    const response = await fetch(`${archivo}?t=${timestamp}`, { cache: 'no-cache' });
+                    const codigo = await response.text();
+                    
+                    const tieneDeteccionVideo = codigo.includes('/\\.(mp4|mov|avi|webm)$/i.test');
+                    const tieneElementoVideo = codigo.includes('<video');
+                    const ultimaModificacion = response.headers.get('last-modified') || 'No disponible';
+                    
+                    html += `
+                        <div style="border: 1px solid ${tieneDeteccionVideo && tieneElementoVideo ? '#28a745' : '#dc3545'}; padding: 10px; margin: 5px 0;">
+                            <strong>${archivo}</strong><br>
+                            <small>Tamaño: ${codigo.length} caracteres</small><br>
+                            <small>Modificado: ${ultimaModificacion}</small><br>
+                            <small>Detección video: ${tieneDeteccionVideo ? '✅' : '❌'}</small><br>
+                            <small>Elemento video: ${tieneElementoVideo ? '✅' : '❌'}</small>
+                        </div>
+                    `;
+                } catch (error) {
+                    html += `
+                        <div style="border: 1px solid #dc3545; padding: 10px; margin: 5px 0;">
+                            <strong>${archivo}</strong><br>
+                            <span style="color: red;">❌ Error: ${error.message}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `
+                <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 5px;">
+                    <h5>💡 Para limpiar cache:</h5>
+                    <button onclick="location.reload(true)" style="background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">🔄 Ctrl+F5 (Recarga forzada)</button>
+                    <button onclick="window.open('forzar-actualizacion-videos.html', '_blank')" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-left: 10px;">🧹 Herramienta de limpieza</button>
+                </div>
+            `;
+            
+            result.innerHTML = html;
+            result.className = 'result success';
+        }
+
+        // Auto-ejecutar verificaciones básicas
+        window.addEventListener('load', () => {
+            console.log('🔍 Diagnóstico de videos vs imágenes iniciado');
+            
+            // Verificar inmediatamente si hay elementos de video en la página
+            setTimeout(() => {
+                const videos = document.querySelectorAll('video.product-image, video.card-img-top');
+                const imagenes = document.querySelectorAll('img.product-image, img.card-img-top');
+                
+                console.log(`📊 Elementos encontrados en la página:`);
+                console.log(`   - Videos de productos: ${videos.length}`);
+                console.log(`   - Imágenes de productos: ${imagenes.length}`);
+                
+                if (videos.length === 0 && imagenes.length > 0) {
+                    console.warn('⚠️ PROBLEMA DETECTADO: Solo se encontraron imágenes, no videos');
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
