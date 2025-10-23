@@ -26,3 +26,8 @@ cache/
 # Otros
 *.zip
 *.tar.gz
+
+# Media y uploads grandes
+/Musa/video/
+/Musa/uploads/
+
