@@ -17,14 +17,9 @@ class GlobalConfig {
      */
     public static function isProduction() {
         if (self::$isProduction === null) {
-            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            
-            // Si está en localhost, permitir modo test
-            if (strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false) {
-                self::$isProduction = false; // MODO TEST en localhost
-            } else {
-                self::$isProduction = true;  // MODO PRODUCCIÓN en hosting
-            }
+            // TEMPORAL: Forzar modo TEST hasta obtener credenciales válidas
+            // TODO: Cambiar a true cuando tengas access_token de PRODUCCIÓN válido
+            self::$isProduction = false;
         }
         return self::$isProduction;
     }
@@ -48,10 +43,10 @@ class GlobalConfig {
         if (self::isProduction()) {
             // HOSTING - Configuración de producción
             return [
-                'host' => 'localhost',
+                'host' => 'localhost', // Host para conexión a base de datos en hosting
                 'dbname' => 'janithal_musa_moda',
-                'username' => 'janithal_admin',
-                'password' => 'MusaArion2024!',
+                'username' => 'janithal_usuario_musaarion_db',
+                'password' => 'Chiguiro553021',
                 'charset' => 'utf8mb4'
             ];
         }
@@ -61,7 +56,7 @@ class GlobalConfig {
             'host' => 'localhost',
             'dbname' => 'janithal_musa_moda', // Base de datos local (misma que hosting)
             'username' => 'root',
-            'password' => '',
+            'password' => 'root', // Contraseña por defecto para XAMPP
             'charset' => 'utf8mb4'
         ];
     }

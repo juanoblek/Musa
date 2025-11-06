@@ -4,20 +4,26 @@
  */
 
 try {
+    // Cargar configuración global
+    require_once __DIR__ . '/config/config-global.php';
+    
+    // Obtener configuración de base de datos
+    $config = GlobalConfig::getDatabaseConfig();
+    
     // Conectar a MySQL sin especificar base de datos
-    $pdo = new PDO('mysql:host=localhost', 'root', '');
+    $pdo = new PDO("mysql:host={$config['host']}", $config['username'], $config['password']);
     
     echo "<h2>✅ Conexión a MySQL exitosa</h2>";
     
     // Verificar si la base de datos existe
-    $stmt = $pdo->query("SHOW DATABASES LIKE 'musa_moda'");
+    $stmt = $pdo->query("SHOW DATABASES LIKE '{$config['dbname']}'");
     $dbExists = $stmt->fetch();
     
     if ($dbExists) {
-        echo "<h3>✅ Base de datos 'musa_moda' existe</h3>";
+        echo "<h3>✅ Base de datos '{$config['dbname']}' existe</h3>";
         
         // Conectar a la base de datos específica
-        $pdo = new PDO('mysql:host=localhost;dbname=musa_moda', 'root', '');
+        $pdo = new PDO("mysql:host={$config['host']};dbname={$config['dbname']}", $config['username'], $config['password']);
         
         // Verificar tablas
         $stmt = $pdo->query("SHOW TABLES");

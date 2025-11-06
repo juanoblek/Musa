@@ -10,7 +10,13 @@ window.currentProducts = currentProducts;
 window.currentCategories = currentCategories;
 
 // Configuración de la API
-const API_BASE_URL = window.location.protocol === 'file:' ? 'http://localhost' : '';
+const API_BASE_URL = (() => {
+    if (window.location.protocol === 'file:') return 'http://localhost/Musa';
+    const origin = window.location.origin;
+    const host = window.location.hostname;
+    if (host === 'localhost' || host === '127.0.0.1') return origin + '/Musa';
+    return origin + '/Musa';
+})();
 const API_ENDPOINTS = {
     productos: '/api/productos.php',
     categorias: '/api/categorias.php',

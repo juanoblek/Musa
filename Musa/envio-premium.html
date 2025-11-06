@@ -570,37 +570,6 @@
                             </label>
                             <select class="form-select" id="department" required>
                                 <option value="">Seleccionar departamento...</option>
-                                <option value="antioquia">Antioquia</option>
-                                <option value="atlantico">Atlántico</option>
-                                <option value="bogota">Bogotá D.C.</option>
-                                <option value="bolivar">Bolívar</option>
-                                <option value="boyaca">Boyacá</option>
-                                <option value="caldas">Caldas</option>
-                                <option value="caqueta">Caquetá</option>
-                                <option value="casanare">Casanare</option>
-                                <option value="cauca">Cauca</option>
-                                <option value="cesar">Cesar</option>
-                                <option value="choco">Chocó</option>
-                                <option value="cordoba">Córdoba</option>
-                                <option value="cundinamarca">Cundinamarca</option>
-                                <option value="guainia">Guainía</option>
-                                <option value="guajira">La Guajira</option>
-                                <option value="guaviare">Guaviare</option>
-                                <option value="huila">Huila</option>
-                                <option value="magdalena">Magdalena</option>
-                                <option value="meta">Meta</option>
-                                <option value="narino">Nariño</option>
-                                <option value="norte_santander">Norte de Santander</option>
-                                <option value="putumayo">Putumayo</option>
-                                <option value="quindio">Quindío</option>
-                                <option value="risaralda">Risaralda</option>
-                                <option value="san_andres">San Andrés y Providencia</option>
-                                <option value="santander">Santander</option>
-                                <option value="sucre">Sucre</option>
-                                <option value="tolima">Tolima</option>
-                                <option value="valle">Valle del Cauca</option>
-                                <option value="vaupes">Vaupés</option>
-                                <option value="vichada">Vichada</option>
                             </select>
                             <div class="invalid-feedback">El departamento es requerido</div>
                         </div>
@@ -680,94 +649,14 @@
                 this.cart = [];
                 this.shippingCost = 0;
                 this.shippingData = {};
-                this.cities = {
-                    'antioquia': ['medellin', 'bello', 'envigado', 'itagui', 'rionegro'],
-                    'atlantico': ['barranquilla', 'soledad', 'malambo', 'sabanalarga'],
-                    'bogota': ['bogota'],
-                    'bolivar': ['cartagena', 'magangue', 'turbaco'],
-                    'boyaca': ['tunja', 'duitama', 'sogamoso', 'chiquinquira'],
-                    'caldas': ['manizales', 'la_dorada', 'chinchina'],
-                    'cundinamarca': ['soacha', 'zipaquira', 'facatativa', 'chia', 'mosquera'],
-                    'huila': ['neiva', 'pitalito', 'garzon'],
-                    'meta': ['villavicencio', 'acacias', 'granada'],
-                    'narino': ['pasto', 'ipiales', 'tumaco'],
-                    'norte_santander': ['cucuta', 'ocana', 'pamplona'],
-                    'quindio': ['armenia', 'calarca', 'montenegro'],
-                    'risaralda': ['pereira', 'dosquebradas', 'santa_rosa'],
-                    'santander': ['bucaramanga', 'floridablanca', 'giron', 'barrancabermeja'],
-                    'tolima': ['ibague', 'espinal', 'melgar'],
-                    'valle': ['cali', 'palmira', 'buenaventura', 'tulua', 'cartago']
-                };
-                
-                this.cityNames = {
-                    'medellin': 'Medellín',
-                    'bello': 'Bello',
-                    'envigado': 'Envigado',
-                    'itagui': 'Itagüí',
-                    'rionegro': 'Rionegro',
-                    'barranquilla': 'Barranquilla',
-                    'soledad': 'Soledad',
-                    'malambo': 'Malambo',
-                    'sabanalarga': 'Sabanalarga',
-                    'bogota': 'Bogotá',
-                    'cartagena': 'Cartagena',
-                    'magangue': 'Magangué',
-                    'turbaco': 'Turbaco',
-                    'tunja': 'Tunja',
-                    'duitama': 'Duitama',
-                    'sogamoso': 'Sogamoso',
-                    'chiquinquira': 'Chiquinquirá',
-                    'manizales': 'Manizales',
-                    'la_dorada': 'La Dorada',
-                    'chinchina': 'Chinchiná',
-                    'soacha': 'Soacha',
-                    'zipaquira': 'Zipaquirá',
-                    'facatativa': 'Facatativá',
-                    'chia': 'Chía',
-                    'mosquera': 'Mosquera',
-                    'neiva': 'Neiva',
-                    'pitalito': 'Pitalito',
-                    'garzon': 'Garzón',
-                    'villavicencio': 'Villavicencio',
-                    'acacias': 'Acacías',
-                    'granada': 'Granada',
-                    'pasto': 'Pasto',
-                    'ipiales': 'Ipiales',
-                    'tumaco': 'Tumaco',
-                    'cucuta': 'Cúcuta',
-                    'ocana': 'Ocaña',
-                    'pamplona': 'Pamplona',
-                    'armenia': 'Armenia',
-                    'calarca': 'Calarcá',
-                    'montenegro': 'Montenegro',
-                    'pereira': 'Pereira',
-                    'dosquebradas': 'Dosquebradas',
-                    'santa_rosa': 'Santa Rosa de Cabal',
-                    'bucaramanga': 'Bucaramanga',
-                    'floridablanca': 'Floridablanca',
-                    'giron': 'Girón',
-                    'barrancabermeja': 'Barrancabermeja',
-                    'ibague': 'Ibagué',
-                    'espinal': 'Espinal',
-                    'melgar': 'Melgar',
-                    'cali': 'Cali',
-                    'palmira': 'Palmira',
-                    'buenaventura': 'Buenaventura',
-                    'tulua': 'Tuluá',
-                    'cartago': 'Cartago'
-                };
-                
-                this.shippingCosts = {
-                    'medellin': 0, 'bogota': 0, 'cali': 0, 'barranquilla': 0,
-                    'cartagena': 0, 'bucaramanga': 0, 'pereira': 0, 'manizales': 0,
-                    'armenia': 0, 'ibague': 0, 'neiva': 0, 'villavicencio': 0,
-                    'pasto': 0, 'cucuta': 0, 'tunja': 0
-                };
+                // Mapa completo de departamentos -> ciudades (se cargará dinámicamente)
+                this.departments = {};
+                this.colombiaDataLoaded = false;
                 
                 this.init();
             }
             
-            init() {
+            async init() {
                 console.log('🚀 Inicializando Sistema de Envío...');
                 
                 // Debug: Verificar qué hay en localStorage
@@ -779,8 +668,77 @@
                 this.loadCart();
                 this.renderOrderSummary();
                 this.setupEventListeners();
+                await this.loadColombiaData();
                 this.loadSavedData();
                 console.log('✅ Sistema de Envío inicializado');
+            }
+
+            async loadColombiaData() {
+                const deptSelect = document.getElementById('department');
+                const citySelect = document.getElementById('city');
+                try {
+                    // Intentar usar caché primero (30 días)
+                    const cacheKey = 'colombia_locations_v1';
+                    const cached = localStorage.getItem(cacheKey);
+                    let data = null;
+                    if (cached) {
+                        const parsed = JSON.parse(cached);
+                        const age = Date.now() - (parsed.timestamp || 0);
+                        if (age < 1000 * 60 * 60 * 24 * 30) {
+                            data = parsed.data;
+                        }
+                    }
+
+                    if (!data) {
+                        const resp = await fetch('https://raw.githubusercontent.com/marcovega/colombia-json/master/colombia.json', { cache: 'no-cache' });
+                        if (!resp.ok) throw new Error('No se pudo obtener el listado de ciudades');
+                        data = await resp.json();
+                        localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
+                    }
+
+                    // Construir mapa de departamentos -> ciudades
+                    this.departments = {};
+                    data.forEach(item => {
+                        const depName = item.departamento;
+                        const cities = Array.isArray(item.ciudades) ? item.ciudades : [];
+                        this.departments[depName] = cities;
+                    });
+
+                    // Poblar select de departamentos
+                    // Limpiar opciones previas dejando el placeholder
+                    deptSelect.innerHTML = '<option value="">Seleccionar departamento...</option>';
+                    Object.keys(this.departments).sort().forEach(dep => {
+                        const opt = document.createElement('option');
+                        opt.value = dep;
+                        opt.textContent = dep;
+                        deptSelect.appendChild(opt);
+                    });
+
+                    // Habilitar ciudad si ya hay un departamento seleccionado por datos guardados
+                    citySelect.disabled = deptSelect.value === '';
+                    this.colombiaDataLoaded = true;
+                    console.log('✅ Departamentos y ciudades de Colombia cargados:', Object.keys(this.departments).length, 'departamentos');
+                } catch (err) {
+                    console.error('❌ Error cargando departamentos/ciudades de Colombia:', err);
+                    // Fallback mínimo para no bloquear el flujo
+                    this.departments = {
+                        'Antioquia': ['Medellín', 'Bello', 'Envigado', 'Itagüí', 'Rionegro'],
+                        'Atlántico': ['Barranquilla', 'Soledad', 'Malambo', 'Sabanalarga'],
+                        'Bogotá D.C.': ['Bogotá'],
+                        'Bolívar': ['Cartagena', 'Magangué', 'Turbaco'],
+                        'Cundinamarca': ['Soacha', 'Zipaquirá', 'Facatativá', 'Chía', 'Mosquera'],
+                        'Valle del Cauca': ['Cali', 'Palmira', 'Buenaventura', 'Tuluá', 'Cartago']
+                    };
+                    // Poblar select con fallback
+                    deptSelect.innerHTML = '<option value="">Seleccionar departamento...</option>';
+                    Object.keys(this.departments).sort().forEach(dep => {
+                        const opt = document.createElement('option');
+                        opt.value = dep;
+                        opt.textContent = dep;
+                        deptSelect.appendChild(opt);
+                    });
+                    citySelect.disabled = true;
+                }
             }
             
             loadCart() {
@@ -910,18 +868,21 @@
                 });
             }
             
-            loadCities(departmentCode) {
+            loadCities(departmentName) {
                 const citySelect = document.getElementById('city');
                 citySelect.innerHTML = '<option value="">Seleccionar ciudad...</option>';
                 citySelect.disabled = false;
                 
-                if (departmentCode && this.cities[departmentCode]) {
-                    this.cities[departmentCode].forEach(cityCode => {
-                        const option = document.createElement('option');
-                        option.value = cityCode;
-                        option.textContent = this.cityNames[cityCode] || cityCode;
-                        citySelect.appendChild(option);
-                    });
+                if (departmentName && this.departments[departmentName]) {
+                    this.departments[departmentName]
+                        .slice()
+                        .sort((a, b) => a.localeCompare(b))
+                        .forEach(cityName => {
+                            const option = document.createElement('option');
+                            option.value = cityName;
+                            option.textContent = cityName;
+                            citySelect.appendChild(option);
+                        });
                 } else {
                     citySelect.disabled = true;
                 }
@@ -1038,7 +999,24 @@
                                 
                                 // Trigger change events
                                 if (key === 'department') {
-                                    this.loadCities(data[key]);
+                                    // Asegurar compatibilidad con valores antiguos (códigos en minúsculas)
+                                    const deptSelect = document.getElementById('department');
+                                    const currentValue = data[key];
+                                    let matched = false;
+                                    // Si el valor exacto no existe, intentar match insensible a mayúsculas
+                                    if (![...deptSelect.options].some(opt => opt.value === currentValue)) {
+                                        const found = [...deptSelect.options].find(opt => opt.value.toLowerCase() === String(currentValue).toLowerCase()
+                                            || opt.textContent.toLowerCase() === String(currentValue).toLowerCase()
+                                            || opt.value.replace(/_/g,' ').toLowerCase() === String(currentValue).toLowerCase());
+                                        if (found) {
+                                            deptSelect.value = found.value;
+                                            matched = true;
+                                        }
+                                    } else {
+                                        matched = true;
+                                    }
+
+                                    this.loadCities(deptSelect.value || (matched ? currentValue : ''));
                                     setTimeout(() => {
                                         if (data.city) {
                                             document.getElementById('city').value = data.city;

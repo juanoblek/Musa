@@ -2899,6 +2899,60 @@
                 }
             }
 
+            // === Helper: Fetch con fallback de endpoints (para hosting / rutas relativas) ===
+            async fetchEndpointWithFallback(relativePath, options = {}, extraFallbackFiles = []) {
+                try {
+                    const origin = window.location.origin;
+                    const cleanPath = (relativePath || '').replace(/^\//, '');
+                    const filename = cleanPath.split('/').pop();
+                    const unique = new Set();
+                    const candidates = [];
+
+                    const pushUrl = (u) => { if (!unique.has(u)) { unique.add(u); candidates.push(u); } };
+
+                    // Principal: bajo /Musa
+                    pushUrl(`${origin}/Musa/${cleanPath}`);
+                    // Relativa al documento actual
+                    pushUrl(cleanPath);
+                    // Fallback al archivo en raíz de /Musa (sin carpeta api)
+                    pushUrl(`${origin}/Musa/${filename}`);
+                    // Relativo simple
+                    pushUrl(filename);
+
+                    // Fallbacks adicionales explícitos (por ejemplo: create-preference.php)
+                    (extraFallbackFiles || []).forEach(name => {
+                        if (!name) return;
+                        pushUrl(`${origin}/Musa/${name}`);
+                        pushUrl(name);
+                    });
+
+                    let lastError = null;
+                    for (const url of candidates) {
+                        try {
+                            console.log(`📡 Intentando endpoint: ${url}`);
+                            const resp = await fetch(url, options);
+                            if (!resp.ok) {
+                                const text = await resp.text().catch(() => '');
+                                console.warn(`⚠️ HTTP ${resp.status} en ${url}:`, text?.slice(0, 200));
+                                lastError = new Error(`HTTP ${resp.status} at ${url}`);
+                                continue;
+                            }
+                            // Intentar parsear JSON (comportamiento esperado en nuestras APIs)
+                            const json = await resp.json();
+                            return json;
+                        } catch (e) {
+                            console.warn(`⚠️ Error llamando ${url}:`, e?.message || e);
+                            lastError = e;
+                            continue;
+                        }
+                    }
+                    throw lastError || new Error('No se pudo contactar a ningún endpoint');
+                } catch (err) {
+                    console.error('❌ Fallback de endpoints agotado:', err?.message || err);
+                    throw err;
+                }
+            }
+
             loadCart() {
                 try {
                     console.log('🛒 Cargando carrito desde localStorage...');
@@ -3199,26 +3253,35 @@
             }
 
             setupFieldFormatting() {
-                // Formatear número de tarjeta
-                document.getElementById('cardNumber').addEventListener('input', (e) => {
-                    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
-                    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-                    e.target.value = formattedValue;
-                });
+                // Formatear número de tarjeta (solo si el campo existe)
+                const cardNumberEl = document.getElementById('cardNumber');
+                if (cardNumberEl) {
+                    cardNumberEl.addEventListener('input', (e) => {
+                        let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                        let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                        e.target.value = formattedValue;
+                    });
+                }
 
                 // Formatear fecha de vencimiento
-                document.getElementById('expiryDate').addEventListener('input', (e) => {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.length >= 2) {
-                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                    }
-                    e.target.value = value;
-                });
+                const expiryEl = document.getElementById('expiryDate');
+                if (expiryEl) {
+                    expiryEl.addEventListener('input', (e) => {
+                        let value = e.target.value.replace(/\D/g, '');
+                        if (value.length >= 2) {
+                            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                        }
+                        e.target.value = value;
+                    });
+                }
 
                 // Solo números en CVV
-                document.getElementById('cvv').addEventListener('input', (e) => {
-                    e.target.value = e.target.value.replace(/[^0-9]/g, '');
-                });
+                const cvvEl = document.getElementById('cvv');
+                if (cvvEl) {
+                    cvvEl.addEventListener('input', (e) => {
+                        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    });
+                }
             }
 
             handlePaymentMethodChange(method) {
@@ -3302,55 +3365,31 @@
             initializeDefaultPaymentMethod() {
                 console.log('🎯 Inicializando método de pago por defecto...');
                 
-                // Verificar que las pestañas existan
+                // Seleccionar explícitamente MercadoPago como método inicial
                 const methodTabs = document.querySelectorAll('.method-tab');
+                const mpTab = document.querySelector('.method-tab[data-method="mercadopago"]');
+                const method = 'mercadopago';
+
                 console.log('📋 Pestañas de métodos encontradas:', methodTabs.length);
-                
-                if (methodTabs.length > 0) {
-                    // Asegurar que la primera pestaña (tarjeta) esté activa
-                    const firstTab = methodTabs[0];
-                    const method = firstTab.dataset.method || 'card';
-                    
-                    console.log('🔧 Activando método por defecto:', method);
-                    
-                    // Remover clase active de todas las pestañas
-                    methodTabs.forEach(tab => tab.classList.remove('active'));
-                    
-                    // Activar la primera pestaña
-                    firstTab.classList.add('active');
-                    
-                    // FORZAR VISIBILIDAD DEL FORMULARIO DE TARJETA
-                    const cardForm = document.getElementById('cardForm');
-                    const pseForm = document.getElementById('pseForm');
-                    
-                    if (cardForm) {
-                        cardForm.style.display = 'block';
-                        cardForm.style.visibility = 'visible';
-                        cardForm.style.opacity = '1';
-                        console.log('💳 Formulario de tarjeta forzado a visible');
-                    }
-                    
-                    if (pseForm) {
-                        pseForm.style.display = 'none';
-                        console.log('🏦 Formulario PSE ocultado');
-                    }
-                    
-                    // Mostrar el formulario correspondiente usando la función normal
-                    this.handlePaymentMethodChange(method);
-                    
-                    console.log('✅ Método de pago por defecto activado:', method);
-                } else {
-                    console.warn('⚠️ No se encontraron pestañas de métodos de pago');
-                    
-                    // FALLBACK: Forzar visibilidad del formulario de tarjeta sin pestañas
-                    const cardForm = document.getElementById('cardForm');
-                    if (cardForm) {
-                        cardForm.style.display = 'block';
-                        cardForm.style.visibility = 'visible';
-                        cardForm.style.opacity = '1';
-                        console.log('💳 Formulario de tarjeta forzado (fallback)');
-                    }
+
+                // Quitar active de todas y activar MercadoPago
+                methodTabs.forEach(tab => tab.classList.remove('active'));
+                if (mpTab) mpTab.classList.add('active');
+
+                // Forzar visibilidad del bloque de MercadoPago como fallback inmediato
+                const mercadopagoForm = document.getElementById('mercadopagoForm');
+                const nequiForm = document.getElementById('nequiForm');
+                const whatsappForm = document.getElementById('whatsappForm');
+                if (mercadopagoForm) {
+                    mercadopagoForm.style.display = 'block';
+                    mercadopagoForm.classList.add('show');
                 }
+                if (nequiForm) nequiForm.style.display = 'none';
+                if (whatsappForm) whatsappForm.style.display = 'none';
+
+                // Usar el manejador normal para asegurar estado consistente
+                this.handlePaymentMethodChange(method);
+                console.log('✅ Método de pago por defecto activado:', method);
             }
 
             showNequiDaviplataForm() {
@@ -3807,15 +3846,14 @@
                 };
                 
                 // Enviar al backend
-                const response = await fetch('api/process-payment.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(paymentData)
-                });
-                
-                const result = await response.json();
+                const result = await this.fetchEndpointWithFallback(
+                    'api/process-payment.php',
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(paymentData)
+                    }
+                );
                 
                 if (result.success) {
                     this.showAlert('¡Pago procesado exitosamente!', 'success');
@@ -4307,19 +4345,14 @@
                     console.log('📡 Enviando datos de pago Nequi/Daviplata...');
                     
                     // Enviar al servidor
-                    const response = await fetch('api/process-nequi-payment.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(paymentData)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Error del servidor: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
+                    const result = await this.fetchEndpointWithFallback(
+                        'api/process-nequi-payment.php',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(paymentData)
+                        }
+                    );
                     
                     if (result.error) {
                         throw new Error(result.message);
@@ -4413,15 +4446,14 @@
                     'api/process-payment-test.php' : 
                     'api/process-payment.php';
                 
-                const response = await fetch(apiEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(paymentData)
-                });
-                
-                const result = await response.json();
+                const result = await this.fetchEndpointWithFallback(
+                    apiEndpoint,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(paymentData)
+                    }
+                );
                 
                 if (!response.ok) {
                     // Error del servidor (incluyendo pagos rechazados)
@@ -4557,7 +4589,7 @@
                     
                     console.log('📦 Todos los items mapeados:', mappedItems);
                     
-                    // Preparar datos de la preferencia con información mínima
+                    // Preparar datos de la preferencia con información mínima (URLs reales)
                     const preferenceData = {
                         items: mappedItems,
                         payer: {
@@ -4566,44 +4598,36 @@
                             email: 'cliente@musafashion.com'
                         },
                         back_urls: {
-                            success: "https://www.google.com",
-                            failure: "https://www.google.com", 
-                            pending: "https://www.google.com"
+                            success: `${window.location.origin}/Musa/confirmacion-premium.html`,
+                            failure: `${window.location.origin}/Musa/failure-premium.html`, 
+                            pending: `${window.location.origin}/Musa/pending-premium.html`
                         },
                         external_reference: `order_${Date.now()}`,
-                        notification_url: `${window.location.origin}/Musa/webhook-mercadopago.php`
+                        notification_url: `${window.location.origin}/Musa/api/webhook-mercadopago.php`
                     };
                     
                     console.log('📋 Datos de preferencia preparados:', preferenceData);
                     console.log('📤 JSON enviado:', JSON.stringify(preferenceData, null, 2));
                     
-                    // Crear preferencia
-                    const response = await fetch('http://localhost/Musa/Musa/create-preference-simple.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
+                    // Crear preferencia (usando helper con fallbacks de ruta)
+                    const result = await this.fetchEndpointWithFallback(
+                        'api/create-preference.php',
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: JSON.stringify(preferenceData)
                         },
-                        body: JSON.stringify(preferenceData)
-                    });
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('❌ Error del servidor:', {
-                            status: response.status,
-                            statusText: response.statusText,
-                            response: errorText
-                        });
-                        throw new Error(`Error en el servidor: ${response.status} - ${errorText}`);
-                    }
-                    
-                    const result = await response.json();
+                        ['create-preference.php']
+                    );
                     console.log('✅ Respuesta del servidor:', result);
                     
-                    if (result.success && result.preference_id) {
+                    if (result.success && (result.preference_id || (result.preference && result.preference.id))) {
                         // Guardar información del pedido en localStorage
                         const orderInfo = {
-                            preference_id: result.preference_id,
+                            preference_id: result.preference_id || result.preference.id,
                             external_reference: preferenceData.external_reference,
                             items: preferenceData.items,
                             payer: preferenceData.payer,
@@ -4614,31 +4638,14 @@
                         localStorage.setItem('currentOrder', JSON.stringify(orderInfo));
                         console.log('💾 Información del pedido guardada:', orderInfo);
                         
-                        // Verificar el tipo de entorno
-                        if (result.environment === 'SIMULATION') {
-                            this.showAlert('🎮 MODO SIMULACIÓN: No hay redirección real', 'info');
-                            console.log('🎯 SIMULACIÓN: En producción se redirigiría a:', result.init_point);
-                            
-                            setTimeout(() => {
-                                this.showAlert('✅ Pago simulado exitoso (DESARROLLO)', 'success');
-                                console.log('🔗 Para pruebas reales configura Sandbox en create-preference-simple.php');
-                            }, 2000);
-                            
-                        } else if (result.environment === 'SANDBOX') {
-                            this.showAlert('🏖️ SANDBOX: Redirigiendo a MercadoPago TEST...', 'info');
-                            console.log('🏖️ SANDBOX: Redirigiendo a entorno de pruebas:', result.sandbox_init_point || result.init_point);
-                            
-                            // Redireccionar al Sandbox de MercadoPago
-                            setTimeout(() => {
-                                window.location.href = result.sandbox_init_point || result.init_point;
-                            }, 1500);
-                            
-                        } else {
-                            // PRODUCCIÓN
-                            this.showAlert('Redirigiendo a MercadoPago...', 'success');
-                            console.log('🔗 PRODUCCIÓN: Redirigiendo a:', result.init_point);
-                            window.location.href = result.init_point;
+                        // Redirigir según lo que devuelva el backend (sandbox o producción)
+                        const redirectUrl = result.sandbox_init_point || result.init_point || (result.preference && (result.preference.sandbox_init_point || result.preference.init_point));
+                        if (!redirectUrl) {
+                            throw new Error('No se recibió URL de redirección de MercadoPago');
                         }
+                        this.showAlert('Redirigiendo a MercadoPago...', 'success');
+                        console.log('🔗 Redirigiendo a:', redirectUrl);
+                        window.location.href = redirectUrl;
                         
                     } else {
                         throw new Error(result.message || 'Error al crear la preferencia de pago');
@@ -4729,7 +4736,7 @@
                         },
                         auto_return: "approved",
                         external_reference: `ORDER_${Date.now()}`,
-                        notification_url: `${window.location.origin}/webhook.php`,
+                        notification_url: `${window.location.origin}/Musa/api/webhook.php`,
                         statement_descriptor: "MUSA FASHION",
                         additional_info: {
                             payment_method: 'pse',
@@ -4741,19 +4748,15 @@
                     console.log('📦 Datos de preferencia PSE:', preferenceData);
                     
                     // Llamar al endpoint para crear la preferencia
-                    const response = await fetch('create-preference.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
+                    const result = await this.fetchEndpointWithFallback(
+                        'api/create-preference.php',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(preferenceData)
                         },
-                        body: JSON.stringify(preferenceData)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Error HTTP: ${response.status}`);
-                    }
-                    
-                    const result = await response.json();
+                        ['create-preference.php']
+                    );
                     
                     if (result.success) {
                         console.log('✅ Preferencia PSE creada correctamente');
@@ -4825,15 +4828,15 @@
                         }
                     };
                     
-                    const response = await fetch('create-preference.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
+                    const result = await this.fetchEndpointWithFallback(
+                        'api/create-preference.php',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(preferenceData)
                         },
-                        body: JSON.stringify(preferenceData)
-                    });
-                    
-                    const result = await response.json();
+                        ['create-preference.php']
+                    );
                     
                     if (result.success) {
                         console.log('✅ Preferencia PSE creada:', result.preference);
@@ -5686,15 +5689,14 @@
                     const saveEndpoint = 'api/guardar-pedido-real.php';
 
                     // Enviar a la API
-                    const response = await fetch(saveEndpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(orderData)
-                    });
-
-                    const result = await response.json();
+                    const result = await this.fetchEndpointWithFallback(
+                        'api/guardar-pedido-real.php',
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(orderData)
+                        }
+                    );
                     
                     if (result.success) {
                         console.log('✅ Pedido guardado exitosamente:', result.pedido_id);
@@ -5776,25 +5778,15 @@
                         console.log(`🏦 Usando endpoint PSE en modo ${envMode.toUpperCase()} (${envMode === 'test' ? 'pagos de prueba' : 'pagos reales'})`);
                     }
                     
-                    const response = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
+                    const result = await this.fetchEndpointWithFallback(
+                        endpoint,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(paymentData)
                         },
-                        body: JSON.stringify(paymentData)
-                    });
-                    
-                    console.log('📡 Respuesta del servidor:', response.status, response.statusText);
-                    
-                    // Intentar obtener el JSON incluso si la respuesta no es "ok"
-                    let result;
-                    try {
-                        result = await response.json();
-                        console.log('📡 Datos recibidos:', result);
-                    } catch (jsonError) {
-                        console.error('❌ Error parsing JSON:', jsonError);
-                        throw new Error('Respuesta del servidor inválida');
-                    }
+                        ['create-preference.php']
+                    );
                     
                     // Si hay error en el resultado pero es una respuesta simulada válida
                     if (result.error && !result.success) {
@@ -6405,17 +6397,15 @@
 
                 // Enviar al servidor
                 console.log('📡 Enviando pedido al servidor...');
-                const response = await fetch('api/guardar-pedido-real.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(orderData)
-                });
-
-                console.log('📡 Respuesta del servidor:', response.status, response.statusText);
-                
-                const result = await response.json();
+                const result = await this.fetchEndpointWithFallback(
+                    'api/guardar-pedido-real.php',
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orderData)
+                    }
+                );
+                console.log('📡 Respuesta del servidor (JSON):', result);
                 console.log('📦 Datos de respuesta:', result);
 
                 if (!response.ok || !result.success) {

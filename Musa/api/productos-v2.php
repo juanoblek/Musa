@@ -2,12 +2,16 @@
 <?php
 // productos-v2.php - API de productos versión 2 (sin caché)
 
-// Conexión directa a la base de datos janithal_musa_moda en localhost
-$host = 'localhost';
-$dbname = 'janithal_musa_moda';
-$username = 'root';
-$password = '';
-$charset = 'utf8mb4';
+// Importar configuración global
+require_once __DIR__ . '/../config/config-global.php';
+
+// Obtener configuración de base de datos según el entorno
+$dbConfig = GlobalConfig::getDatabaseConfig();
+$host = $dbConfig['host'];
+$dbname = $dbConfig['dbname'];
+$username = $dbConfig['username'];
+$password = $dbConfig['password'];
+$charset = $dbConfig['charset'];
 
 // Headers anti-caché
 header('Content-Type: application/json; charset=utf-8');
@@ -25,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Log de debug
 error_log("=== API V2 REQUEST ===");
+error_log("Entorno: " . (GlobalConfig::isProduction() ? 'PRODUCCIÓN' : 'DESARROLLO'));
+error_log("Base de datos: $host / $dbname");
 error_log("Method: " . $_SERVER['REQUEST_METHOD']);
 error_log("URI: " . $_SERVER['REQUEST_URI']);
 error_log("Query: " . json_encode($_GET));

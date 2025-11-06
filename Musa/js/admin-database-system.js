@@ -8,15 +8,80 @@ console.log('🔧 Cargando admin-database-system.js versión 20250828_02 - CON C
 
 // Configuración de la API
 const API_CONFIG = {
-    baseURL: window.location.hostname === 'localhost' 
-        ? 'http://localhost/Musa/api/' 
-        : 'https://musaarion.com/api/',
+    baseURL: (() => {
+        const origin = window.location.origin;
+        const hostname = window.location.hostname;
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost/Musa/api/';
+        }
+        return `${origin}/Musa/api/`;
+    })(),
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
 };
+
+// Helper: fetch con fallback para JSON
+async function apiFetchWithFallback(endpointPath, fetchOptions = {}) {
+    const origin = window.location.origin;
+    const clean = (endpointPath || '').replace(/^\/?(api\/)?/, '');
+    const candidates = [
+        `${API_CONFIG.baseURL}${clean}`,
+        `${origin}/Musa/api/${clean}`,
+        `api/${clean}`,
+        `Musa/api/${clean}`
+    ];
+    let lastError;
+    for (const url of candidates) {
+        try {
+            console.log(`📡 [fallback] Intentando: ${url}`);
+            const resp = await fetch(url, fetchOptions);
+            if (!resp.ok) {
+                const t = await resp.text().catch(() => '');
+                console.warn(`⚠️ HTTP ${resp.status} en ${url}:`, t?.slice(0,200));
+                lastError = new Error(`HTTP ${resp.status} at ${url}`);
+                continue;
+            }
+            return await resp.json();
+        } catch (e) {
+            console.warn(`⚠️ Error llamando ${url}:`, e?.message || e);
+            lastError = e;
+        }
+    }
+    throw lastError || new Error('No se pudo contactar la API');
+}
+
+// Helper: fetch con fallback que devuelve Response crudo (para FormData/uploads)
+async function apiFetchRawWithFallback(endpointPath, fetchOptions = {}) {
+    const origin = window.location.origin;
+    const clean = (endpointPath || '').replace(/^\/?(api\/)?/, '');
+    const candidates = [
+        `${API_CONFIG.baseURL}${clean}`,
+        `${origin}/Musa/api/${clean}`,
+        `api/${clean}`,
+        `Musa/api/${clean}`
+    ];
+    let lastError;
+    for (const url of candidates) {
+        try {
+            console.log(`📡 [fallback-raw] Intentando: ${url}`);
+            const resp = await fetch(url, fetchOptions);
+            if (!resp.ok) {
+                const t = await resp.text().catch(() => '');
+                console.warn(`⚠️ HTTP ${resp.status} en ${url}:`, t?.slice(0,200));
+                lastError = new Error(`HTTP ${resp.status} at ${url}`);
+                continue;
+            }
+            return resp;
+        } catch (e) {
+            console.warn(`⚠️ Error llamando ${url}:`, e?.message || e);
+            lastError = e;
+        }
+    }
+    throw lastError || new Error('No se pudo contactar la API');
+}
 
 class DatabaseAdminSystem {
     constructor() {
@@ -82,14 +147,10 @@ class DatabaseAdminSystem {
         formData.append('image', file);
         
         try {
-            const response = await fetch(`${API_CONFIG.baseURL}images.php`, {
+            const response = await apiFetchRawWithFallback('images.php', {
                 method: 'POST',
                 body: formData
             });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
             
             const result = await response.json();
             
@@ -465,8 +526,6 @@ class DatabaseAdminSystem {
      */
     
     async apiRequest(method, endpoint, data = null) {
-        const url = `${API_CONFIG.baseURL}${endpoint}`;
-        
         const config = {
             method: method,
             headers: API_CONFIG.headers,
@@ -476,19 +535,11 @@ class DatabaseAdminSystem {
         if (data && (method === 'POST' || method === 'PUT')) {
             config.body = JSON.stringify(data);
         }
-
-        console.log(`🌐 API Request: ${method} ${url}`, data);
+        console.log(`🌐 API Request: ${method} ${endpoint}`, data);
 
         try {
-            const response = await fetch(url, config);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const result = await response.json();
+            const result = await apiFetchWithFallback(endpoint, config);
             console.log('📡 API Response:', result);
-            
             return result;
         } catch (error) {
             console.error('❌ API Request failed:', error);

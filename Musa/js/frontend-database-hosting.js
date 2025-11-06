@@ -10,20 +10,51 @@ console.log('🔧 [FRONTEND-DATABASE] Cargando archivo frontend-database.js para
 // Configuración optimizada para hosting
 const FRONTEND_API_CONFIG = {
     baseURL: (() => {
+        const origin = window.location.origin;
         const hostname = window.location.hostname;
-        const protocol = window.location.protocol;
+        const pathname = window.location.pathname || '';
         
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'http://localhost/Musa/api/';
-        } else if (hostname === 'musaarion.com' || hostname.includes('musaarion.com')) {
-            return 'https://musaarion.com/api/';
-        } else {
-            return `${protocol}//${hostname}/api/`;
         }
+        if (pathname.includes('/Musa/')) {
+            return `${origin}/Musa/api/`;
+        }
+        return `${origin}/Musa/api/`;
     })(),
     timeout: 20000, // Aumentado para hosting compartido
     retries: 3
 };
+
+// Helper: fetch con fallback de rutas para API
+async function apiFetchWithFallback(relativePathWithQuery, options = {}) {
+    const origin = window.location.origin;
+    const clean = (relativePathWithQuery || '').replace(/^\/?(api\/)?/, '');
+    const candidates = [
+        `${FRONTEND_API_CONFIG.baseURL}${clean}`,
+        `${origin}/Musa/api/${clean}`,
+        `api/${clean}`,
+        `Musa/api/${clean}`
+    ];
+    let lastError;
+    for (const url of candidates) {
+        try {
+            console.log(`📡 [fallback] Intentando: ${url}`);
+            const resp = await fetch(url, options);
+            if (!resp.ok) {
+                const t = await resp.text().catch(() => '');
+                console.warn(`⚠️ HTTP ${resp.status} en ${url}:`, t?.slice(0,200));
+                lastError = new Error(`HTTP ${resp.status} at ${url}`);
+                continue;
+            }
+            return await resp.json();
+        } catch (e) {
+            console.warn(`⚠️ Error llamando ${url}:`, e?.message || e);
+            lastError = e;
+        }
+    }
+    throw lastError || new Error('No se pudo contactar la API');
+}
 
 class DatabaseProductLoader {
     constructor() {
@@ -116,29 +147,21 @@ class DatabaseProductLoader {
                 ...filters
             });
 
-            const apiUrl = `${FRONTEND_API_CONFIG.baseURL}productos.php?${params.toString()}`;
-            console.log('🔗 API URL:', apiUrl);
-            
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), FRONTEND_API_CONFIG.timeout);
-            
-            const response = await fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Cache-Control': 'no-cache',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                signal: controller.signal
-            });
-            
+            const data = await apiFetchWithFallback(
+                `productos.php?${params.toString()}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    signal: controller.signal
+                }
+            );
             clearTimeout(timeoutId);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
             console.log('📊 Respuesta del API:', data);
             
             if (data.products && Array.isArray(data.products)) {

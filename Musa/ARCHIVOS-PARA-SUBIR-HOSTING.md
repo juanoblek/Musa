@@ -154,10 +154,18 @@ chmod 644 .htaccess
 ✓ /config/database.php
 ✓ /config/config.php
 ✓ /api/productos.php
+✓ /api/create-preference.php
+✓ /api/guardar-pedido-real.php
+✓ /api/webhook-mercadopago.php
 ✓ /js/frontend-database.js
 ✓ /uploads/ (directorio)
 ✓ /install-hosting-setup.php
 ```
+
+### ℹ️ Notas sobre rutas de API en producción
+- El frontend intenta primero `https://TU-DOMINIO/Musa/api/...` y luego rutas relativas (`api/...`) y archivos en la raíz de `Musa` como último recurso (por ejemplo `create-preference.php`).
+- Recomendado: subir siempre la carpeta `api/` completa dentro de `public_html/Musa/api/` para evitar redirecciones innecesarias y 404.
+- Asegura también los webhooks en `Musa/api/webhook-mercadopago.php` y `Musa/api/webhook.php`.
 
 ---
 

@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "title": "Test Item",
+      "description": "Test",
+      "picture_url": "https://musaarion.com/Musa/images/placeholder.svg",
+      "category_id": "clothing",
+      "quantity": 1,
+      "currency_id": "COP",
+      "unit_price": 1000
+    }
+  ],
+  "payer": {"name": "Test", "surname": "Musa", "email": "test@musa.local"},
+  "back_urls": {
+    "success": "https://musaarion.com/Musa/confirmacion-premium.html",
+    "failure": "https://musaarion.com/Musa/failure-premium.html",
+    "pending": "https://musaarion.com/Musa/pending-premium.html"
+  },
+  "external_reference": "order_cli_123456",
+  "notification_url": "https://musaarion.com/Musa/api/webhook-mercadopago.php"
+}

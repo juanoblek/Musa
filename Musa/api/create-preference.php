@@ -2,8 +2,32 @@
 // Archivo para crear preferencias de MercadoPago
 // Este archivo debe ejecutarse en el servidor backend
 
-// ✅ CONFIGURACIÓN GLOBAL AUTO-DETECT
-require_once '../config/config-global.php';
+// Aumentar reporting y asegurar log de errores en hosting
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+// Intentar usar un log local dentro del proyecto si es posible
+@ini_set('error_log', __DIR__ . '/../logs/php-error.log');
+
+// ✅ Cargar CONFIGURACIÓN GLOBAL con rutas tolerantes
+$configPaths = [
+    __DIR__ . '/../config/config-global.php',
+    __DIR__ . '/config/config-global.php',
+    dirname(__DIR__) . '/config/config-global.php'
+];
+$loadedConfig = false;
+foreach ($configPaths as $cfg) {
+    if (file_exists($cfg)) {
+        require_once $cfg;
+        $loadedConfig = true;
+        break;
+    }
+}
+if (!$loadedConfig) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Config no encontrada']);
+    exit();
+}
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -25,13 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // ✅ OBTENER CREDENCIALES DE CONFIGURACIÓN GLOBAL
 $mpConfig = GlobalConfig::getMercadoPagoConfig();
-$MP_ACCESS_TOKEN = $mpConfig['access_token'];
-
-if (!$MP_ACCESS_TOKEN) {
-    throw new Exception('Access token de MercadoPago no disponible');
-}
+$MP_ACCESS_TOKEN = $mpConfig['access_token'] ?? '';
 
 try {
+    if (!$MP_ACCESS_TOKEN) {
+        throw new Exception('Access token de MercadoPago no disponible');
+    }
     // Obtener datos del request
     $input = json_decode(file_get_contents('php://input'), true);
     
@@ -56,13 +79,13 @@ try {
     $failure_url = $input['back_urls']['failure'] ?? $urls['failure'];
     $pending_url = $input['back_urls']['pending'] ?? $urls['pending'];
     
-    // Log de URLs
-    GlobalConfig::log('URLs configuradas', [
+    // Log de URLs (sin dependencias externas)
+    error_log('🔗 DEBUG - URLs configuradas: ' . json_encode([
         'success' => $success_url,
         'failure' => $failure_url,
         'pending' => $pending_url,
-        'environment' => IS_PRODUCTION ? 'PRODUCTION' : 'DEVELOPMENT'
-    ]);
+        'environment' => GlobalConfig::isProduction() ? 'PRODUCTION' : 'DEVELOPMENT'
+    ]));
     
     // Configurar métodos de pago según la selección
     $payment_methods = [];
@@ -148,6 +171,10 @@ try {
         'external_reference' => $input['external_reference'] ?? 'MUSA-' . time(),
         'statement_descriptor' => 'MUSA FASHION'
     ];
+    // Agregar notification_url solo si viene definida y no vacía
+    if (!empty($input['notification_url'])) {
+        $preference_data['notification_url'] = $input['notification_url'];
+    }
     
     // Log de datos a enviar
     error_log('📦 DEBUG - Datos a enviar a MercadoPago: ' . json_encode($preference_data));

@@ -1,5 +1,9 @@
 <?php
 // api/categorias.php - API para gestión de categorías
+
+// Importar configuración global
+require_once __DIR__ . '/../config/config-global.php';
+
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
@@ -16,16 +20,16 @@ function sendJsonResponse($data, $status = 200) {
     exit;
 }
 
-// Detectar entorno y configurar base de datos
-$hostname = $_SERVER['SERVER_NAME'] ?? 'localhost';
-$isLocal = ($hostname === 'localhost' || $hostname === '127.0.0.1');
+// Obtener configuración de base de datos según el entorno
+$dbConfig = GlobalConfig::getDatabaseConfig();
+$host = $dbConfig['host'];
+$dbname = $dbConfig['dbname'];
+$username = $dbConfig['username'];
+$password = $dbConfig['password'];
 
-
-// Configuración fija para hosting
-$host = 'localhost';
-$dbname = 'janithal_musa_moda';
-$username = 'root';
-$password = '';
+error_log("=== API CATEGORIAS ===");
+error_log("Entorno: " . (GlobalConfig::isProduction() ? 'PRODUCCIÓN' : 'DESARROLLO'));
+error_log("Base de datos: $host / $dbname");
 
 try {
     $db = new PDO(

@@ -98,6 +98,9 @@ echo '<div class="step"><h3>🔨 PASO 3: Creando/verificando tablas</h3>';
 
 if (isset($connection)) {
     try {
+        // Configurar PDO para usar consultas bufferizadas
+        $connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        
         // Ejecutar estructura de base de datos
         $sqlFile = __DIR__ . '/ESTRUCTURA-COMPLETA-DB.sql';
         
@@ -110,8 +113,19 @@ if (isset($connection)) {
                 $statement = trim($statement);
                 if (!empty($statement)) {
                     try {
-                        $connection->exec($statement);
+                        // Asegurarse de que cualquier consulta previa esté completada
+                        while ($connection->getAttribute(PDO::ATTR_SERVER_INFO)) {
+                            $connection->getAttribute(PDO::ATTR_SERVER_INFO);
+                        }
+                        
+                        // Preparar y ejecutar la consulta
+                        $stmt = $connection->prepare($statement);
+                        $stmt->execute();
                         $created++;
+                        
+                        // Asegurarse de que los resultados sean leídos
+                        while ($stmt->fetch(PDO::FETCH_ASSOC));
+                        $stmt->closeCursor();
                     } catch (PDOException $e) {
                         // Ignorar errores de tablas existentes
                         if (strpos($e->getMessage(), 'already exists') === false) {
