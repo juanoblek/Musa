@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home4/janithal/public_html/
-    - /bin/rsync -av --delete --exclude='.git' --exclude='logs/' --exclude='test-*.json' --exclude='.env' --exclude='config/config-global.php' Musa/ $DEPLOYPATH/Musa/
-    - /bin/find $DEPLOYPATH/Musa -type d -exec /bin/chmod 755 {} \;
-    - /bin/find $DEPLOYPATH/Musa -type f -exec /bin/chmod 644 {} \;
+    - export DEPLOYPATH=/home4/janithal/public_html
+    - /bin/rsync -av --delete --exclude='.git' --exclude='logs/' --exclude='test-*.json' --exclude='.env' --exclude='*.md' Musa/Musa/ $DEPLOYPATH/
+    - /bin/find $DEPLOYPATH -type d -exec /bin/chmod 755 {} \;
+    - /bin/find $DEPLOYPATH -type f -exec /bin/chmod 644 {} \;
